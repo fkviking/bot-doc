@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>10. API v2 | Документация торговых роботов компании &quot;Викинг&quot;</title>
+    <meta name="generator" content="VuePress 1.9.7">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/github-markdown-css/2.2.1/github-markdown.css">
+    <meta name="description" content="Documentation for Viking&amp;#39;s trading bots">
+    <meta name="theme-color" content="#3eaf7c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="preload" href="/bot-doc/assets/css/0.styles.3f3820d4.css" as="style"><link rel="preload" href="/bot-doc/assets/js/app.c3061f20.js" as="script"><link rel="preload" href="/bot-doc/assets/js/3.5c872acc.js" as="script"><link rel="preload" href="/bot-doc/assets/js/26.cf470181.js" as="script"><link rel="prefetch" href="/bot-doc/assets/js/10.9c88206f.js"><link rel="prefetch" href="/bot-doc/assets/js/11.6fffcdde.js"><link rel="prefetch" href="/bot-doc/assets/js/12.6307b4ef.js"><link rel="prefetch" href="/bot-doc/assets/js/13.31bb26a6.js"><link rel="prefetch" href="/bot-doc/assets/js/14.1ec64455.js"><link rel="prefetch" href="/bot-doc/assets/js/15.c0cafc1e.js"><link rel="prefetch" href="/bot-doc/assets/js/16.9c85ce01.js"><link rel="prefetch" href="/bot-doc/assets/js/17.fd8609d7.js"><link rel="prefetch" href="/bot-doc/assets/js/18.600e8077.js"><link rel="prefetch" href="/bot-doc/assets/js/19.e85f8225.js"><link rel="prefetch" href="/bot-doc/assets/js/20.eb5a5681.js"><link rel="prefetch" href="/bot-doc/assets/js/21.0bd0b0e4.js"><link rel="prefetch" href="/bot-doc/assets/js/22.9b51ab40.js"><link rel="prefetch" href="/bot-doc/assets/js/23.f1311c13.js"><link rel="prefetch" href="/bot-doc/assets/js/24.12f7b8d1.js"><link rel="prefetch" href="/bot-doc/assets/js/25.eb83bdd5.js"><link rel="prefetch" href="/bot-doc/assets/js/27.f7bc0cea.js"><link rel="prefetch" href="/bot-doc/assets/js/28.e5c75022.js"><link rel="prefetch" href="/bot-doc/assets/js/29.ef234b9f.js"><link rel="prefetch" href="/bot-doc/assets/js/30.839a4236.js"><link rel="prefetch" href="/bot-doc/assets/js/4.252b6a40.js"><link rel="prefetch" href="/bot-doc/assets/js/5.8ff27740.js"><link rel="prefetch" href="/bot-doc/assets/js/6.0c1a845b.js"><link rel="prefetch" href="/bot-doc/assets/js/7.323e2656.js"><link rel="prefetch" href="/bot-doc/assets/js/8.ecd38e98.js"><link rel="prefetch" href="/bot-doc/assets/js/9.c36e680d.js"><link rel="prefetch" href="/bot-doc/assets/js/vendors~docsearch.46c621f4.js">
+    <link rel="stylesheet" href="/bot-doc/assets/css/0.styles.3f3820d4.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/bot-doc/" class="home-link router-link-active"><!----> <span class="site-name">Документация торговых роботов компании &quot;Викинг&quot;</span></a> <div class="links"><form id="search-form" role="search" class="algolia-search-wrapper search-box"><input id="algolia-search-input" class="search-query"></form> <nav class="nav-links can-hide"><div class="nav-item"><a href="/bot-doc/docs/" class="nav-link router-link-active">
+  Документация
+</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/bot-doc/docs/" class="nav-link router-link-active">
+  Документация
+</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span></span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/bot-doc/docs/01-change-history.html" class="sidebar-link">1. История изменений</a></li><li><a href="/bot-doc/docs/02-introduction.html" class="sidebar-link">2. Введение</a></li><li><a href="/bot-doc/docs/03-getting-started.html" class="sidebar-link">3. Начало работы</a></li><li><a href="/bot-doc/docs/04-creating-connection.html" class="sidebar-link">4. Добавление подключений</a></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>5. Описание параметров</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/bot-doc/docs/06-algorithm-comments.html" class="sidebar-link">6. Примечания к алгоритму</a></li><li><a href="/bot-doc/docs/07-order-error.html" class="sidebar-link">7. Ошибки заявок</a></li><li><a href="/bot-doc/docs/08-c-api.html" class="sidebar-link">8. C++</a></li><li><a href="/bot-doc/docs/09-api-v1.html" class="sidebar-link">9. API</a></li><li><a href="/bot-doc/docs/10-api-v2.html" aria-current="page" class="active sidebar-link">10. API v2</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/bot-doc/docs/10-api-v2.html#_10-1-подписки" class="sidebar-link">10.1. Подписки</a></li></ul></li><li><a href="/bot-doc/docs/11-faq.html" class="sidebar-link">11. Часто задаваемые вопросы</a></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>12. API Фронта 2.0</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/bot-doc/docs/99-sample-doc.html" class="sidebar-link">99 Тестовый документ</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="_10-api-v2"><a href="#_10-api-v2" class="header-anchor">#</a> 10. API v2</h1> <h2 id="_10-1-подписки"><a href="#_10-1-подписки" class="header-anchor">#</a> 10.1. Подписки</h2> <h3 id="_10-1-1-подписка-на-дерево"><a href="#_10-1-1-подписка-на-дерево" class="header-anchor">#</a> 10.1.1. Подписка на &quot;дерево&quot;</h3> <p>Подписка</p> <div class="language-{ extra-class"><pre class="language-text"><code>       &quot;type&quot;: &quot;subscribe&quot;,
+       &quot;clOrdId&quot;: &quot;1&quot;,
+       &quot;data&quot;: {
+           &quot;topic&quot;: &quot;robots&quot;
+       }
+   }
+</code></pre></div><div class="language- extra-class"><pre class="language-text"><code>{
+       &quot;type&quot;: &quot;subscribe&quot;,
+       &quot;clOrdId&quot;: &quot;1&quot;,
+       &quot;data&quot;: {
+           &quot;topic&quot;: &quot;robots&quot;,
+           &quot;admin&quot;: true
+       }
+   }
+</code></pre></div><p>clOrdId - пользовательский идентификатор сообщения, он же придет во всех ответах
+admin - получать данные доступные только для админа</p> <p>Ответ (снапшот)</p> <div class="language- extra-class"><pre class="language-text"><code>{
+    &quot;type&quot;: &quot;callback&quot;,
+    &quot;data&quot;: {
+        &quot;robots&quot;: {
+            &quot;1&quot;: {
+                &quot;portfolios&quot;: {
+                    &quot;test&quot;: {
+                        &quot;re_buy&quot;: false,
+                        &quot;re_sell&quot;: false,
+                        &quot;all_free&quot;: 1,
+                        &quot;disabled&quot;: false,
+                        &quot;securities&quot;: {
+                            &quot;BNF_BTCUSDT&quot;: {
+                                &quot;sec_key&quot;: &quot;BNF_BTCUSDT&quot;,
+                                &quot;sec_type&quot;: 34359738368,
+                                &quot;client_code&quot;: &quot;virtual&quot;,
+                                &quot;sec_key_subscr&quot;: &quot;BTCUSDT&quot;
+                            }
+                        },
+                        &quot;has_virtual&quot;: true,
+                        &quot;name&quot;: &quot;test&quot;,
+                        &quot;owner&quot;: &quot;test@gmail.com&quot;
+                    }
+                },
+                &quot;trans_conns&quot;: {
+                    &quot;0_virtual&quot;: {
+                        &quot;sec_pos&quot;: null,
+                        &quot;coin_pos&quot;: null,
+                        &quot;disabled&quot;: false,
+                        &quot;sec_type&quot;: 0,
+                        &quot;name&quot;: &quot;virtual&quot;,
+                        &quot;full_name&quot;: &quot;virtual&quot;
+                    }
+                },
+                &quot;data_conns&quot;: {
+                    &quot;34359738368_binancefut_listen&quot;: {
+                        &quot;disabled&quot;: false,
+                        &quot;sec_type&quot;: 34359738368,
+                        &quot;name&quot;: &quot;binancefut_listen&quot;
+                    }
+                },
+                &quot;start&quot;: false,
+                &quot;rl&quot;: &quot;&quot;,
+                &quot;rv&quot;: &quot;&quot;,
+                &quot;rvd&quot;: 0,
+                &quot;mc&quot;: 0,
+                &quot;de&quot;: -1,
+                &quot;dt&quot;: 0,
+                &quot;pms&quot;: 1,
+                &quot;name&quot;: &quot;1&quot;,
+                &quot;rc&quot;: false
+            },
+            &quot;12&quot;: {
+                &quot;portfolios&quot;: {
+                    &quot;test&quot;: {
+                        &quot;re_buy&quot;: false,
+                        &quot;re_sell&quot;: false,
+                        &quot;all_free&quot;: 1,
+                        &quot;disabled&quot;: false,
+                        &quot;securities&quot;: {
+                            &quot;BNF_BTCUSDT&quot;: {
+                                &quot;sec_key&quot;: &quot;BNF_BTCUSDT&quot;,
+                                &quot;sec_type&quot;: 34359738368,
+                                &quot;client_code&quot;: &quot;virtual&quot;,
+                                &quot;sec_key_subscr&quot;: &quot;BTCUSDT&quot;
+                            }
+                        },
+                        &quot;has_virtual&quot;: true,
+                        &quot;name&quot;: &quot;test&quot;,
+                        &quot;owner&quot;: &quot;test@gmail.com&quot;
+                    }
+                },
+                &quot;trans_conns&quot;: {
+                    &quot;0_virtual&quot;: {
+                        &quot;sec_pos&quot;: null,
+                        &quot;coin_pos&quot;: null,
+                        &quot;disabled&quot;: false,
+                        &quot;sec_type&quot;: 0,
+                        &quot;name&quot;: &quot;virtual&quot;,
+                        &quot;full_name&quot;: &quot;virtual&quot;
+                    }
+                },
+                &quot;data_conns&quot;: {
+                    &quot;34359738368_binancefut_listen&quot;: {
+                        &quot;disabled&quot;: true,
+                        &quot;sec_type&quot;: 34359738368,
+                        &quot;name&quot;: &quot;binancefut_listen&quot;
+                    }
+                },
+                &quot;start&quot;: true,
+                &quot;rl&quot;: &quot;&quot;,
+                &quot;rv&quot;: &quot;&quot;,
+                &quot;rvd&quot;: 0,
+                &quot;mc&quot;: 0,
+                &quot;de&quot;: -1,
+                &quot;dt&quot;: 0,
+                &quot;pms&quot;: 0,
+                &quot;name&quot;: &quot;12&quot;,
+                &quot;rc&quot;: false
+            }
+        },
+        &quot;snapshot&quot;: true
+    },
+    &quot;ts&quot;: 1646903524392865792,
+    &quot;clOrdId&quot;: &quot;1&quot;
+}
+</code></pre></div><p>snapshot - означает снапшот это или обновление
+re_sell/re_buy - портфель может покупать/продавать
+all_free - нет активных заявок в портфеле
+disabled - портфель отключен
+has_virtual - торговля с использованием виртуальных подключений
+name - имя
+owner - создатель/хозяин портфеля
+client_code - используемое торговое подключение
+start - флаг, означающий должен ли быть в данный момент включен робот
+rl - имя робота
+rv - версия робота
+rvd - дата версии робота
+mc - число проходов главного цикла событий в секунду
+mtc - лимит транзакционных подключений
+de - осталось дней до окончания лицензии (0 - лицензия закончилась, &lt;=0 - не известно)
+dt - дата/время на сервере робота
+pms - права (FOR_ALL = 0, USER = 1, ADMIN = 10)
+rc - робот подключен
+wr - робот ожидает перезапуска после смены &quot;критичных&quot; настроек
+gc - все подключения робота к биржам подключены (CLOSED = 0, OPENING = 1, ONLINE = 2, UNKNOWN = 3)
+tr - торговля включена или есть активные заявки (NOT_TRADING = 0, TRADING = 2, UNKNOWN = 3)
+shared - &quot;шареный робот&quot;
+ip - доступные адреса
+__action - если равно &quot;del&quot;, то удалить данный ключ
+clear - имя ключа, который нужно удалить из данного словаря (удалять нужно первым делом, т.к. в сообщении содержится новое значение данного ключа)
+expiration - дата окончания действия лицензии (только для админа)
+robot_comment - комментарий (только для админа)
+max_trans_count - лимит транзакционных подключений (только для админа)
+log_days - сколько дней хранить логи (только для админа)
+cpu - исползуемое ядро процессора (только для админа)
+robot_type - имя сборки (только для админа)
+for_all - робот доступный всем (только для админа)
+cmd_params - параметры запуска (только для админа)
+mail_to - отправлить сообщение на почты(только для админа)
+users - пользователи робота (только для админа)
+Обновления (приходит только id робота, имя портфеля и бумаги или ключ подключения, и то что обновилось)
+{&quot;type&quot;: &quot;callback&quot;, &quot;clOrdId&quot;: &quot;1&quot;, &quot;data&quot;: {&quot;robots&quot;:{&quot;1&quot;:{&quot;portfolios&quot;: {&quot;qwe&quot;: {&quot;name&quot;: &quot;qwe&quot;, &quot;securities&quot;: {&quot;CEX_BTC_USD&quot;: {&quot;__action&quot;: &quot;del&quot;}}}}}}, &quot;snapshot&quot;: false},&quot;ts&quot;:1624516437000000123}
+{&quot;type&quot;: &quot;callback&quot;, &quot;clOrdId&quot;: &quot;1&quot;, &quot;data&quot;:{&quot;robots&quot;:{&quot;1&quot;:{&quot;rc&quot;:true}}, &quot;snapshot&quot;:false}, &quot;ts&quot;:1646903528002037248}
+формат сообщения такой же, как у снапшота</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/bot-doc/docs/09-api-v1.html" class="prev">
+        9. API
+      </a></span> <span class="next"><a href="/bot-doc/docs/11-faq.html">
+        11. Часто задаваемые вопросы
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/bot-doc/assets/js/app.c3061f20.js" defer></script><script src="/bot-doc/assets/js/3.5c872acc.js" defer></script><script src="/bot-doc/assets/js/26.cf470181.js" defer></script>
+  </body>
+</html>

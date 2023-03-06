@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>12.1.1. Авторизация пользователя через Firebase | Документация торговых роботов компании &quot;Викинг&quot;</title>
+    <meta name="generator" content="VuePress 1.9.7">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/github-markdown-css/2.2.1/github-markdown.css">
+    <meta name="description" content="Documentation for Viking&amp;#39;s trading bots">
+    <meta name="theme-color" content="#3eaf7c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="preload" href="/bot-doc/assets/css/0.styles.3f3820d4.css" as="style"><link rel="preload" href="/bot-doc/assets/js/app.c3061f20.js" as="script"><link rel="preload" href="/bot-doc/assets/js/3.5c872acc.js" as="script"><link rel="preload" href="/bot-doc/assets/js/28.e5c75022.js" as="script"><link rel="prefetch" href="/bot-doc/assets/js/10.9c88206f.js"><link rel="prefetch" href="/bot-doc/assets/js/11.6fffcdde.js"><link rel="prefetch" href="/bot-doc/assets/js/12.6307b4ef.js"><link rel="prefetch" href="/bot-doc/assets/js/13.31bb26a6.js"><link rel="prefetch" href="/bot-doc/assets/js/14.1ec64455.js"><link rel="prefetch" href="/bot-doc/assets/js/15.c0cafc1e.js"><link rel="prefetch" href="/bot-doc/assets/js/16.9c85ce01.js"><link rel="prefetch" href="/bot-doc/assets/js/17.fd8609d7.js"><link rel="prefetch" href="/bot-doc/assets/js/18.600e8077.js"><link rel="prefetch" href="/bot-doc/assets/js/19.e85f8225.js"><link rel="prefetch" href="/bot-doc/assets/js/20.eb5a5681.js"><link rel="prefetch" href="/bot-doc/assets/js/21.0bd0b0e4.js"><link rel="prefetch" href="/bot-doc/assets/js/22.9b51ab40.js"><link rel="prefetch" href="/bot-doc/assets/js/23.f1311c13.js"><link rel="prefetch" href="/bot-doc/assets/js/24.12f7b8d1.js"><link rel="prefetch" href="/bot-doc/assets/js/25.eb83bdd5.js"><link rel="prefetch" href="/bot-doc/assets/js/26.cf470181.js"><link rel="prefetch" href="/bot-doc/assets/js/27.f7bc0cea.js"><link rel="prefetch" href="/bot-doc/assets/js/29.ef234b9f.js"><link rel="prefetch" href="/bot-doc/assets/js/30.839a4236.js"><link rel="prefetch" href="/bot-doc/assets/js/4.252b6a40.js"><link rel="prefetch" href="/bot-doc/assets/js/5.8ff27740.js"><link rel="prefetch" href="/bot-doc/assets/js/6.0c1a845b.js"><link rel="prefetch" href="/bot-doc/assets/js/7.323e2656.js"><link rel="prefetch" href="/bot-doc/assets/js/8.ecd38e98.js"><link rel="prefetch" href="/bot-doc/assets/js/9.c36e680d.js"><link rel="prefetch" href="/bot-doc/assets/js/vendors~docsearch.46c621f4.js">
+    <link rel="stylesheet" href="/bot-doc/assets/css/0.styles.3f3820d4.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/bot-doc/" class="home-link router-link-active"><!----> <span class="site-name">Документация торговых роботов компании &quot;Викинг&quot;</span></a> <div class="links"><form id="search-form" role="search" class="algolia-search-wrapper search-box"><input id="algolia-search-input" class="search-query"></form> <nav class="nav-links can-hide"><div class="nav-item"><a href="/bot-doc/docs/" class="nav-link router-link-active">
+  Документация
+</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/bot-doc/docs/" class="nav-link router-link-active">
+  Документация
+</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span></span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/bot-doc/docs/01-change-history.html" class="sidebar-link">1. История изменений</a></li><li><a href="/bot-doc/docs/02-introduction.html" class="sidebar-link">2. Введение</a></li><li><a href="/bot-doc/docs/03-getting-started.html" class="sidebar-link">3. Начало работы</a></li><li><a href="/bot-doc/docs/04-creating-connection.html" class="sidebar-link">4. Добавление подключений</a></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>5. Описание параметров</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/bot-doc/docs/06-algorithm-comments.html" class="sidebar-link">6. Примечания к алгоритму</a></li><li><a href="/bot-doc/docs/07-order-error.html" class="sidebar-link">7. Ошибки заявок</a></li><li><a href="/bot-doc/docs/08-c-api.html" class="sidebar-link">8. C++</a></li><li><a href="/bot-doc/docs/09-api-v1.html" class="sidebar-link">9. API</a></li><li><a href="/bot-doc/docs/10-api-v2.html" class="sidebar-link">10. API v2</a></li><li><a href="/bot-doc/docs/11-faq.html" class="sidebar-link">11. Часто задаваемые вопросы</a></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading open"><span>12. API Фронта 2.0</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/bot-doc/docs/12-api-v3/authorization-firebase.html" aria-current="page" class="active sidebar-link">12.1.1. Авторизация пользователя через Firebase</a><ul class="sidebar-sub-headers"></ul></li></ul></section></li><li><a href="/bot-doc/docs/99-sample-doc.html" class="sidebar-link">99 Тестовый документ</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h3 id="_12-1-1-авторизация-пользователя-через-firebase"><a href="#_12-1-1-авторизация-пользователя-через-firebase" class="header-anchor">#</a> 12.1.1. Авторизация пользователя через Firebase</h3> <p>Только для сайта</p> <p>Request Payload:</p> <table><thead><tr><th>Key[=value]</th> <th style="text-align:center;">Required</th> <th style="text-align:right;">JSON type</th> <th style="text-align:right;">Internal type</th> <th style="text-align:right;">Description</th></tr></thead> <tbody><tr><td>type = authorization_firebase</td> <td style="text-align:center;">y</td> <td style="text-align:right;">string</td> <td style="text-align:right;"></td> <td style="text-align:right;">Operation type</td></tr> <tr><td>eid</td> <td style="text-align:center;">y</td> <td style="text-align:right;">string</td> <td style="text-align:right;">string_36</td> <td style="text-align:right;">External user id that will be received in response</td></tr> <tr><td>data</td> <td style="text-align:center;">y</td> <td style="text-align:right;">object</td> <td style="text-align:right;"></td> <td style="text-align:right;"></td></tr> <tr><td>client_id</td> <td style="text-align:center;">y</td> <td style="text-align:right;">string</td> <td style="text-align:right;"></td> <td style="text-align:right;">Firebase client_id</td></tr> <tr><td>token</td> <td style="text-align:center;">y</td> <td style="text-align:right;">string</td> <td style="text-align:right;"></td> <td style="text-align:right;">Firebase access token</td></tr> <tr><td>role</td> <td style="text-align:center;">n</td> <td style="text-align:right;">string</td> <td style="text-align:right;">user_role</td> <td style="text-align:right;">User login role (demo is default)</td></tr></tbody></table> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token punctuation">{</span>
+	<span class="token string-property property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;authorization_firebase&quot;</span><span class="token punctuation">,</span>
+	<span class="token string-property property">&quot;data&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+		<span class="token string-property property">&quot;client_id&quot;</span><span class="token operator">:</span> <span class="token string">&quot;81Fk8whhHvabzTchEEnQeJjCPS53&quot;</span><span class="token punctuation">,</span>
+		<span class="token string-property property">&quot;token&quot;</span><span class="token operator">:</span> <span class="token string">&quot;eyJhbGciOiJSUzI1NiIsImtpZCI6ImVhNWY2NDYxMjA4Y2ZmMGVlYzgwZDFkYmI1MjgyZTkyMDY0MjAyNWEiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi0JDQvdGC0L7QvSDQodC-0LvQvtCy0YzRkdCyIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BT2gxNEdqYkU4a0ZlSHMxNDdVRDI5QzhKSUN4a3pXci0zSFZlRVVlS1ZJRD1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9ib3QtZmt2aWtpbmciLCJhdWQiOiJib3QtZmt2aWtpbmciLCJhdXRoX3RpbWUiOjE2NTc2OTM1NzIsInVzZXJfaWQiOiI4MUZrOHdoaEh2YWJ6VGNoRUVuUWVKakNQUzUzIiwic3ViIjoiODFGazh3aGhIdmFielRjaEVFblFlSmpDUFM1MyIsImlhdCI6MTY1NzY5MzU3MiwiZXhwIjoxNjU3Njk3MTcyLCJlbWFpbCI6Ijc2NDExMDlAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMTYxMTY2OTg4Njk0MzI0OTg4ODciXSwiZW1haWwiOlsiNzY0MTEwOUBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.CzuPsAeLh49fOaGc14xih9-lk8Y1965FTHpNWk6tOdl9Dj1uBgi1OTUNfEgVJi_8coYK0hlio0o5hfu15LXsCPWJRZ6I3W32i7sBKLotekTv0oDDCN1pq2Jqoyl7Ary2lsKeyW8qXkDiWl1T77jO5P1gEC0kkabW5Yb4CNeNFMAcKNtO-hjckdcD25URcYuQLmfym49G0FfszPDONaBQe1c1NxBNvZrp72sLk-r12LIZgOm795Upl2-hXaH7xNHKQZO885MqAx29IZ6M952la1VTKTlkzyNDijYhcfDs2Izc6XIBm-rj1m_dR0JWDrv4mzWwOJR4_3KjkL6nAi4NnA&quot;</span><span class="token punctuation">,</span>
+		<span class="token string-property property">&quot;role&quot;</span><span class="token operator">:</span> <span class="token string">&quot;demo&quot;</span>
+	<span class="token punctuation">}</span><span class="token punctuation">,</span>
+	<span class="token string-property property">&quot;eid&quot;</span><span class="token operator">:</span> <span class="token string">&quot;qwerty&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>Response on success</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token punctuation">{</span>
+    <span class="token string-property property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;authorization_firebase&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;data&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string-property property">&quot;lang&quot;</span><span class="token operator">:</span> <span class="token string">&quot;ru&quot;</span><span class="token punctuation">,</span>
+        <span class="token string-property property">&quot;ui_items&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token string-property property">&quot;main&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;page&quot;</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;/&quot;</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;methods&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;widgets&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token string-property property">&quot;welcome&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token string-property property">&quot;methods&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token string-property property">&quot;portfolio_groups&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;page&quot;</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;portfolio-groups&quot;</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;methods&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;widgets&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token string-property property">&quot;portfolio_group_list&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token string-property property">&quot;methods&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token string-property property">&quot;portfolio_group&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;detail&quot;</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;portfolio-group/:group_name&quot;</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;widgets&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token string-property property">&quot;portfolio_group_items&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token string-property property">&quot;methods&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                    <span class="token string-property property">&quot;portfolio_group_analytics&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token string-property property">&quot;methods&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token string-property property">&quot;portfolio&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">&quot;url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;portfolio/:portfolio-id&quot;</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;detail&quot;</span><span class="token punctuation">,</span>
+                <span class="token string-property property">&quot;widgets&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token string-property property">&quot;portfolio_analytics&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token string-property property">&quot;methods&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                    <span class="token string-property property">&quot;portfolio_settings&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token string-property property">&quot;methods&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                    <span class="token string-property property">&quot;portfolio_assets&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                        <span class="token string-property property">&quot;methods&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token string-property property">&quot;active_role&quot;</span><span class="token operator">:</span> <span class="token string">&quot;trader&quot;</span><span class="token punctuation">,</span>
+        <span class="token string-property property">&quot;roles&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+            <span class="token string">&quot;trader&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;admin&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;boss&quot;</span>
+        <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;ts&quot;</span><span class="token operator">:</span> <span class="token number">1657693572940145200</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;eid&quot;</span><span class="token operator">:</span> <span class="token string">&quot;qwerty&quot;</span><span class="token punctuation">,</span>
+    <span class="token string-property property">&quot;r&quot;</span><span class="token operator">:</span> <span class="token string">&quot;p&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>Response on error</p> <p>Example</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token punctuation">{</span>
+	<span class="token string-property property">&quot;type&quot;</span><span class="token operator">:</span><span class="token string">&quot;authorization_firebase&quot;</span><span class="token punctuation">,</span>
+	<span class="token string-property property">&quot;data&quot;</span><span class="token operator">:</span>
+	<span class="token punctuation">{</span>
+		<span class="token string-property property">&quot;msg&quot;</span><span class="token operator">:</span><span class="token string">&quot;Authorization error or email not verified&quot;</span><span class="token punctuation">,</span>
+		<span class="token string-property property">&quot;code&quot;</span><span class="token operator">:</span><span class="token number">2</span>
+	<span class="token punctuation">}</span><span class="token punctuation">,</span>
+	<span class="token string-property property">&quot;ts&quot;</span><span class="token operator">:</span><span class="token number">1657693572940145200</span><span class="token punctuation">,</span>
+	<span class="token string-property property">&quot;eid&quot;</span><span class="token operator">:</span><span class="token string">&quot;qwerty&quot;</span><span class="token punctuation">,</span>
+	<span class="token string-property property">&quot;r&quot;</span><span class="token operator">:</span><span class="token string">&quot;e&quot;</span>
+<span class="token punctuation">}</span>
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/bot-doc/docs/11-faq.html" class="prev">
+        11. Часто задаваемые вопросы
+      </a></span> <span class="next"><a href="/bot-doc/docs/99-sample-doc.html">
+        99 Тестовый документ
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/bot-doc/assets/js/app.c3061f20.js" defer></script><script src="/bot-doc/assets/js/3.5c872acc.js" defer></script><script src="/bot-doc/assets/js/28.e5c75022.js" defer></script>
+  </body>
+</html>
