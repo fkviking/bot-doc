@@ -128,6 +128,7 @@ ___
 <iframe width="1520" height="562" src="https://www.youtube.com/embed/jPKi2Addbxw" title="Markdown - что за язык и как им пользоваться" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 Если надо, то редактируем его размер на странице через "width" и "height". В этом доке используем 560х315!!!
+735x415
 <br/>
 <br/>
 

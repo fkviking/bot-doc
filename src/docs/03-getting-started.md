@@ -3,10 +3,10 @@
 Изначально, робот, созданный для клиента, не имеет активных маркетдата и транзакционных подключений к биржам и не содержит ни одного портфеля (это не касается тестовых роботов для виртуальной торговли, там сразу доступно получение маркетдаты со всех поддерживаемых бирж). Поэтому первым делом необходимо настроить подключения для получения маркетдаты, а так же добавить транзакционные подключения.
 
 ## **3.1. Настройка подключений**
-___
+
 Видео, наглядно объясняющее процесс настройки подключений:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/s412pbSalGo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="735" height="415" src="https://www.youtube.com/embed/s412pbSalGo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 Для настройки подключений в древовидной структуре слева выбираем нужного робота, далее заходим во вкладку `Connections -> Connections`:
 
@@ -25,7 +25,6 @@ ___
 Когда параметры заполнены, нужно нажать `Add connection`.Теперь транзакционное подключение создано.
 
 ## **3.2. Тelegram-бот**
-___
 
 Кроме управления роботом через стандартный web-интерфейс, существует возможность задавать основные параметры робота через Telegram bot. Кроме того, в Telegram bot можно получать [Уведомления](https://fkviking.github.io/bot-doc/docs/05-params/5-4-notifications.html#_5-4-%D0%BF%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B8) о работе робота. Настоятельно рекомендуется настроить возможность управления роботом через Telegram bot, так как он является резервным каналом управления роботом (Telegram bot подключается к роботу напрямую и сохраняет возможность управления роботом даже при неработоспособности сайта).
 
@@ -40,11 +39,10 @@ ___
 Нажмите `/start` снова, чтобы начать работу.
 
 ## **3.3. Настройка портфелей**
-___
 
 Видео, наглядно объясняющее процесс создания торгового портфеля:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/m6tkfY9KQ_g" title="Создание портфеля" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="735" height="415" src="https://www.youtube.com/embed/m6tkfY9KQ_g" title="Создание портфеля" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 Для того, чтобы добавить портфель в древовидной структуре слева выбираем нужного робота, далее переходим во вкладку `Portfolios -> Portfolios`.
 В открывшемся окне нажимаем на кнопку создания нового портфеля `Add`:
@@ -72,7 +70,6 @@ ___
 После всех настроек нажмите `Apply` внизу страницы. Теперь портфель создан. Если расписание не было задано, то необходимо включать торговлю по портфелю вручную с помощью флагов `re_sell/re_buy`.
 
 ## **3.4. Управление портфелями**
-___
 
 Над таблицей портфелей находится блок кнопок, обеспечивающих управление портфелями.
 
