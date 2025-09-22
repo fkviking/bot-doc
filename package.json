@@ -9,11 +9,13 @@
   },
   "repository": "bot-doc/bot-doc",
   "scripts": {
-    "pre-process": "node scripts/generate-docs.js",
+    "generate-docs": "node scripts/generate-docs.js ru",
+    "generate-docs-en": "node scripts/generate-docs.js en",
+    "pre-process": "npm run generate-docs && npm run generate-docs-en",
     "reset-assets": "node scripts/reset-assets.js",
     "transliterate-assets": "node scripts/transliterate-assets.js",
-    "dev": "npm run pre-process & vuepress dev src",
-    "build": "npm run pre-process & vuepress build src"
+    "dev": "npm run pre-process && vuepress dev src",
+    "build": "npm run pre-process && vuepress build src"
   },
   "license": "MIT",
   "devDependencies": {

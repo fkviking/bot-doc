@@ -25,67 +25,137 @@ module.exports = {
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
 
-  /**
-   * Theme configuration, here is the default theme configuration for VuePress.
-   *
-   * ref：https://v1.vuepress.vuejs.org/theme/default-theme-config.html
-   */
-  themeConfig: {
-    logo: '/images/vkg_logo.svg',
-    repo: '',
-    editLinks: false,
-    docsDir: 'docs',
-    editLinkText: '',
-    lastUpdated: false,
-    algolia: {
-      apiKey: '7d6295408b07d0fac47f9f4f4082d107',
-      indexName: 'test_viking2',
-      // If Algolia did not provided you any `appId`, use `BH4D9OD16A` or remove this option
-      appId: 'GRBQWTRZK3',
-      searchParameters: {
-        queryLanguages: ['en', 'ru'],
-        ignorePlurals: true,
-        advancedSyntax: true,
-        hitsPerPage: 10
-      }
+  locales: {
+    '/': {
+      lang: 'ru-RU',
+      title: 'Документация торговых роботов компании "Викинг"',
+      description: 'Руководство пользователя, описание алгоритма и API'
     },
-    nav: [
-      {
-        text: 'Документация',
-        link: '/docs/introduction'
-      }
-    ],
-     sidebar: {
-      '/docs/': [
-        {
-          collapsable: false,
-          children: [
-            'change-history',
-            'introduction',
-            'interface',
-            'getting-started',
-            'stable-work',
-            'creating-connection',
-            'params-description',
-            'algorithm-comments',
-            'order-error',
-            'c-api',
-            'api',
-            'comparison',
-            'faq'
-          ]
-        }
-      ],
-
+    '/en/': {
+      lang: 'en-US',
+      title: 'Documentation for Viking\'s trading robots',
+      description: 'User guide, algorithm description and API'
     }
   },
+  themeConfig: {
+    logo: '/images/vkg_logo.svg',
+    locales: {
+      '/': {
+        lang: 'ru-RU',
+        title: 'Документация торговых роботов компании "Викинг"',
+        description: 'Руководство пользователя, описание алгоритма и API',
+        selectText: '🇷🇺 RU',
+        label: '🇷🇺 RU',
+        ariaLabel: 'Languages',
+        algolia: {
+          apiKey: '7d6295408b07d0fac47f9f4f4082d107',
+          indexName: 'test_viking2',
+          // If Algolia did not provided you any `appId`, use `BH4D9OD16A` or remove this option
+          appId: 'GRBQWTRZK3',
+          searchParameters: {
+            queryLanguages: ['en', 'ru'],
+            ignorePlurals: true,
+            advancedSyntax: true,
+            hitsPerPage: 10
+          }
+        },
+        sidebar: {
+          '/docs/': [
+            {
+              collapsable: false,
+              children: [
+                'change-history',
+                'introduction',
+                'interface',
+                'getting-started',
+                'stable-work',
+                'creating-connection',
+                'params-description',
+                'algorithm-comments',
+                'order-error',
+                'c-api',
+                'api',
+                'comparison',
+                'faq'
+              ]
+            }
+          ],
+        },
+        nav: [
+          {
+            text: 'Документация',
+            link: '/docs/introduction'
+          }
+        ],
+        repo: '',
+        editLinks: false,
+        docsDir: 'docs',
+        editLinkText: '',
+        lastUpdated: false,
+      },
+      '/en/': {
+        lang: 'en-US',
+        title: 'Documentation for Viking\'s trading robots',
+        description: 'User guide, algorithm description and API',
+        selectText: '🇺🇸 EN',
+        label: '🇺🇸 EN',
+        ariaLabel: 'Languages',
+        algolia: {
+          apiKey: '7d6295408b07d0fac47f9f4f4082d107',
+          indexName: 'test_viking2',
+          // If Algolia did not provided you any `appId`, use `BH4D9OD16A` or remove this option
+          appId: 'GRBQWTRZK3',
+          searchParameters: {
+            queryLanguages: ['en', 'ru'],
+            ignorePlurals: true,
+            advancedSyntax: true,
+            hitsPerPage: 10
+          }
+        },
+        sidebar: {
+          '/en/docs/': [
+            {
+              collapsable: false,
+              children: [
+                'change-history',
+                'introduction',
+                'interface',
+                'getting-started',
+                'stable-work',
+                'creating-connection',
+                'params-description',
+                'algorithm-comments',
+                'order-error',
+                'c-api',
+                'api',
+                'comparison',
+                'faq'
+              ]
+            }
+          ],
+        },
+        nav: [
+          {
+            text: 'Documentation',
+            link: '/en/docs/introduction'
+          }
+        ],
+        logo: '/images/vkg_logo.svg',
+        repo: '',
+        editLinks: false,
+        docsDir: 'en/docs',
+        editLinkText: '',
+        lastUpdated: false,
+      }
+    },
+  },
   markdown: {
-    extractHeaders: [ 'h2', 'h3', 'h4', 'h5','h6' ],
+    extractHeaders: ['h2', 'h3', 'h4', 'h5', 'h6'],
     extendMarkdown: md => {
       md.use(require('markdown-it'))
-      .use(require('markdown-it-attrs'))
-      .use(require('markdown-it-katex'))
-      .use(require('markdown-it-anchor'))
+        .use(require('markdown-it-attrs'))
+        .use(require('markdown-it-katex'))
+        .use(require('markdown-it-anchor'))
     }
   },
   /**
@@ -101,5 +171,6 @@ module.exports = {
         '@images': path.resolve(__dirname, '..', 'docs', '00-img'),
       }
     }
-  }
+  },
+
 }

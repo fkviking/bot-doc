@@ -41,14 +41,15 @@ function createAnchorFromHeader(headerText) {
 	const cleanHeaderText = headerText.replace(/<Anchor.*?\/>/, '').trim();
 
 	const slug = slugify(cleanHeaderText);
+	const escapedSlug = escapeQuotesInSlug(slug);
 	
 	let anchor;
 	
 	if (anchorMatch) {
 		const existingIds = anchorMatch[1].split(',').map(id => id.trim());
 		
-		if (!existingIds.some(id => id === `'${slug}'`)) {
-			existingIds.push(`'${slug}'`);
+		if (!existingIds.some(id => id === `'${escapedSlug}'`)) {
+			existingIds.push(`'${escapedSlug}'`);
 		}
 		
 		anchor = `<Anchor :ids="[${existingIds.join(', ')}]" />`;
@@ -95,8 +96,13 @@ function slugify(s) {
 	return transliterated.trim().toLowerCase().replace(/\s+/g, '-');
 }
 
+function escapeQuotesInSlug(slug) {
+	return slug.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
 function createAnchorTag(slug) {
-	return `<Anchor :ids="['${slug}']" />`;
+	const escapedSlug = escapeQuotesInSlug(slug);
+	return `<Anchor :ids="['${escapedSlug}']" />`;
 }
 
 function transliterateLinks(content) {

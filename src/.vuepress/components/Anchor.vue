@@ -43,6 +43,10 @@ export default {
     
     navbarHeight() {
       return this.$root.$el.querySelector('.navbar')?.offsetHeight || 58;
+    },
+
+    locale() {
+      return this.$route.path.startsWith('/en/') ? 'en' : 'ru';
     }
   },
 
@@ -123,18 +127,21 @@ export default {
     },
 
     copyAnchorLink(id) {
+      const successMessage = this.locale === 'en' ? 'Link copied!' : 'Ссылка скопирована!';
+      const errorMessage = this.locale === 'en' ? 'Failed to copy link' : 'Не удалось скопировать ссылку';
+
       const url = `${window.location.origin}${window.location.pathname}#${encodeURIComponent(id)}`;
       this.scrollToElement();
       
       navigator.clipboard.writeText(url)
-        .then(() => this.showToastNotification())
+        .then(() => this.showToastNotification(successMessage))
         .catch(err => {
-          console.error('Не удалось скопировать ссылку:', err);
-          this.showToastNotification('Не удалось скопировать ссылку');
+          console.error(errorMessage, err);
+          this.showToastNotification(errorMessage);
         });
     },
 
-    showToastNotification(message = 'Ссылка скопирована!') {
+    showToastNotification(message) {
       this.cleanupToast();
       
       toastElement = document.createElement('div');
