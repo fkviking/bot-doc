@@ -109,6 +109,12 @@ ignore-section-number: true
     **If the error occurs when placing orders for non-Is first instruments:**
     
     It is likely that the first-leg order is being filled in small portions, and after each such trade, hedging orders are being placed for second-leg instruments. Pay attention to the [Overlay](params-description.md#p.overlay)parameter, which allows placing hedging orders not after every single first-leg trade, thus reducing order frequency.
+
+	*Important!**
+
+	Our flood control system doesn't provide 100% protection against real flooding due to the time difference with the exchange. The time is initially synchronized, but the order takes a certain amount of time to reach the exchange, which is what causes the difference. There is a lag. Consequently, the windows in which the number of transactions is counted differ slightly, which can lead to flooding. Therefore, it is necessary to pay special attention to the "Anti Spam" settings and the robot logs that report such errors.
+
+	Information about fees for erroneous Flood Control transactions can be found on the Moscow Exchange [website](https://www.moex.com/a3792).
     
     </details>
 ---
@@ -221,7 +227,7 @@ ignore-section-number: true
     
     </details>
 
----    
+---
 - <details>
     <summary><i>Does the robot require the 'Cancel on Disconnect' option to be enabled in the trading connection? <Anchor :ids="['faq.cod']" /></i></summary>
     
@@ -230,12 +236,48 @@ ignore-section-number: true
     On one hand, the `Cancel on Disconnect` mechanism is designed to mitigate risks during connection loss. For example, with CoD enabled, if a connection drops, the first-leg instrument order will be automatically canceled, eliminating the risk of an unhedged position. On the other hand, enabling this mechanism on trading connections used for second-leg instruments may lead to undesired behavior: if the connection is lost, the second-leg order will be canceled and will not be automatically re-submitted after reconnection. Hedging will only occur again if the [Hedge (sec)](params-description.md#p.hedge_after) parameter is properly configured..
     
     </details>
----    
+	
+---
 - <details>
     <summary><i>The exchange has suspended trading. What actions should I take in the robot? <Anchor :ids="['faq.exchange_stopped']" /></i></summary>
     
     First and foremost, regardless of which exchange has suspended trading, do not rush to reset order statuses by clicking [Sell/Buy status](params-description.#p.sell_status) or using the [Reset statuses](getting-started.md#portfolio_actions.reset_statuses). menu option. Trading suspensions can occur for various reasons, not only technical ones, and exchange behavior during such events may vary significantly. We have previously observed cases where, after a trading halt on the Moscow Exchange, a client immediately reset order statuses in the robot. Then, 10–30 minutes later, trading resumed, but the client had to manually cancel outstanding orders via the terminal—orders the robot had "forgotten" due to the status reset.
     
     Since trading halts on any exchange can happen for multiple reasons, there is no universal action algorithm for such situations. Our platform employs a comprehensive monitoring system that tracks numerous robot parameters: availability of trading and market data connections, orders stuck in intermediate statuses, order submission/cancellation errors not covered by standard categories, etc. Thanks to this system, we are often aware of trading halts on the Moscow Exchange before receiving notifications from brokers. This information is analyzed promptly, and in case of an exchange failure, we send out user notifications detailing the necessary steps.
-    
-    </details>    
+
+  </details>
+  
+---
+- <details>
+	<summary><i>My portfolio trades and logs have disappeared. What's the cause? <Anchor :ids="['faq.lost_deals']" /></i></summary>
+	The most common cause is portfolio deletion. If you delete a portfolio from the bot, the associated trades and logs are also deleted, which is why they aren't displayed in the corresponding widgets. If the portfolio isn't deleted, and no information about it is updating in the widgets, please contact technical support with a detailed description of the situation and screenshots of the problem.
+
+</details>
+
+---
+- <details>
+	<summary><i>When using order book trading, the actual spread is worse than the calculated spread, even though there are no stops. <Anchor :ids="['faq.wrong_price']" /></i></summary>
+
+	You need to check the [Calc price OB](params-description.md#s.ob_c_p_t) and [Trading price OB](params-description.md#s.ob_t_p_t) parameters. This situation may occur due to differences in the specified values ​​for this parameter.
+
+	For example, the [Calc price OB](params-description.md#s.ob_c_p_t) parameter is set to "Weighted avg." This is the weighted average price up to and including the order book level at which the desired volume was acquired.
+
+	And for the [Trading price OB](params-description.md#s.ob_t_p_t) parameter, the Deepest value is selected. This is the price of the level in the order book at which the desired volume was reached.
+
+	Let's assume the second leg is a buy order, and an offer order is placed. Here are the sell orders in the order book:
+
+	103 - 5
+
+	102 - 2
+
+	101 - 2
+
+	100 - 1 is the offer.
+
+	Let's say the volume what we needed is 6.
+	This means you can satisfy it no earlier than at a price of 103.
+	But in the [sell/buy](params-description.md#p.sell) calculations, you use the weighted average price (Weighted Avg), i.e. (103 * 1 + 102 * 2 + 101 * 2 + 100 * 1) / 6 = 101.5.
+	Then you place an order at the deepest price, that is, at 103.
+	In other words, you're buying at a price that's clearly higher than the price you used in your calculations.
+	
+</details>
