@@ -288,7 +288,7 @@ The main table of the widget includes the following columns:
 - **Quantity** - traded quantity. If the `Aggregated` flag is present, the displayed quantity may differ from the actual quantity in a single terminal trade, as the row marked with `Aggregated` may represent an aggregation of several consecutive trades from the same order;
 - **Curpos** - position in the portfolio’s instrument after processing this trade;
 - **Connection** - trading connection through which the order leading to this trade was submitted;
-- **Aggregation** - flag indicating that the displayed trade may actually be an aggregation of multiple individual trades.
+- **Aggregated** - flag indicating that the displayed trade may actually be an aggregation of multiple individual trades.
 
 ### Deals history <Anchor :ids="['deals_history']" />
 
@@ -306,7 +306,7 @@ The main table of the widget includes the following columns:
 - **Quantity** - traded quantity. If the `Aggregated` flag is present, the displayed quantity may differ from the actual quantity in a single terminal trade, as the row marked with `Aggregated` may represent an aggregation of several consecutive trades from the same order;
 - **Curpos** - position in the portfolio’s instrument after processing this trade;
 - **Connection** - trading connection through which the order leading to this trade was submitted;
-- **Aggregation** - flag indicating that the displayed trade may actually be an aggregation of multiple individual trades.
+- **Aggregated** - flag indicating that the displayed trade may actually be an aggregation of multiple individual trades.
 
 ### Portfolios historical chart <Anchor :ids="['portfolios_historical_chart']" />
 

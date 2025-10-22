@@ -70,7 +70,7 @@ The IP address from which the connection to the exchange will be established. Th
 
 ### FAST (FIX Adapted for STreaming) <Anchor :ids="['tc.MOEX_FUT_OPT.FAST']" />
 
-This connection consists of 4 streams. This is designed to separate rarely used options, as well as to distinguish the resource-intensive but fast Orderlog stream from the slightly slower but lighter Best prices stream.
+This connection consists of 4 streams. This is designed to separate rarely used options, as well as to distinguish the resource-intensive but fast Orderlog stream from the slightly slower but lighter Best prices stream. It is recommended NOT to enable FAST streams with SIMBA streams at the same time.
 
 #### Futures Definitions
 
@@ -90,7 +90,7 @@ Instrument definition stream for options. To trade options, this stream must be 
 
 ### SIMBA <Anchor :ids="['tc.MOEX_FUT_OPT.SIMBA']" />
 
-This connection consists of 3 streams. This is designed to separate rarely used options.
+This connection consists of 3 streams. This is designed to separate rarely used options. It is recommended NOT to enable FAST streams with SIMBA streams at the same time.
 
 #### Futures Definitions
 
@@ -212,7 +212,7 @@ The IP address from which the connection to the exchange will be established. Th
 
 ### FAST
 
-This connection consists of 3 streams. This is designed to separate the Orderlog stream from the Best prices stream. They have similar speed, and the exchange allows their simultaneous use, so they can be enabled together. However, Best prices is clearly less resource-intensive.
+This connection consists of 3 streams. This is designed to separate the Orderlog stream from the Best prices stream. They have similar speed, and the exchange allows their simultaneous use, so they can be enabled together. However, Best prices is clearly less resource-intensive. It is recommended NOT to enable FAST streams with SIMBA streams at the same time.
 
 #### Definitions
 
@@ -228,7 +228,7 @@ Stream of all orders. We recommend enabling it simultaneously with the Best pric
 
 ### SIMBA
 
-This connection consists of 2 streams.
+This connection consists of 2 streams. It is recommended NOT to enable FAST streams with SIMBA streams at the same time.
 
 #### Definitions
 
@@ -349,7 +349,7 @@ The IP address from which the connection to the exchange will be established. Th
 
 ### FAST
 
-This connection consists of 3 streams. This is designed to separate the Orderlog stream from the Best prices stream. They have similar speed, and the exchange allows their simultaneous use, so they can be enabled together. However, Best prices is clearly less resource-intensive.
+This connection consists of 3 streams. This is designed to separate the Orderlog stream from the Best prices stream. They have similar speed, and the exchange allows their simultaneous use, so they can be enabled together. However, Best prices is clearly less resource-intensive. It is recommended NOT to enable FAST streams with SIMBA streams at the same time.
 
 #### Definitions
 
@@ -369,7 +369,7 @@ To view and add indices to the portfolio, this stream must be set to Enable stat
 
 ### SIMBA
 
-This connection consists of 2 streams.
+This connection consists of 2 streams. It is recommended NOT to enable FAST streams with SIMBA streams at the same time.
 
 #### Definitions
 
