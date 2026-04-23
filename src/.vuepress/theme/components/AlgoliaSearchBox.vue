@@ -500,12 +500,23 @@ export default {
         left 0
         width 10rem
 
+    .search-hotkeys-wrapper
+      display none
+
 @media (max-width: $MQMobile)
   .algolia-search-wrapper
     .suggestions
       right 0
-      width calc(100vw - 4rem)
+      width calc(100vw - 2rem)
+      max-height 60vh
+      position fixed
+      top 3.6rem
+      left 1rem
+      right 1rem
+
+    .search-hotkeys-wrapper
+      display none
 
     input:focus
-      width 8rem
+      width calc(100vw - 8rem)
 </style>
