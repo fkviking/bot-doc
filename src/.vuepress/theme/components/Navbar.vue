@@ -27,10 +27,9 @@
       } : {}"
     >
       <AlgoliaSearchBox
-        v-if="allowShowSearchBox"
+        v-if="isAlgoliaSearch"
         :options="algolia"
       />
-      <SearchBox v-else-if="$site.themeConfig.search !== false && $page.frontmatter.search !== false" />
       <NavLinks class="can-hide" />
     </div>
   </header>
@@ -39,7 +38,6 @@
 <script>
 // NOTE: Point to @vuepress/theme-default/components/Navbar.vue
 import AlgoliaSearchBox from './AlgoliaSearchBox.vue'
-import SearchBox from '@SearchBox'
 import SidebarButton from '@theme/components/SidebarButton.vue'
 import NavLinks from '@theme/components/NavLinks.vue'
 
@@ -49,7 +47,6 @@ export default {
   components: {
     SidebarButton,
     NavLinks,
-    SearchBox,
     AlgoliaSearchBox
   },
 
@@ -66,10 +63,6 @@ export default {
 
     isAlgoliaSearch () {
       return this.algolia && this.algolia.apiKey && this.algolia.indexName
-    },
-
-    allowShowSearchBox () {
-      return this.isAlgoliaSearch && this.$lang === 'ru-RU'
     }
   },
 

@@ -11,11 +11,11 @@
   "scripts": {
     "generate-docs": "node scripts/generate-docs.js ru",
     "generate-docs-en": "node scripts/generate-docs.js en",
-    "pre-process": "npm run generate-docs && npm run generate-docs-en",
+    "pre-process": "yarn generate-docs && yarn generate-docs-en",
     "reset-assets": "node scripts/reset-assets.js",
     "transliterate-assets": "node scripts/transliterate-assets.js",
-    "dev": "npm run pre-process && vuepress dev src",
-    "build": "npm run pre-process && vuepress build src"
+    "dev": "yarn pre-process && vuepress dev src",
+    "build": "yarn pre-process && vuepress build src"
   },
   "license": "MIT",
   "devDependencies": {
@@ -26,8 +26,10 @@
   },
   "dependencies": {
     "@vuepress/theme-default": "^1.9.8",
+    "algoliasearch": "^4.27.0",
     "cyrillic-to-translit-js": "^3.2.1",
     "gray-matter": "^4.0.3",
+    "instantsearch.js": "^4.94.0",
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.0.1",
     "markdown-it-attrs": "^4.1.6",

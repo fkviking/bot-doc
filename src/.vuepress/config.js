@@ -39,7 +39,6 @@ module.exports = {
   },
   themeConfig: {
     logo: '/images/vkg_logo_en.svg',
-    search: false,
     locales: {
       '/': {
         lang: 'ru-RU',
@@ -48,15 +47,12 @@ module.exports = {
         selectText: '🇷🇺 RU',
         label: '🇷🇺 RU',
         ariaLabel: 'Languages',
+        searchPlaceholder: 'Поиск...',
         algolia: {
-          apiKey: '7d6295408b07d0fac47f9f4f4082d107',
+          apiKey: '94ee5ea090e8169a1c1fa8c35b0189ed',
           indexName: 'test_viking2',
-          // If Algolia did not provided you any `appId`, use `BH4D9OD16A` or remove this option
-          appId: 'GRBQWTRZK3',
+          appId: 'TMJSXT1U3B',
           searchParameters: {
-            queryLanguages: ['en', 'ru'],
-            ignorePlurals: true,
-            advancedSyntax: true,
             hitsPerPage: 10
           }
         },
@@ -101,15 +97,12 @@ module.exports = {
         selectText: '🇺🇸 EN',
         label: '🇺🇸 EN',
         ariaLabel: 'Languages',
+        searchPlaceholder: 'Search...',
         algolia: {
-          apiKey: '7d6295408b07d0fac47f9f4f4082d107',
+          apiKey: '94ee5ea090e8169a1c1fa8c35b0189ed',
           indexName: 'test_viking2',
-          // If Algolia did not provided you any `appId`, use `BH4D9OD16A` or remove this option
-          appId: 'GRBQWTRZK3',
+          appId: 'TMJSXT1U3B',
           searchParameters: {
-            queryLanguages: ['en', 'ru'],
-            ignorePlurals: true,
-            advancedSyntax: true,
             hitsPerPage: 10
           }
         },
