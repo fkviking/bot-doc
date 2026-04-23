@@ -207,7 +207,7 @@ export default {
       ])
 
       this.searchInstance.start()
-      this.isMac = navigator.platform.toUpperCase().includes('MAC')
+      this.isMac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent)
       document.addEventListener('keydown', this.onHotkey)
     },
 
