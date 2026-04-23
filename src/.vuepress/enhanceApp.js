@@ -11,16 +11,18 @@ export default ({
   siteData // site metadata
 }) => {
 
-  router.afterEach((to) => {
-    setTimeout(() => {
-      try {
-        const isHomePage = ['/', '/en/'].includes(to.path)
-        if (isHomePage) transformFeatureToLink(to, siteData);
-      } catch (error) {
-        console.error('Error in enhanceApp.js', error);
-      }
-    }, 100);
-  });
+  if (typeof document !== 'undefined') {
+    router.afterEach((to) => {
+      setTimeout(() => {
+        try {
+          const isHomePage = ['/', '/en/'].includes(to.path)
+          if (isHomePage) transformFeatureToLink(to, siteData);
+        } catch (error) {
+          console.error('Error in enhanceApp.js', error);
+        }
+      }, 100);
+    });
+  }
 }
 
 

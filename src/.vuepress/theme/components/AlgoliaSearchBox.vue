@@ -207,8 +207,10 @@ export default {
       ])
 
       this.searchInstance.start()
-      this.isMac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent)
-      document.addEventListener('keydown', this.onHotkey)
+      if (typeof window !== 'undefined') {
+        this.isMac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent)
+        document.addEventListener('keydown', this.onHotkey)
+      }
     },
 
     onInput (e) {
