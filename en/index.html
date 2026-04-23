@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Documentation for Viking&#39;s trading robots</title>
+    <meta name="generator" content="VuePress 1.9.10">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/github-markdown-css/2.2.1/github-markdown.css">
+    <link rel="icon" href="/bot-doc/favicon.ico">
+    <meta name="description" content="User guide, algorithm description and API">
+    <meta name="theme-color" content="#3eaf7c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="preload" href="/bot-doc/assets/css/0.styles.cd6e184c.css" as="style"><link rel="preload" href="/bot-doc/assets/js/app.1d9c3b56.js" as="script"><link rel="preload" href="/bot-doc/assets/js/3.eb654620.js" as="script"><link rel="preload" href="/bot-doc/assets/js/2.6e6e0d44.js" as="script"><link rel="preload" href="/bot-doc/assets/js/49.8b85e885.js" as="script"><link rel="prefetch" href="/bot-doc/assets/js/1.82223cbd.js"><link rel="prefetch" href="/bot-doc/assets/js/10.8c0b22fa.js"><link rel="prefetch" href="/bot-doc/assets/js/11.eee313ff.js"><link rel="prefetch" href="/bot-doc/assets/js/12.0ab3296e.js"><link rel="prefetch" href="/bot-doc/assets/js/13.9de09d1e.js"><link rel="prefetch" href="/bot-doc/assets/js/14.251d98b9.js"><link rel="prefetch" href="/bot-doc/assets/js/15.2225fa3a.js"><link rel="prefetch" href="/bot-doc/assets/js/16.1f1a48c2.js"><link rel="prefetch" href="/bot-doc/assets/js/17.ba976ab9.js"><link rel="prefetch" href="/bot-doc/assets/js/18.61bda9cf.js"><link rel="prefetch" href="/bot-doc/assets/js/19.20f19045.js"><link rel="prefetch" href="/bot-doc/assets/js/20.8e42eddc.js"><link rel="prefetch" href="/bot-doc/assets/js/21.91a3cee5.js"><link rel="prefetch" href="/bot-doc/assets/js/22.7e704b8b.js"><link rel="prefetch" href="/bot-doc/assets/js/23.8e8ed64a.js"><link rel="prefetch" href="/bot-doc/assets/js/24.7406b9c1.js"><link rel="prefetch" href="/bot-doc/assets/js/25.514e0daf.js"><link rel="prefetch" href="/bot-doc/assets/js/26.f2cbd146.js"><link rel="prefetch" href="/bot-doc/assets/js/27.2575ce60.js"><link rel="prefetch" href="/bot-doc/assets/js/28.9798b188.js"><link rel="prefetch" href="/bot-doc/assets/js/29.ee8a8b77.js"><link rel="prefetch" href="/bot-doc/assets/js/30.c9d7818c.js"><link rel="prefetch" href="/bot-doc/assets/js/31.6c99447f.js"><link rel="prefetch" href="/bot-doc/assets/js/32.83f46c26.js"><link rel="prefetch" href="/bot-doc/assets/js/33.61f57b69.js"><link rel="prefetch" href="/bot-doc/assets/js/34.9a4be678.js"><link rel="prefetch" href="/bot-doc/assets/js/35.a4528f00.js"><link rel="prefetch" href="/bot-doc/assets/js/36.d81d8b79.js"><link rel="prefetch" href="/bot-doc/assets/js/37.d8b7a9b6.js"><link rel="prefetch" href="/bot-doc/assets/js/38.d41eba32.js"><link rel="prefetch" href="/bot-doc/assets/js/39.20417fdf.js"><link rel="prefetch" href="/bot-doc/assets/js/4.1b1d2809.js"><link rel="prefetch" href="/bot-doc/assets/js/40.a1dbe9f5.js"><link rel="prefetch" href="/bot-doc/assets/js/41.63d5ceb8.js"><link rel="prefetch" href="/bot-doc/assets/js/42.ae95f852.js"><link rel="prefetch" href="/bot-doc/assets/js/43.6851d7ab.js"><link rel="prefetch" href="/bot-doc/assets/js/44.ecd08290.js"><link rel="prefetch" href="/bot-doc/assets/js/45.e74f6211.js"><link rel="prefetch" href="/bot-doc/assets/js/46.d83c0042.js"><link rel="prefetch" href="/bot-doc/assets/js/47.65d85571.js"><link rel="prefetch" href="/bot-doc/assets/js/48.d32303ee.js"><link rel="prefetch" href="/bot-doc/assets/js/5.35c42855.js"><link rel="prefetch" href="/bot-doc/assets/js/50.770818ba.js"><link rel="prefetch" href="/bot-doc/assets/js/6.b8af3e8d.js"><link rel="prefetch" href="/bot-doc/assets/js/7.eccf7eb6.js"><link rel="prefetch" href="/bot-doc/assets/js/8.4f0719aa.js">
+    <link rel="stylesheet" href="/bot-doc/assets/css/0.styles.cd6e184c.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/bot-doc/en/" aria-current="page" class="home-link router-link-exact-active router-link-active"><img src="/bot-doc/images/vkg_logo_en.svg" alt="Documentation for Viking's trading robots" class="logo"> <span class="site-name can-hide">Documentation for Viking's trading robots</span></a> <div class="links"><div class="algolia-search-wrapper search-box"><input placeholder="Search..." aria-label="Search" autocomplete="off" spellcheck="false" class="search-query"> <div class="search-hotkeys-wrapper"><kbd class="search-hotkey">Ctrl</kbd> <kbd class="search-hotkey">K</kbd></div> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/bot-doc/en/docs/introduction.html" class="nav-link">
+  Documentation
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Languages" class="dropdown-title"><span class="title">🇺🇸 EN</span> <span class="arrow down"></span></button> <button type="button" aria-label="Languages" class="mobile-dropdown-title"><span class="title">🇺🇸 EN</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/bot-doc/" class="nav-link">
+  🇷🇺 RU
+</a></li><li class="dropdown-item"><!----> <a href="/bot-doc/en/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  🇺🇸 EN
+</a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/bot-doc/en/docs/introduction.html" class="nav-link">
+  Documentation
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Languages" class="dropdown-title"><span class="title">🇺🇸 EN</span> <span class="arrow down"></span></button> <button type="button" aria-label="Languages" class="mobile-dropdown-title"><span class="title">🇺🇸 EN</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/bot-doc/" class="nav-link">
+  🇷🇺 RU
+</a></li><li class="dropdown-item"><!----> <a href="/bot-doc/en/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  🇺🇸 EN
+</a></li></ul></div></div> <!----></nav>  <!----> </aside> <main aria-labelledby="main-title" class="home"><header class="hero"><img src="/bot-doc/images/chart-main.svg" alt="hero"> <h1 id="main-title">
+      FC &quot;Viking&quot; Arbitrage Robot
+    </h1> <p class="description">
+      User guide, algorithm description and API
+    </p> <p class="action"><a href="/bot-doc/en/docs/introduction.html" class="nav-link action-button">
+  User Manual, Algorithm Description, and API →
+</a></p></header> <div class="features"><div class="feature"><h2>Trading Algorithm</h2> <p>Operating logic, description of portfolio and financial instrument parameters</p></div><div class="feature"><h2>C++ Formulas</h2> <p>Types of formulas, access to market data and portfolio data, ability to modify portfolio and financial instrument parameters</p></div><div class="feature"><h2>WebSocket API</h2> <p>Description of API methods for managing portfolios and robots</p></div></div> <div class="theme-default-content custom content__default"></div> <div class="footer">
+    FC Viking | Copyright © 2010-2026
+  </div></main></div><div class="global-ui"></div></div>
+    <script src="/bot-doc/assets/js/app.1d9c3b56.js" defer></script><script src="/bot-doc/assets/js/3.eb654620.js" defer></script><script src="/bot-doc/assets/js/2.6e6e0d44.js" defer></script><script src="/bot-doc/assets/js/49.8b85e885.js" defer></script>
+  </body>
+</html>
