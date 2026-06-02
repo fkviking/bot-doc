@@ -739,11 +739,11 @@ Indicates that your account is a margin account. If enabling this flag, ensure y
 
 ### API Key <Anchor :ids="['tc.BINANCE.ws_id']" />
 
-API key ID for accessing the exchange API. Located in account settings under [API Management]('creating-connection.md#creating-connection.api-key'). The following permissions should be enabled: "Read Info", "Enable Trading". For margin trading, the "Enable Margin" permission should also be enabled. The key must be new and not used anywhere else previously.
+API key ID for accessing the exchange API. Located in account settings under [API Management](creating-connection.md#BINANCE). The following permissions should be enabled: "Read Info", "Enable Trading". For margin trading, the "Enable Margin" permission should also be enabled. The key must be new and not used anywhere else previously.
 
 ### Secret <Anchor :ids="['tc.BINANCE.ws_secret_part']" />
 
-A secret key for accessing the exchange API. Created along with the corresponding [public key]('creating-connection.md#creating-connection.api-key').
+A secret key for accessing the exchange API. Created along with the corresponding [public key](creating-connection.md#BINANCE).
 
 On the Viking platform, the middle part of the key is used for the `Secret` field. For example:
 
