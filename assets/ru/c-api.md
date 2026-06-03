@@ -172,7 +172,7 @@ if (t.tick())
 | int ob_c_p_t()                         | получить "Calc price OB" инструмента портфеля                     |
 | int ob_t_p_t()                         | получить "Trading price OB" инструмента портфеля                  |
 | int decimals()                         | получить "Decimals" инструмента портфеля                          |
-| double d_pg()                          | получить "date pagination" инструмента портфеля                   |
+| double d_pg()                          | получить "date pagination" инструмента портфеля (дата экспирации), в формате epoch                   |
 | std::string client_code()              | получить "Client code" инструмента портфеля                       |
 | bool is_first()                        | получить "Is first" инструмента портфеля                          |
 | int on_buy()                           | получить "On buy" инструмента портфеля                            |
