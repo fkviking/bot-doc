@@ -196,7 +196,7 @@ Methods of `security_fields`:
 | int ob_c_p_t()                         | Returns the "Calc price OB" of the portfolio instrument.                    |
 | int ob_t_p_t()                         | Returns the "Trading price OB" of the portfolio instrument.                 |
 | int decimals()                         | Returns the "Decimals" setting of the portfolio instrument.                 |
-| double d_pg()                          | Returns the "Date pagination" value of the portfolio instrument.            |
+| double d_pg()                          | Returns the "Date pagination" value of the portfolio instrument (expiration date) in epoch format.            |
 | std::string client_code()              | Returns the "Client code" of the portfolio instrument.                      |
 | bool is_first()                        | Returns the "Is first" flag of the portfolio instrument.                    |
 | int on_buy()                           | Returns the "On buy" value of the portfolio instrument.                     |
