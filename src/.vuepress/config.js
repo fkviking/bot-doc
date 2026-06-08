@@ -73,6 +73,7 @@ module.exports = {
                 'c-api',
                 'api',
                 'comparison',
+                'client_server_requirements',
                 'faq'
               ]
             }
