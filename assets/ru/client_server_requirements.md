@@ -1,7 +1,7 @@
 ---
 title: 13. Требования к серверам клиента
 section: 13
-ignore-section-number: false
+ignore-section-number: true
 ---
 
 
