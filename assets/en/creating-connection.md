@@ -1000,31 +1000,31 @@ You should contact support to clarify bind IP. The IP address specified in this 
 
 ## CEXIO
 
-В роботе поддерживается только подключение на основе Websocket и REST API. Маркетдата подключение активируется как описано в главе [Настройка подключений](getting-started.md#connection-setup). Параметры транзакционного подключения описаны ниже.
+The robot supports WebSocket and REST API connections only. MarketData connections are activated as described in the [Connection Setup chapter](getting-started.md#connection-setup). Transactional connection parameters are described below.
 
 ### Name <Anchor :ids="['tc.CEXIO.name']" />
 
-Поле для задания имени подключения. Это значение задается для удобства, чтобы потом в списке транзакционных подключений было проще ориентироваться. Разрешенные символы: `_ a-z A-Z 0-9`
+A field is used to specify a connection name. This value is provided for convenience, to make it easier to navigate the list of transaction connections. Allowed characters are `_ a-z A-Z 0-9`
 
 ### User ID <Anchor :ids="['tc.CEXIO.user_id']" />
 
-Идентификатор пользователя.
+User ID.
 
 ### Key <Anchor :ids="['tc.CEXIO.ws_id']" />
 
-Публичный ключ для доступа к API биржи, создаётся в личном кабинете на сайте биржи. Создаётся вместе с соотвествующим секретным ключом. Находится в настройках профиля в разделе "API Access". Не забудьте активировать ключ. Ключ должен быть новым, не использованным нигде ранее.
+A public key for accessing the exchange API is created in your personal account on the exchange website. It is created along with a corresponding private key. It can be found in your profile settings under "API Access." Be sure to activate the key. The key must be new and not previously used anyhere ever before.
 
 ### Secret <Anchor :ids="['tc.CEXIO.ws_secret_part']" />
 
-Секретный ключ для доступа к API биржи, создаётся в личном кабинете на сайте биржи. Создаётся вместе с соотвествующим публичным ключом. Находится в настройках профиля в разделе "API Access". Не забудьте активировать ключ. Ключ должен быть новым, не использованным нигде ранее.
+A secret (private) key for accessing the exchange API is created in your personal account on the exchange website. It is created along with the corresponding public key. It can be found in your profile settings under "API Access." Be sure to activate the key. The key must be new and not previously used anyhere ever before.
 
 ### Flood timeout <Anchor :ids="['tc.CEXIO.flood_timeout']" />
 
-В данном параметре указывается время, в течение которого робот не будет выставлять заявки после получения ошибки REASON_FLOOD.
+This parameter specifies the time during which the robot will not place  orders after receiving the REASON_FLOOD error.
 
 ### Cancel on disconnect <Anchor :ids="['tc.CEXIO.cod']" />
 
-Флаг, отвечающий за автоматическое снятие заявок биржей, при разрыве связи между биржей и роботом.
+A flag that is responsible for the automatic order cancellation by the exchange when the connection between the exchange and the robot is lost.
 
 ### Single ADDING order <Anchor :ids="['tc.CEXIO.single_adding']" />
 
