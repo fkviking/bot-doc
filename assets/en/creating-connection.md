@@ -597,7 +597,7 @@ A flag that controls automatic order cancellation by the exchange when the conne
 
 ### Bind IP <Anchor :ids="['tc.KRAKEN.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BITFINEX
 
@@ -629,7 +629,7 @@ Second secret API key for accessing the exchange API. Created in the user accoun
 
 ### Bind IP <Anchor :ids="['tc.BITFINEX.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## HitBTC
 
@@ -649,7 +649,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.HITBTC.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BITMEX
 
@@ -677,7 +677,7 @@ Second secret API key for accessing the exchange API. Created in the user accoun
 
 ### Bind IP <Anchor :ids="['tc.BITMEX.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BINANCE
 
@@ -759,7 +759,7 @@ Use:
 
 ### Bind IP <Anchor :ids="['tc.BINANCE.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BINANCEFUT
 
@@ -787,7 +787,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BINANCEFUT.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ### BINANCEFUT Connection Streams Description
 
@@ -829,7 +829,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BINANCECM.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ### BINANCECM Connection Streams Description
 
@@ -874,7 +874,7 @@ Set this flag if you want to create a fast market data connection using the same
 
 ### Bind IP <Anchor :ids="['tc.DERIBIT.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## OKX
 
@@ -902,7 +902,7 @@ Password for accessing the exchange.
 
 ### Bind IP <Anchor :ids="['tc.OKEX.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BEQUANT
 
@@ -944,7 +944,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BEQUANT.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## KRAKENFUT
 
@@ -972,7 +972,7 @@ Flag that controls automatic order cancellation by the exchange upon disconnecti
 
 ### Bind IP <Anchor :ids="['tc.KRAKENFUT.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## KUCOIN
 
@@ -996,7 +996,43 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.KUCOIN.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+
+## CEXIO
+
+The robot supports WebSocket and REST API connections only. MarketData connections are activated as described in the [Connection Setup chapter](getting-started.md#connection-setup). Transactional connection parameters are described below.
+
+### Name <Anchor :ids="['tc.CEXIO.name']" />
+
+A field is used to specify a connection name. This value is provided for convenience, to make it easier to navigate the list of transaction connections. Allowed characters are `_ a-z A-Z 0-9`
+
+### User ID <Anchor :ids="['tc.CEXIO.user_id']" />
+
+User ID.
+
+### Key <Anchor :ids="['tc.CEXIO.ws_id']" />
+
+A public key for accessing the exchange API is created in your personal account on the exchange website. It is created along with a corresponding private key. It can be found in your profile settings under "API Access." Be sure to activate the key. The key must be new and not previously used anyhere ever before.
+
+### Secret <Anchor :ids="['tc.CEXIO.ws_secret_part']" />
+
+A secret (private) key for accessing the exchange API is created in your personal account on the exchange website. It is created along with the corresponding public key. It can be found in your profile settings under "API Access." Be sure to activate the key. The key must be new and not previously used anyhere ever before.
+
+### Flood timeout <Anchor :ids="['tc.CEXIO.flood_timeout']" />
+
+This parameter specifies the time during which the robot will not place  orders after receiving the REASON_FLOOD error.
+
+### Cancel on disconnect <Anchor :ids="['tc.CEXIO.cod']" />
+
+A flag that is responsible for the automatic order cancellation by the exchange when the connection between the exchange and the robot is lost.
+
+### Single ADDING order <Anchor :ids="['tc.CEXIO.single_adding']" />
+
+Only one order with the ADDING status is allowed for each financial instrument. If you try to place another order, the error of placing an order is returned.
+
+### Bind IP <Anchor :ids="['tc.CEXIO.bind_ip = Bind IP']" />
+
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## HUOBI
 
@@ -1020,7 +1056,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.HUOBI.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## HUOBIFUT
 
@@ -1044,7 +1080,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.HUOBIFUT.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## HUOBIFUTCM
 
@@ -1068,7 +1104,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.HUOBIFUTCM.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## HUOBIFUTUM
 
@@ -1092,7 +1128,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.HUOBIFUTUM.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## VIKINGTRADE
 
@@ -1116,7 +1152,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.VIKINGTRADE.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BYBIT
 
@@ -1136,7 +1172,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BYBIT.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BYBITSPOT
 
@@ -1156,7 +1192,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BYBITSPOT.bind_ip']" />
 
-If the agreement does not require connection from a fixed IP address, set the value to `Automatic`. Otherwise, contact support to confirm the server address. The address specified in this field should not be provided to the exchange as the server address.
+You should contact support to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## CTRADER
 
