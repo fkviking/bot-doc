@@ -1,59 +1,59 @@
 ---
-title: 13. Требования к серверам клиента
+title: 13. Client server requirements
 section: 13
 ignore-section-number: true
 ---
 
 
-# Требования к оборудованию
+# Hardware requirements
 
-*   **Процессор:** Не менее 8 ядер с отключенным гипертредингом.
-    *   *Примечание:* На биржах, таких как MOEX или SPBEX, где для UDP-потоков используются отдельные роботы, под дополнительные потоки требуются дополнительные ядра.
-*   **Виртуализация:** При использовании виртуальной машины она должна поддерживать изоляцию ядра (pinning).
-*   **Оперативная память:** Не менее 8 ГБ, из расчета 1 ГБ на ядро (больше ядер — больше памяти).
-*   **Диск:** HDD или SSD объемом не менее 40 ГБ.
-*   **Сетевая подсистема:** В соответствии с требованиями MOEX — Подключения, обеспечивающее доступ к высокоскоростным сервисам предоставления Биржевой информации, выполняется двумя физическими линками на скорости 10Гбит по стандарту 10GBaseSR (оптика мультимод)
-    *   *Рекомендация:* Мы используем оборудование Solarflare, так как с определенными драйверами оно обеспечивает минимальную latency.
-*   **Сетевая настройка:** Предоставление всех линков к необходимым сервисам и их настройка.
-
----
-
-# Требования к программному обеспечению (в случае настройки клиентом)
-
-*   **ОС:** Rocky Linux 9.4 и выше.
-*   **Дисковая разметка:** Разделы на диске:
-    *   `/` (корневой) — 20 ГБ.
-    *   `/var/log` — 20 ГБ, смонтированный в отдельный раздел (итоговый объем зависит от количества роботов).
-*   **Сеть:** Настроенные сетевые интерфейсы под необходимые потоки данных.
-*   *   **Использование:** Нежелательно использование сервера для каких-либо других сторонних задач.
+*   **Processor:** At least 8 cores with hyperthreading disabled.
+    *   *Note:* On exchanges such as MOEX or SPBEX, where separate bots are used for UDP streams, additional cores are required for additional streams.
+*   **Virtualization:** If using a virtual machine, it must support core isolation (pinning)
+*   **RAM:** At least 8 GB, at a rate of 1 GB per core (more cores = more memory).
+*   **Drive:** HDD or SSD with at least 40 GB of storage.
+*   **Network subsystem:** In accordance with MOEX requirements, connections providing access to high-speed exchange data services are provided by two physical links at 10 Gbps speeds using the 10GBaseSR standard (MultiMode Fiber).
+    *   *Recommendation:* We use Solarflare equipment, as it provides minimal latency with certain drivers.
+*   **Network setup:** We need access to all links to the required services to configure them ourselves.
 
 ---
 
-# Требования при нашей настройке
+# Software requirements (if configured by the client)
 
-*   **Доступ для установки:** Доступ по IPMI к серверу для установки операционной системы (если клиент её не установил).
-*   **Доступ для настройки:** Доступ `root` по SSH с определенных IP-адресов. Мы определяем список IP-адресов и направляем его клиенту.
-*   **Инфраструктура:** Все подключенные линки и настройки сетевых интерфейсов должны быть предоставлены.
-
----
-
-# Рекомендации к физическому серверу в ЦОД
-
-*   **Процессор:** 2 процессора AMD EPYC SP5 (32C, 48C, 64C), или более новый. Желательно с более высокой тактовой частотой.
-*   **Оперативная память:** из расчета 1 ГБ на ядро.
-*   **Диски:** 2 NVMe-накопителя по 512 ГБ.
-*   **Форм-фактор:** 1U с двумя блоками питания.
-*   **Сетевые карты:** 2 x Solarflare Flareon Ultra SFN8522-PLUS (Dual-Port 10GbE SFP+, PCIe 3.1 x8).
-*   **Трансиверы:** 4 x SFP+ 10Gb LC-модуля.
+*   **OS:** Rocky Linux 9.4 or higher.
+*   **Disk layout:** Disk partitions:
+    *   `/` (root) — 20 ГБ.
+    *   `/var/log` — 20 ГБ, mounted on a separate partition (the final volume depends on the number of robots).
+*   **Network:** Configured network interfaces for the required data flows.
+*   *   **Usage:** It is not recommended to use the server for any other tasks.
 
 ---
 
-# Рекомендации по серверу в AWS
+# Requirements if software is configured by us 
 
-*   **Тип инстанса:** `c6g.large`.
-*   **Жесткий диск:**
-    *   **Объем (GiB):** 30
-    *   **Тип:** `gp3`
+*   **Installation access:** IPMI access to the server to install the operating system (if the client has not installed it).
+*   **Configuration access:** Root access via SSH from specific IP addresses. We define a list of IP addresses and forward it to the client.
+*   **Infrastructure:** All connected links and network interface settings must be provided.
+
+---
+
+# Recommendations for a bare-metal server in a data center
+
+*   **Processor:** 2x AMD EPYC SP5 (32C, 48C, 64C) or newer. Higher clock speeds preferred.
+*   **RAM:** 1 GB per core.
+*   **Drives:** 2x 512 GB NVMe drives.
+*   **Form Factor:** 1U with dual power supplies.
+*   **Network Interface Cards:** 2x Solarflare Flareon Ultra SFN8522-PLUS (Dual-Port 10GbE SFP+, PCIe 3.1 x8).
+*   **Transceivers:** 4x SFP+ 10Gb LC modules.
+
+---
+
+# Recommendations for a server in AWS
+
+*   **Instance type:** `c6g.large`.
+*   **Hard drive:**
+    *   **Capacity (GiB):** 30
+    *   **Type:** `gp3`
     *   **IOPS:** 3000
-    *   **Пропускная способность (MB/s):** 125
-*   **ОС:** RockyLinux 9.4+, AlmaLinux 9,4+.
+    *   **Bandwidth (MB/s):** 125
+*   **OS:** RockyLinux 9.4+, AlmaLinux 9,4+.
