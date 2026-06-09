@@ -8,7 +8,7 @@ ignore-section-number: true
 # Hardware requirements
 
 *   **Processor:** At least 8 cores with hyperthreading disabled.
-    *   *Note:* On exchanges such as MOEX or SPBEX, where separate bots are used for UDP streams, additional cores are required for additional streams.
+    *   *Note:* Such configuration takes into account receiving the market date of one exchange, such as MOEX or SPBEX (and the corresponding launch of separate robots to receive UDP streams).
 *   **Virtualization:** If using a virtual machine, it must support core isolation (pinning)
 *   **RAM:** At least 8 GB, at a rate of 1 GB per core (more cores = more memory).
 *   **Drive:** HDD or SSD with at least 40 GB of storage.
