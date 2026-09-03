@@ -273,20 +273,20 @@ First delta = 20. Вы котируете на продажу объёмом 100
      
 1. если прошла продажа в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos\neq 0$, то:
 
-            $k3=\left(|{Lim\_Sell_0- Lim\_Buy_0}|-TP-K\right)\times\frac{V}{curpos},$
+    $k3=\left(|{Lim\_Sell_0- Lim\_Buy_0}|-TP-K\right)\times\frac{V}{curpos},$
 
-            $k4=
+    $k4=
       \begin{cases}k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
                   -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0 
       \end{cases},$ 
 
-            $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
+    $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
         \begin{cases} 
            k4, &\text{if}\enspace curpos>0\\ 
            K1, &\text{if}\enspace curpos<0 
         \end{cases},$
 
-            $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
+    $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
        \begin{cases} 
          K2, &\text{if}\enspace curpos>0\\ 
           K, &\text{if}\enspace curpos<0 
@@ -294,28 +294,28 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 2. если прошла продажа в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos=0$, то:
 
-            $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times K,$
+    $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times K,$
 
-            $Lim\_Buy_1=Lim\_Sell_0-TP,$
+    $Lim\_Buy_1=Lim\_Sell_0-TP,$
 
 
 3. если прошла покупка в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos\neq 0$, то:
 
-            $k3=\left(|Lim\_Sell_0-Lim\_Buy_0|-TP-K\right)\times\frac{V}{curpos},$
+    $k3=\left(|Lim\_Sell_0-Lim\_Buy_0|-TP-K\right)\times\frac{V}{curpos},$
 
-            $k4=
+    $k4=
       \begin{cases} 
         -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
          k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0
       \end{cases},$
         
-            $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
+    $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
        \begin{cases} 
          k4, &\text{if}\enspace curpos<0\\
          K1, &\text{if}\enspace curpos>0 
        \end{cases},$
         
-            $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
+    $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
        \begin{cases} 
          K2, &\text{if}\enspace curpos<0\\
           K, &\text{if}\enspace curpos>0 
@@ -323,9 +323,9 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 4. если прошла покупка в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos=0$, то:
         
-            $Lim\_Sell_1=Lim\_Buy_0+TP,$
+    $Lim\_Sell_1=Lim\_Buy_0+TP,$
         
-            $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times K.$ 
+    $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times K.$ 
 
 ##### Standard + X shift mode <Anchor :ids="['p.standart_x_shift_mode']" />
 
@@ -343,13 +343,13 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 1. Если прошла продажа в количестве `diffpos`:
         
-        $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
+    $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
         \begin{cases} 
            X, &\text{if}\enspace curpos>0\\ 
            K1, &\text{if}\enspace curpos<0 
         \end{cases},$
 
-        $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
+    $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
        \begin{cases} 
          K2, &\text{if}\enspace curpos>0\\ 
           K, &\text{if}\enspace curpos<0 
@@ -357,13 +357,13 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 1. Если прошла покупка в количестве diffpos:
 
-        $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
+    $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
        \begin{cases} 
          X, &\text{if}\enspace curpos<0\\
          K1, &\text{if}\enspace curpos>0 
        \end{cases},$
         
-        $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
+    $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
        \begin{cases} 
          K2, &\text{if}\enspace curpos<0\\
           K, &\text{if}\enspace curpos>0 
