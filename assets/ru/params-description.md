@@ -255,25 +255,23 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 #### Shift mode <Anchor :ids="['p.shift_mode']" />
 
-Режим подвижки цен [Lim_sell](params-description.md#p.lim_s) и [Lim_buy](params-description.md#p.lim_b).
+Режим подвижки цен [Lim_sell](params-description.md#p.lim_s) и [Lim_buy](params-description.md#p.lim_b). Их всего три: `Standard`, `Standard + X` и `C++ formula`.
 
-- `Standard`
+##### Standard shift mode <Anchor :ids="['p.standart_shift_mode']" />
 
-   Сигнальные цены [Lim_Sell](params-description.md#p.lim_s) и [Lim_Buy](params-description.md#p.lim_s) перемещаются только при прохождении сделок по [Is first](params-description.md#s.is_first) финансовому инструменту портфеля кроме случая использования [Always timer](params-description.md#p.always_limits_timer).
+Сигнальные цены [Lim_Sell](params-description.md#p.lim_s) и [Lim_Buy](params-description.md#p.lim_s) перемещаются только при прохождении сделок по [Is first](params-description.md#s.is_first) финансовому инструменту портфеля кроме случая использования [Always timer](params-description.md#p.always_limits_timer).
 
-    Правила перемещения сигнальных цен можно разделить на две части: произошла продажа по [Is first](params-description.md#s.is_first) финансовому инструменту и произошла покупка по [Is first](params-description.md#s.is_first) финансовому инструменту. Внутри каждой из этих частей алгоритм делится еще на две части: позиция портфеля до прохождения данной сделки была равна нулю и была не равна нулю.
+Правила перемещения сигнальных цен по [Is first](params-description.md#s.is_first) финансовому инструменту можно разделить на две части: продажа и покупка. Внутри каждой из этих частей алгоритм делится еще на две части: позиция портфеля до прохождения данной сделки была равна нулю и была не равна нулю: 
 
-    Введем следующие обозначения:
-    * `diffpos` - знаковое количество лотов в сделке по [Is first](params-description.md#s.is_first) финансовому инструменту, `V` - это `v_in ×`[Count](params-description.md#s.count) или `v_out ×`[Count](params-description.md#s.count) в зависимости от того открываем мы позицию или закрываем данной заявкой,
-    `v_in` равен [v_in_left](params-description.md#p.v_in_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_in_right](params-description.md#p.v_in_r) если [v_side](params-description.md#p.v_side) равен `v_right`,
-    `v_out` равен [v_out_left](params-description.md#p.v_out_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_out_right](params-description.md#p.v_out_r) если [v_side](params-description.md#p.v_side) равен `v_right`,
-    [Count](params-description.md#s.count) - это `Count` [Is first](params-description.md#s.is_first) финансового инструмента
-    * [Curpos](params-description.md#s.pos) - текущая позиция по [Is first](params-description.md#s.is_first) финансового инструмента портфеля (т.е. прошедшая только что сделка еще НЕ учтена), нижний индекс 0 - предыдущее значение параметра, 1 - новое значение параметра. В данных обозначениях алгоритм перемещения сигнальных цен примет вид:
-
-    Сам алгоритм перемещения сигнальных цен:
-    - если прошла продажа (соответственно в количестве `diffpos`):
-        
-        - если текущая позиция до момента совершения сделки была $curpos\neq 0$, то:
+Введем следующие обозначения:
+* `diffpos` - знаковое количество лотов в сделке по [Is first](params-description.md#s.is_first) финансовому инструменту, 
+* `V` - это `v_in ×`[Count](params-description.md#s.count) или `v_out ×`[Count](params-description.md#s.count) в зависимости от того открываем мы позицию или закрываем данной заявкой. `v_in` равен [v_in_left](params-description.md#p.v_in_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_in_right](params-description.md#p.v_in_r) если [v_side](params-description.md#p.v_side) равен `v_right`, `v_out` равен [v_out_left](params-description.md#p.v_out_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_out_right](params-description.md#p.v_out_r) если [v_side](params-description.md#p.v_side) равен `v_right`.
+* [Count](params-description.md#s.count) - это `Count` [Is first](params-description.md#s.is_first) финансового инструмента.
+* [Curpos](params-description.md#s.pos) - текущая позиция по [Is first](params-description.md#s.is_first) финансового инструмента портфеля (т.е. прошедшая только что сделка еще НЕ учтена), нижний индекс 0 - предыдущее значение параметра, 1 - новое значение параметра. 
+    
+В таких обозначениях алгоритм перемещения сигнальных цен примет вид:
+     
+1. если прошла продажа в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos\neq 0$, то:
 
             $k3=\left(|{Lim\_Sell_0- Lim\_Buy_0}|-TP-K\right)\times\frac{V}{curpos},$
 
@@ -294,15 +292,14 @@ First delta = 20. Вы котируете на продажу объёмом 100
           K, &\text{if}\enspace curpos<0 
        \end{cases},$
 
-        - если текущая позиция до момента совершения сделки была $curpos=0$, то:
+2. если прошла продажа в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos=0$, то:
 
             $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times K,$
 
             $Lim\_Buy_1=Lim\_Sell_0-TP,$
 
-    - если прошла покупка (соответственно в количестве diffpos):
 
-        - если текущая позиция до момента совершения сделки была $curpos\neq 0$, то:
+3. если прошла покупка в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos\neq 0$, то:
 
             $k3=\left(|Lim\_Sell_0-Lim\_Buy_0|-TP-K\right)\times\frac{V}{curpos},$
 
@@ -324,27 +321,27 @@ First delta = 20. Вы котируете на продажу объёмом 100
           K, &\text{if}\enspace curpos>0 
        \end{cases},$
 
-        - если текущая позиция до момента совершения сделки была $curpos=0$, то:
+4. если прошла покупка в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos=0$, то:
         
             $Lim\_Sell_1=Lim\_Buy_0+TP,$
         
             $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times K.$ 
 
-- `Standard + X`
+##### Standard + X shift mode <Anchor :ids="['p.standart_x_shift_mode']" />
 
-   Сигнальные цены [Lim_Sell](params-description.md#p.lim_s) и [Lim_Buy](params-description.md#p.lim_s) перемещаются только при прохождении сделок по [Is first](params-description.md#s.is_first) финансовому инструменту портфеля кроме случая использования [Always timer](params-description.md#p.always_limits_timer).
+Сигнальные цены [Lim_Sell](params-description.md#p.lim_s) и [Lim_Buy](params-description.md#p.lim_s) перемещаются только при прохождении сделок по [Is first](params-description.md#s.is_first) финансовому инструменту портфеля кроме случая использования [Always timer](params-description.md#p.always_limits_timer).
 
-    Правила перемещения сигнальных цен можно разделить на две части: произошла продажа по [Is first](params-description.md#s.is_first) финансовому инструменту и произошла покупка по [Is first](params-description.md#s.is_first) финансовому инструменту.
+Правила перемещения сигнальных цен можно разделить на две части: произошла продажа по [Is first](params-description.md#s.is_first) финансовому инструменту и произошла покупка по [Is first](params-description.md#s.is_first) финансовому инструменту.
 
-    Введем следующие обозначения:
-    * `diffpos` - знаковое количество лотов в сделке по [Is first](params-description.md#s.is_first) финансовому инструменту, `V` - это `v_in ×`[Count](params-description.md#s.count) или `v_out ×`[Count](params-description.md#s.count) в зависимости от того открываем мы позицию или закрываем данной заявкой,
-    `v_in` равен [v_in_left](params-description.md#p.v_in_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_in_right](params-description.md#p.v_in_r) если [v_side](params-description.md#p.v_side) равен `v_right`,
-    `v_out` равен [v_out_left](params-description.md#p.v_out_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_out_right](params-description.md#p.v_out_r) если [v_side](params-description.md#p.v_side) равен `v_right`,
-    [Count](params-description.md#s.count) - это `Count` [Is first](params-description.md#s.is_first) финансового инструмента
-    * [Curpos](params-description.md#s.pos) - текущая позиция по [Is first](params-description.md#s.is_first) финансового инструмента портфеля (т.е. прошедшая только что сделка еще НЕ учтена), нижний индекс 0 - предыдущее значение параметра, 1 - новое значение параметра. В данных обозначениях алгоритм перемещения сигнальных цен примет вид:
+Введем следующие обозначения:
+* `diffpos` - знаковое количество лотов в сделке по [Is first](params-description.md#s.is_first) финансовому инструменту.
+* `V` - это `v_in ×`[Count](params-description.md#s.count) или `v_out ×`[Count](params-description.md#s.count) в зависимости от того открываем мы позицию или закрываем данной заявкой, `v_in` равен [v_in_left](params-description.md#p.v_in_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_in_right](params-description.md#p.v_in_r) если [v_side](params-description.md#p.v_side) равен `v_right` `v_out` равен [v_out_left](params-description.md#p.v_out_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_out_right](params-description.md#p.v_out_r) если [v_side](params-description.md#p.v_side) равен `v_right`,
+* [Count](params-description.md#s.count) - это `Count` [Is first](params-description.md#s.is_first) финансового инструмента
+* [Curpos](params-description.md#s.pos) - текущая позиция по [Is first](params-description.md#s.is_first) финансового инструмента портфеля (т.е. прошедшая только что сделка еще НЕ учтена), нижний индекс 0 - предыдущее значение параметра, 1 - новое значение параметра. В данных обозначениях алгоритм перемещения сигнальных цен примет вид:
 
-    Сам алгоритм перемещения сигнальных цен:
-    - если прошла продажа (соответственно в количестве `diffpos`):
+В таких обозначениях алгоритм перемещения сигнальных цен примет вид:
+
+1. Если прошла продажа в количестве `diffpos`:
         
         $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
         \begin{cases} 
@@ -358,7 +355,7 @@ First delta = 20. Вы котируете на продажу объёмом 100
           K, &\text{if}\enspace curpos<0 
        \end{cases},$
 
-    - если прошла покупка (соответственно в количестве diffpos):
+1. Если прошла покупка в количестве diffpos:
 
         $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
        \begin{cases} 
@@ -372,9 +369,9 @@ First delta = 20. Вы котируете на продажу объёмом 100
           K, &\text{if}\enspace curpos>0 
        \end{cases},$
 
-- `C++ formula` 
+##### C++ formula shift mode <Anchor :ids="['p.c_formula_shift_mode']" />
 
-    Использовать [Shift formula](params-description.md#p.shift_formula)
+В этом режиме подвижки цен используется [Shift formula](params-description.md#p.shift_formula)
 
 #### v_side <Anchor :ids="['p.v_side']" />
 
@@ -447,7 +444,7 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 Формула на языке программирования [C++](c-api.md#cpp), которая вызывается при каждой сделке по [Is first](params-description.md#s.is_first) финансовому инструменту портфеля по алгоритму (т.е. аналогично той логике, которая используется для [Shift mode](params-description.md#p.shift_mode)
 равного `Standard` и `Standard + X`). Данная функция вызывается ДО изменения позиции на количество сделки, инициировавшей вызов `Shift formula`. Если установлен флаг [Virt_0_pos](params-description.md#p.virtual_0_pos), то количество в сделке, переворачивающей
-позицию, будет разделено на две части, и формула будет вызвана дважды: отдельно с количеством закрывающим позицию и отдельно с количеством открывающим новую позицию. Используется только в режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula`.
+позицию, будет разделено на две части, и формула будет вызвана дважды: отдельно с количеством закрывающим позицию и отдельно с количеством открывающим новую позицию. Используется только в режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula`. Если вы используете метод [deal_item deal()](c-api.md#__last_deal__) в `Shift formula`, он вернет последнюю сделку только по [Is first](params-description.md#s.is_first) финансовому инструменту. 
 
 [Примеры реализации `Shift formula` для режимов `Shift mode` `Standard` и `Standard + X`](c-api.md#__shift_formula__)
 
