@@ -160,9 +160,9 @@ A checked checkbox indicates that the client's account is a firm-level account.
 
 The IP address from which the connection to the exchange will be established. The IP address must be specified in the agreement with the broker.
 
-### TWIME и FIFO TWIME
+### TWIME and FIFO TWIME
 
-TWIME is a binary protocol, a faster alternative to the FIX protocol. The robot supports connections via the TWIME protocol in both TWIME and FIFO TWIME variants. However, using FIFO TWIME requires additional network infrastructure, so if you plan to use FIFO TWIME, please [notify support staff](help@fkviking.ru) in advance—they will place the robot on a server where such connectivity is supported at the infrastructure level. When creating a connection, the choice between TWIME and FIFO TWIME is made by selecting the appropriate [TWIME server](creating-connection.md#tc.MOEX_FOND.TWIME.twime_server) address to connect to.
+TWIME is a binary protocol, a faster alternative to the FIX protocol. Robot software supports connections via the TWIME protocol in both TWIME and FIFO TWIME variants. However, using FIFO TWIME requires additional network infrastructure, so if you plan to use FIFO TWIME, please [notify support staff](help@fkviking.ru) in advance—they will place the robot on a server where such connectivity is supported at the infrastructure level. When creating a connection, the choice between TWIME and FIFO TWIME is made by selecting the appropriate [TWIME server](creating-connection.md#tc.MOEX_FOND.TWIME.twime_server) address to connect to.
 
 #### Name <Anchor :ids="['tc.MOEX_FOND.TWIME.name']" />
 
