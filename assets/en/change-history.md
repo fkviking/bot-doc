@@ -7,6 +7,18 @@ summary: 'What changed in the robot and the documentation from version to versio
 
 # Change Log
 
+## 2026-08-21
+
+- Added portfolio parameters [Shift mode](params-description.md#p.shift_mode), [Shift formula](params-description.md#p.shift_formula), [X](params-description.md#p.x), [v_side](params-description.md#p.v_side),
+    responsible for new algorithms of [Lim_sell](params-description.md#p.lim_s) and [Lim_buy](params-description.md#p.lim_b) price moving;
+- Added [portfolio methods](c-api.md#portfolio-field-access) to C++ interface for accessing and editing [Shift mode](params-description.md#p.shift_mode), [X](params-description.md#p.x), [v_side](params-description.md#p.v_side);
+- Added [deal()](c-api.md#__last_deal__) method to C++ interface for portfolio object.
+
+## 2026-08-04
+
+- Added [`void log_show(const std::string&)`](c-api.md#cpp-log-show) function to C++ interface
+- Added [ability to save and load indicator values on robot restart](c-api.html#sokhranenie-znachenii-indikatorov-mezhdu-perezapuskami-robota) to C++ interface
+
 ## 2026-03-05
 
 - The `Sell/Buy` and `Lim_S/Lim_B` fields have been added to the [Finres history](interface.md#finres_history) and [Finres for today](interface.md#finres_for_today) widgets. The `Buy/Sell` field has been renamed to `Direction` in both widgets.
