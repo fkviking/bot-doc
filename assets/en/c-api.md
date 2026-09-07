@@ -304,6 +304,7 @@ Methods of `portfolio`:
 | security_fields next_sec()                                  | Returns the next instrument in the portfolio. (See [iteration example](#__Example3__)). The iteration order is **not** defined and does not depend on instrument addition order or settings. |
 | deal_item deal(const std::string& s)                        | Returns the trade for the instrument with SecKey `s` (available only in Trade formula, i.e., at the moment of trade execution). If no trade occurred for this instrument, both `amount` and `price` will be zero. |
 | deal_item deal(const security_fields& sf)                   | Returns the trade for the instrument `sf` (available only in Trade formula). If no trade occurred for this instrument, both `amount` and `price` will be zero. |
+| deal_item deal() <Anchor hide :ids="['__last_deal__']" />  | get last trade for portfolio financial instruments, if no trades occurred, then `amount` and `price` will be zero |
 | struct security_fields security_field(const std::string& s) | Returns the instrument of this portfolio with SecKey `s`. |
 | struct security_fields security_field()                     | Returns the main instrument of the current portfolio. |
 | std::map<std::string, double>& data()                       | Dictionary for storing user-defined values. **Not persisted** when the robot is stopped. |
@@ -318,6 +319,8 @@ Methods of `portfolio`:
 | bool re_buy()                       | Returns the portfolio’s "re_buy".                                                                            |
 | bool use_tt()                       | Returns the portfolio’s "Use timetable".                                                                     |
 | int portfolio_type()                | Returns the portfolio’s "Type".                                                                              |
+| int shift_mode()                                            | get "Shift mode" of the portfolio                                                                                |
+| int v_side()                                                | get "v_side" of the portfolio                                                                                 |
 | long long v_in_l()                  | Returns the portfolio’s "v_in_left".                                                                         |
 | long long v_in_r()                  | Returns the portfolio’s "v_in_right".                                                                        |
 | long long v_out_l()                 | Returns the portfolio’s "v_out_left".                                                                        |
@@ -328,6 +331,7 @@ Methods of `portfolio`:
 | double k1()                         | Returns the portfolio’s "K1".                                                                                |
 | double k2()                         | Returns the portfolio’s "K2".                                                                                |
 | double tp()                         | Returns the portfolio’s "TP".                                                                                |
+| double x()                                                  | get "X" of the portfolio                                                                                   |
 | bool equal_prices()                 | Returns the portfolio’s "Equal prices".                                                                      |
 | bool always_limits_timer()          | Returns the portfolio’s "Always timer".                                                                      |
 | double lim_s()                      | Returns the portfolio’s "Lim_Sell".                                                                          |
@@ -368,46 +372,48 @@ Methods of `portfolio`:
 | void set_uf0(const user_value& v)   | Sets user-defined field #0. (User fields are not used by the built-in algorithm.)              |
 | ...                                 | ...                                                                                           |
 | void set_uf19(const user_value& v)  | Sets user-defined field #19. (User fields are not used by the built-in algorithm.)             |
-| void set_decimals(int v)            | Sets the portfolio’s "Decimals" to `v`.                                                       |
-| void set_comment(const std::string& v) | Sets the portfolio’s "Comment" to `v`.                                                    |
-| void set_color(const std::string& v)   | Sets the portfolio’s "Color" to `v` (hex format [valid CSS color](https://www.w3schools.com/colors/default.asp)). |
-| void set_re_sell(bool v)            | Sets the portfolio’s "re_sell" to `v`.                                                        |
-| void set_re_buy(bool v)             | Sets the portfolio’s "re_buy" to `v`.                                                         |
-| void set_use_tt(bool v)             | Sets the portfolio’s "Use timetable" to `v`.                                                  |
-| void set_portfolio_type(int v)      | Sets the portfolio’s "Type" to `v`.                                                           |
-| void set_v_in_l(long long v)        | Sets the portfolio’s "v_in_left" to `v`.                                                      |
-| void set_v_in_r(long long v)        | Sets the portfolio’s "v_in_right" to `v`.                                                     |
-| void set_v_out_l(long long v)       | Sets the portfolio’s "v_out_left" to `v`.                                                     |
-| void set_v_out_r(long long v)       | Sets the portfolio’s "v_out_right" to `v`.                                                    |
-| void set_v_min(long long v)         | Sets the portfolio’s "v_min" to `v`.                                                          |
-| void set_v_max(long long v)         | Sets the portfolio’s "v_max" to `v`.                                                          |
-| void set_k(double v)                | Sets the portfolio’s "K" to `v`.                                                              |
-| void set_k1(double v)               | Sets the portfolio’s "K1" to `v`.                                                             |
-| void set_k2(double v)               | Sets the portfolio’s "K2" to `v`.                                                             |
-| void set_tp(double v)               | Sets the portfolio’s "TP" to `v`.                                                             |
-| void set_equal_prices(bool v)       | Sets the portfolio’s "Equal prices" to `v`.                                                   |
-| void set_always_limits_timer(bool v)| Sets the portfolio’s "Always timer" to `v`.                                                   |
-| void set_lim_s(double v)            | Sets the portfolio’s "Lim_Sell" to `v`.                                                       |
-| void set_lim_b(double v)            | Sets the portfolio’s "Lim_Buy" to `v`.                                                        |
-| void set_delta(double v)            | Sets the portfolio’s "Delta" to `v`.                                                          |
-| void set_first_delta(double v)      | Sets the portfolio’s "First delta" to `v`.                                                    |
-| void set_mkt_volume(long long v)    | Sets the portfolio’s "Market volume" to `v`.                                                  |
-| void set_type_trade(int v)          | Sets the portfolio’s "Type trade" to `v`.                                                     |
-| void set_price_type(int v)          | Sets the portfolio’s "Type price" to `v`.                                                     |
-| void set_simply_first(bool v)       | Sets the portfolio’s "Simply first" to `v`.                                                   |
-| void set_quote(bool v)              | Sets the portfolio’s "Quote" to `v`.                                                          |
-| void set_percent(double v)          | Sets the portfolio’s "Percent" to `v`.                                                        |
-| void set_timer(int v)               | Sets the portfolio’s "Limits timer" to `v`.                                                   |
-| void set_to0(bool v)                | Sets the portfolio’s "To0" to `v`.                                                            |
-| void set_virtual_0_pos(bool v)      | Sets the portfolio’s "Virt 0 pos" to `v`.                                                     |
-| void set_opened(double v)           | Sets the portfolio’s "Opened" to `v`.                                                         |
-| void set_opened_comission(double v) | Sets the portfolio’s "Commission sum" to `v`.                                                 |
-| void set_n_perc_fill(int v)         | Sets the portfolio’s "n_perc_fill" to `v`.                                                    |
-| void set_max_not_hedged(int v)      | Sets the portfolio’s "Max not hedged" to `v`.                                                 |
-| void set_return_first(double v)     | Sets the portfolio’s "Return first" to `v`.                                                   |
-| void set_price_check(double v)      | Sets the portfolio’s "Price check" to `v`.                                                    |
-| void set_hedge_after(int v)         | Sets the portfolio’s "Hedge (sec)" to `v`.                                                    |
-| void set_overlay(long long v)       | Sets the portfolio’s "Overlay" to `v`.                                                        |
+| void set_decimals(int v)            | Sets  "Decimals" of the portfolio to `v`.                                                       |
+| void set_comment(const std::string& v) | Sets  "Comment" of the portfolio to `v`.                                                    |
+| void set_color(const std::string& v)   | Sets  "Color" of the portfolio to `v` (hex format [valid CSS color](https://www.w3schools.com/colors/default.asp)). |
+| void set_re_sell(bool v)            | Sets  "re_sell" of the portfolio to `v`.                                                        |
+| void set_re_buy(bool v)             | Sets  "re_buy" of the portfolio to `v`.                                                         |
+| void set_use_tt(bool v)             | Sets  "Use timetable" of the portfolio to `v`.                                                  |
+| void set_portfolio_type(int v)      | Sets  "Type" of the portfolio to `v`.                                                           |
+| void set_x(double v)                                        | change "X" of the portfolio of the portfolio to `v`                                                                     |
+| void set_v_side(int v)                                      | change "v_side" of the portfolio of the portfolio to `v`                                                                   |
+| void set_v_in_l(long long v)        | Sets  "v_in_left" of the portfolio to `v`.                                                      |
+| void set_v_in_r(long long v)        | Sets  "v_in_right" of the portfolio to `v`.                                                     |
+| void set_v_out_l(long long v)       | Sets  "v_out_left" of the portfolio to `v`.                                                     |
+| void set_v_out_r(long long v)       | Sets  "v_out_right" of the portfolio to `v`.                                                    |
+| void set_v_min(long long v)         | Sets  "v_min" of the portfolio to `v`.                                                          |
+| void set_v_max(long long v)         | Sets  "v_max" of the portfolio to `v`.                                                          |
+| void set_k(double v)                | Sets  "K" of the portfolio to `v`.                                                              |
+| void set_k1(double v)               | Sets  "K1" of the portfolio to `v`.                                                             |
+| void set_k2(double v)               | Sets  "K2" of the portfolio to `v`.                                                             |
+| void set_tp(double v)               | Sets  "TP" of the portfolio to `v`.                                                             |
+| void set_equal_prices(bool v)       | Sets  "Equal prices" of the portfolio to `v`.                                                   |
+| void set_always_limits_timer(bool v)| Sets  "Always timer" of the portfolio to `v`.                                                   |
+| void set_lim_s(double v)            | Sets  "Lim_Sell" of the portfolio to `v`.                                                       |
+| void set_lim_b(double v)            | Sets  "Lim_Buy" of the portfolio to `v`.                                                        |
+| void set_delta(double v)            | Sets  "Delta" of the portfolio to `v`.                                                          |
+| void set_first_delta(double v)      | Sets  "First delta" of the portfolio to `v`.                                                    |
+| void set_mkt_volume(long long v)    | Sets  "Market volume" of the portfolio to `v`.                                                  |
+| void set_type_trade(int v)          | Sets  "Type trade" of the portfolio to `v`.                                                     |
+| void set_price_type(int v)          | Sets  "Type price" of the portfolio to `v`.                                                     |
+| void set_simply_first(bool v)       | Sets  "Simply first" of the portfolio to `v`.                                                   |
+| void set_quote(bool v)              | Sets  "Quote" of the portfolio to `v`.                                                          |
+| void set_percent(double v)          | Sets  "Percent" of the portfolio to `v`.                                                        |
+| void set_timer(int v)               | Sets  "Limits timer" of the portfolio to `v`.                                                   |
+| void set_to0(bool v)                | Sets  "To0" of the portfolio to `v`.                                                            |
+| void set_virtual_0_pos(bool v)      | Sets  "Virt 0 pos" of the portfolio to `v`.                                                     |
+| void set_opened(double v)           | Sets  "Opened" of the portfolio to `v`.                                                         |
+| void set_opened_comission(double v) | Sets  "Commission sum" of the portfolio to `v`.                                                 |
+| void set_n_perc_fill(int v)         | Sets  "n_perc_fill" of the portfolio to `v`.                                                    |
+| void set_max_not_hedged(int v)      | Sets  "Max not hedged" of the portfolio to `v`.                                                 |
+| void set_return_first(double v)     | Sets  "Return first" of the portfolio to `v`.                                                   |
+| void set_price_check(double v)      | Sets  "Price check" of the portfolio to `v`.                                                    |
+| void set_hedge_after(int v)         | Sets  "Hedge (sec)" of the portfolio to `v`.                                                    |
+| void set_overlay(long long v)       | Sets  "Overlay" of the portfolio to `v`.                                                        |
 
 To access "user fields" by index, arrays are available: <Anchor :ids="['user-fields']"/>
 ```C
