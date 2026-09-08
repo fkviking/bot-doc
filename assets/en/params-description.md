@@ -308,6 +308,137 @@ when `Threshold = 0` , this parameter has no effect on the algorithm — effecti
 
 A group of parameters responsible for creating the arbitrage channel.
 
+#### Shift mode <Anchor :ids="['p.shift_mode']" />
+
+Price moving mode for [Lim_sell](params-description.md#p.lim_s) and [Lim_buy](params-description.md#p.lim_b).
+
+- `Standard`
+
+   Signal prices [Lim_Sell](params-description.md#p.lim_s) and [Lim_Buy](params-description.md#p.lim_b) are moved only upon trade execution on [Is first](params-description.md#s.is_first) financial instrument of portfolio, except when using [Always timer](params-description.md#p.always_limits_timer).
+
+    Rules for moving signal prices can be divided into two cases: a sale occurred on [Is first](params-description.md#s.is_first) financial instrument and a purchase occurred on [Is first](params-description.md#s.is_first) financial instrument. Within each of these cases, algorithm is further split into two subcases: portfolio position before trade execution was zero or non-zero.
+
+    Let us introduce following notation:
+    * `diffpos` - signed lot quantity in trade on [Is first](params-description.md#s.is_first) financial instrument, `V` is `v_in ×`[Count](params-description.md#s.count) or `v_out ×`[Count](params-description.md#s.count) depending on whether we open or close position with this order,
+    `v_in` equals [v_in_left](params-description.md#p.v_in_l) if [v_side](params-description.md#p.v_side) equals `v_left` and equals [v_in_right](params-description.md#p.v_in_r) if [v_side](params-description.md#p.v_side) equals `v_right`,
+    `v_out` equals [v_out_left](params-description.md#p.v_out_l) if [v_side](params-description.md#p.v_side) equals `v_left` and equals [v_out_right](params-description.md#p.v_out_r) if [v_side](params-description.md#p.v_side) equals `v_right`,
+    [Count](params-description.md#s.count) is `Count` of [Is first](params-description.md#s.is_first) financial instrument
+    * [Curpos](params-description.md#s.pos) - current position on [Is first](params-description.md#s.is_first) financial instrument of portfolio (i.e., just executed trade is NOT yet accounted for), subscript 0 is previous value of parameter, 1 is new value of parameter. With this notation, algorithm for moving signal prices takes following form:
+
+    Algorithm for moving signal prices itself:
+    - if a sale occurred (in quantity `diffpos`, respectively):
+        
+        - if current position before trade execution was $curpos\neq 0$, then:
+
+            $k3=\left(|{Lim\_Sell_0- Lim\_Buy_0}|-TP-K\right)\times\frac{V}{curpos},$
+
+            $k4=
+      \begin{cases}k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
+                  -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0 
+      \end{cases},$ 
+
+            $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
+        \begin{cases} 
+           k4, &\text{if}\enspace curpos>0\\ 
+           K1, &\text{if}\enspace curpos<0 
+        \end{cases},$
+
+            $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos>0\\ 
+          K, &\text{if}\enspace curpos<0 
+       \end{cases},$
+
+        - if current position before trade execution was $curpos=0$, then:
+
+            $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times K,$
+
+            $Lim\_Buy_1=Lim\_Sell_0-TP,$
+
+    - if a purchase occurred (in quantity `diffpos`, respectively):
+
+        - if current position before trade execution was $curpos\neq 0$, then:
+
+            $k3=\left(|Lim\_Sell_0-Lim\_Buy_0|-TP-K\right)\times\frac{V}{curpos},$
+
+            $k4=
+      \begin{cases} 
+        -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
+         k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0
+      \end{cases},$
+        
+            $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         k4, &\text{if}\enspace curpos<0\\
+         K1, &\text{if}\enspace curpos>0 
+       \end{cases},$
+        
+            $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos<0\\
+          K, &\text{if}\enspace curpos>0 
+       \end{cases},$
+
+        - if current position before trade execution was $curpos=0$, then:
+        
+            $Lim\_Sell_1=Lim\_Buy_0+TP,$
+        
+            $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times K.$ 
+
+- `Standard + X`
+
+   Signal prices [Lim_Sell](params-description.md#p.lim_s) and [Lim_Buy](params-description.md#p.lim_b) are moved only upon trade execution on [Is first](params-description.md#s.is_first) financial instrument of portfolio, except when using [Always timer](params-description.md#p.always_limits_timer).
+
+    Rules for moving signal prices can be divided into two cases: a sale occurred on [Is first](params-description.md#s.is_first) financial instrument and a purchase occurred on [Is first](params-description.md#s.is_first) financial instrument.
+
+    Let us introduce following notation:
+    * `diffpos` - signed lot quantity in trade on [Is first](params-description.md#s.is_first) financial instrument, `V` is `v_in ×`[Count](params-description.md#s.count) or `v_out ×`[Count](params-description.md#s.count) depending on whether we open or close position with this order,
+    `v_in` equals [v_in_left](params-description.md#p.v_in_l) if [v_side](params-description.md#p.v_side) equals `v_left` and equals [v_in_right](params-description.md#p.v_in_r) if [v_side](params-description.md#p.v_side) equals `v_right`,
+    `v_out` equals [v_out_left](params-description.md#p.v_out_l) if [v_side](params-description.md#p.v_side) equals `v_left` and equals [v_out_right](params-description.md#p.v_out_r) if [v_side](params-description.md#p.v_side) equals `v_right`,
+    [Count](params-description.md#s.count) is `Count` of [Is first](params-description.md#s.is_first) financial instrument
+    * [Curpos](params-description.md#s.pos) - current position on [Is first](params-description.md#s.is_first) financial instrument of portfolio (i.e., just executed trade is NOT yet accounted for), subscript 0 is previous value of parameter, 1 is new value of parameter. With this notation, algorithm for moving signal prices takes following form:
+
+    Algorithm for moving signal prices itself:
+    - if a sale occurred (in quantity `diffpos`, respectively):
+        
+        $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
+        \begin{cases} 
+           X, &\text{if}\enspace curpos>0\\ 
+           K1, &\text{if}\enspace curpos<0 
+        \end{cases},$
+
+        $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos>0\\ 
+          K, &\text{if}\enspace curpos<0 
+       \end{cases},$
+
+    - if a purchase occurred (in quantity `diffpos`, respectively):
+
+        $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         X, &\text{if}\enspace curpos<0\\
+         K1, &\text{if}\enspace curpos>0 
+       \end{cases},$
+        
+        $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos<0\\
+          K, &\text{if}\enspace curpos>0 
+       \end{cases},$
+
+- `C++ formula` 
+
+    Use [Shift formula](params-description.md#p.shift_formula)
+
+#### v_side <Anchor :ids="['p.v_side']" />
+
+- `v_left` - use [v_in_left](params-description.md#p.v_in_l) and [v_out_left](params-description.md#p.v_out_l) when moving [Lim_sell](params-description.md#p.lim_s) and [Lim_buy](params-description.md#p.lim_b)
+- `v_right` - use [v_in_right](params-description.md#p.v_in_r) and [v_out_right](params-description.md#p.v_out_r) when moving [Lim_sell](params-description.md#p.lim_s) and [Lim_buy](params-description.md#p.lim_b)
+
+**Important!** In [Shift mode](params-description.md#p.shift_mode) equal to `C++ formula`, suffix `formula` will be added to parameter name, this means that parameter is not used in limit moving algorithm, but can be used in formula code.
+Suffix `formula` does not create new parameter and does not change its value - only displayed name and role in algorithm are changed.
+
 #### K <Anchor :ids="['p.k']" />
 
 Price shift coefficient that improves the order price for each subsequent entry.  
