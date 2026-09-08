@@ -460,6 +460,24 @@ The coefficient that shifts the order price to improve it for each subsequent ex
 [Lim_sell](params-description.md#p.lim_s) (in case of selling) or [Lim_buy](params-description.md#p.lim_b)(in case of buying) is shifted by the value of `K2` when exiting a position. In other words, this defines how much the next exit order improves after a prior fill (a "fill" is defined as a trade with volume no less than [v_out_left](params-description.md#p.v_out_l)).
 From the earlier example, where [Lim_buy](params-description.md#p.lim_b) = 105, with `K2` = 3, after a fill at [Lim_buy](params-description.md#p.lim_b), its value becomes 105 - 3 = 102.
 
+#### X <Anchor :ids="['p.x']" />
+
+Coefficient for shifting opposite signal level when exiting position. Used only in [Shift mode](params-description.md#p.shift_mode) equal to `Standard + X`.
+After each trade reducing position, current exit level shifts by [K2](params-description.md#p.k2), and opposite level intended for new entry shifts by `X`.
+When closing short position by buying, [Lim_sell](params-description.md#p.lim_s) decreases by `X`, and when closing long position by selling, [Lim_buy](params-description.md#p.lim_b) increases by `X`.
+Thus, `X` determines how much potential re-entry level shifts following exit level during position unloading.
+
+**Important!** In [Shift mode](params-description.md#p.shift_mode) equal to `C++ formula`, suffix `formula` will be added to parameter name, this means that parameter is not used in limit moving algorithm, but can be used in formula code.
+Suffix `formula` does not create new parameter and does not change its value - only displayed name and role in algorithm are changed.
+
+### Shift formula <Anchor :ids="['p.shift_formula']" />
+
+Formula in [C++](c-api.md#cpp) programming language, which is called upon each trade on [Is first](params-description.md#s.is_first) financial instrument of portfolio by algorithm (i.e., similar to logic used for [Shift mode](params-description.md#p.shift_mode) equal to `Standard` and `Standard + X`). This function is called BEFORE changing position by trade quantity that initiated `Shift formula` call. If [Virt_0_pos](params-description.md#p.virtual_0_pos) flag is set, then quantity in trade reversing position will be divided into two parts, and formula will be called twice: separately with quantity closing position and separately with quantity opening new position. Used only in [Shift mode](params-description.md#p.shift_mode) equal to `C++ formula`.
+
+[Examples of `Shift formula` implementation for `Shift mode` `Standard` and `Standard + X`](c-api.md#__shift_formula__)
+
+**Important!** Value returned by this formula is NOT used by algorithm in any way, it is kept for compatibility so that all formula functions have signature of type `double FORMULA_NAME()` (i.e., function without arguments returning value of type `double`).
+
 ### Limits timer <Anchor :ids="['p.timer']" />
 
 Timer duration (set in seconds) after which both [Lim_sell](params-description.md#p.lim_s) and [Lim_buy](params-description.md#p.lim_b) are shifted by the value of [K](params-description.md#p.k). The timer starts when trading is enabled and a buy or sell signal occurs, but trading is blocked because the robot has already reached the maximum position (according to [v_min/v_max](params-description.md#p.v_min)). The shift by timer can be disabled by setting the [Percent](params-description.md#p.percent) value to > 100%. 
