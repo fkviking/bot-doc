@@ -160,9 +160,9 @@ A checked checkbox indicates that the client's account is a firm-level account.
 
 The IP address from which the connection to the exchange will be established. The IP address must be specified in the agreement with the broker.
 
-### TWIME и FIFO TWIME
+### TWIME and FIFO TWIME
 
-TWIME is a binary protocol, a faster alternative to the FIX protocol. The robot supports connections via the TWIME protocol in both TWIME and FIFO TWIME variants. However, using FIFO TWIME requires additional network infrastructure, so if you plan to use FIFO TWIME, please [notify support staff](help@fkviking.ru) in advance—they will place the robot on a server where such connectivity is supported at the infrastructure level. When creating a connection, the choice between TWIME and FIFO TWIME is made by selecting the appropriate [TWIME server](creating-connection.md#tc.MOEX_FOND.TWIME.twime_server) address to connect to.
+TWIME is a binary protocol, a faster alternative to the FIX protocol. Robot software supports connections via the TWIME protocol in both TWIME and FIFO TWIME variants. However, using FIFO TWIME requires additional network infrastructure, so if you plan to use FIFO TWIME, please [notify support staff](help@fkviking.ru) in advance—they will place the robot on a server where such connectivity is supported at the infrastructure level. When creating a connection, the choice between TWIME and FIFO TWIME is made by selecting the appropriate [TWIME server](creating-connection.md#tc.MOEX_FOND.TWIME.twime_server) address to connect to.
 
 #### Name <Anchor :ids="['tc.MOEX_FOND.TWIME.name']" />
 
@@ -623,26 +623,6 @@ Second secret API key for accessing the exchange API. Created in the user accoun
 
 You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
-## HitBTC
-
-The robot supports only connection to the HitBTC exchange's Spot section via Websocket and REST API. Market data connection is activated as described in the [Setting up connection](getting-started.md#connection-setup). Transactional connection parameters are described below.
-
-### Name <Anchor :ids="['tc.HITBTC.name']" />
-
-A field for specifying the connection name. This value is set for user convenience, to make it easier to identify the connection within the list of transactional connections. Allowed characters `_ a-z A-Z 0-9`
-
-### API Key <Anchor :ids="['tc.HITBTC.ws_id']" />
-
-Public API key for accessing the exchange API. Created in the user account on the exchange website together with the corresponding secret key. Located in account settings under the API keys section. The following permissions should be enabled: "Order book, History, Trading balance", "Place/cancel orders", "Payment information". The key must be new and not used anywhere else previously.
-
-### Secret <Anchor :ids="['tc.HITBTC.ws_secret_part']" />
-
-Secret API key for accessing the exchange API. Created in the user account on the exchange website together with the corresponding public key. Located in account settings under the API keys section. The following permissions should be enabled: "Order book, History, Trading balance", "Place/cancel orders", "Payment information". The key must be new and not used anywhere else previously.
-
-### Bind IP <Anchor :ids="['tc.HITBTC.bind_ip']" />
-
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
-
 ## BITMEX
 
 Connection to the BitMEX exchange's futures market. The robot supports only Websocket and REST API connections. The transactional connection uses two distinct API key pairs, which must be different. Market data connection is activated as described in the [Setting up connections](getting-started.md#connection-setup). Transactional connection parameters are described below.
@@ -987,42 +967,6 @@ Public API key for accessing the exchange API. Created in the user account on th
 Secret API key for accessing the exchange API. Created in the user account on the exchange website together with the corresponding public key. Usually located under Settings → Security → API.
 
 ### Bind IP <Anchor :ids="['tc.KUCOIN.bind_ip']" />
-
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
-
-## CEXIO
-
-The robot supports WebSocket and REST API connections only. MarketData connections are activated as described in the [Connection Setup chapter](getting-started.md#connection-setup). Transactional connection parameters are described below.
-
-### Name <Anchor :ids="['tc.CEXIO.name']" />
-
-A field is used to specify a connection name. This value is provided for convenience, to make it easier to navigate the list of transaction connections. Allowed characters are `_ a-z A-Z 0-9`
-
-### User ID <Anchor :ids="['tc.CEXIO.user_id']" />
-
-User ID.
-
-### Key <Anchor :ids="['tc.CEXIO.ws_id']" />
-
-A public key for accessing the exchange API is created in your personal account on the exchange website. It is created along with a corresponding private key. It can be found in your profile settings under "API Access." Be sure to activate the key. The key must be new and not previously used anyhere ever before.
-
-### Secret <Anchor :ids="['tc.CEXIO.ws_secret_part']" />
-
-A secret (private) key for accessing the exchange API is created in your personal account on the exchange website. It is created along with the corresponding public key. It can be found in your profile settings under "API Access." Be sure to activate the key. The key must be new and not previously used anyhere ever before.
-
-### Flood timeout <Anchor :ids="['tc.CEXIO.flood_timeout']" />
-
-This parameter specifies the time during which the robot will not place  orders after receiving the REASON_FLOOD error.
-
-### Cancel on disconnect <Anchor :ids="['tc.CEXIO.cod']" />
-
-A flag that is responsible for the automatic order cancellation by the exchange when the connection between the exchange and the robot is lost.
-
-### Single ADDING order <Anchor :ids="['tc.CEXIO.single_adding']" />
-
-Only one order with the ADDING status is allowed for each financial instrument. If you try to place another order, the error of placing an order is returned.
-
-### Bind IP <Anchor :ids="['tc.CEXIO.bind_ip']" />
 
 You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
@@ -1438,6 +1382,54 @@ Client code is used when adding order. Most often, the value is a numeric identi
 A flag indicating whether SSL/TLS encryption should be used. Information about whether encryption is enabled for a given login is provided by the broker.
 
 ### Bind IP <Anchor :ids="['tc.J2T.bind_ip']" />
+
+You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+
+## BITGETFUT
+
+### Name <Anchor :ids="['tc.BITGETFUT.name']" />
+
+You set the connection name in this field. Its value is set for convenience, to make it easier to identify the connection in the list of transactional connections. The allowed characters are `_ a-z A-Z 0-9`
+
+### Key API <Anchor :ids="['tc.BITGETFUT.key_api']" />
+
+The key API is a public key to access BITGET API. It is set on your account page on BITGET site together with the corresponding private key. The option is located in your account settings, API section. 
+
+### Key secret <Anchor :ids="['tc.BITGETFUT.key_secret']" />
+
+The key API is a private key to access BITGET API. It is set on your account page on BITGET site together with the corresponding public key. The option is located in your account settings, API section.
+
+### Passphrase <Anchor :ids="['tc.BITGETFUT.passphrase']" />
+
+The pass-phrase is set by the user.
+
+### Bind IP <Anchor :ids="['tc.BITGETFUT.bind_ip']" />
+
+You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+
+## BITGETSPOT
+
+### Name <Anchor :ids="['tc.BITGETSPOT.name']" />
+
+You set the connection name in this field. Its value is set for convenience, to make it easier to identify the connection in the list of transactional connections. The allowed characters are `_ a-z A-Z 0-9`
+
+### Conn type <Anchor :ids="['tc.BITGETSPOT.conn_type']" />
+
+It is a trading mode option. Available modes include `Spot` (trading without leverage) as well as `Isolated` and `Cross` margin trading modes. A detailed comparison of the trading modes can be found on BITGET website.
+
+### Key API <Anchor :ids="['tc.BITGETSPOT.key_api']" />
+
+The key API is a public key to access BITGET API. It is set on your account page on BITGET site together with the corresponding private key. The option is located in your account settings, API section. 
+
+### Key secret <Anchor :ids="['tc.BITGETSPOT.key_secret']" />
+
+The key API is a private key to access BITGET API. It is set on your account page on BITGET site together with the corresponding public key. The option is located in your account settings, API section. 
+
+### Passphrase <Anchor :ids="['tc.BITGETSPOT.passphrase']" />
+
+The pass-phrase is set by the user.
+
+### Bind IP <Anchor :ids="['tc.BITGETSPOT.bind_ip']" />
 
 You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 

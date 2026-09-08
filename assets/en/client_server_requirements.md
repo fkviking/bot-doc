@@ -20,7 +20,7 @@ The configuration of servers used to host trading robots depends on many factors
 *   **Drive:** HDD or SSD with at least 40 GB of storage.
 *   **Network subsystem:** In accordance with MOEX requirements, connections providing access to low latency exchange data services are provided by two physical links at 10 Gbps speeds using the 10GBaseSR standard (MultiMode Fiber).
     *   *Recommendation:* We use Solarflare equipment, as it provides minimal latency with certain drivers.
-*   **Network setup:** We need access to all links to the required services to configure them ourselves.*
+*   **Network setup:** We need access to all links to the required services to configure them ourselves.
 
 ---
 
@@ -42,7 +42,9 @@ The configuration of servers used to host trading robots depends on many factors
     *   `/` (root) — 20 GB or more.
     *   `/var/log` — 20 GB, for each running robot, mounted on a separate partition.
 *   **Network:** Network interfaces are configured for the required data flows.
-*   *   **Usage:** It is recommended not to use the server for any other tasks.    *
+*   **Usage:** It is recommended not to use the server for any other tasks.    
+
+### Software requirements (if configured by us)
 
 By agreement with the client, such configuration can be performed by us.
 If the configuration is performed by us, the following access rights are required:

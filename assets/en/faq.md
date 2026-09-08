@@ -192,9 +192,14 @@ summary: Answers to common questions about trading, portfolio setup, and robot b
 - <details>
     <summary><i>On futures instruments of the Moscow Exchange, prices in the robot differ from those in the terminal. What could be the reason?<Anchor :ids="['faq.sintetic']" /></i></summary>
 
-    The futures market of the Moscow Exchange uses synthetic matching, which is related to trading [calendar spreads](https://www.moex.com/ru/spreads). With synthetic matching, trades are formed based on orders arriving in different order books of linked instruments (two futures and a calendar spread). As a result, during matching, synthetic levels of any necessary depth are constructed to match active orders.
+    The futures market of the Moscow Exchange uses synthetic matching. It is related to trading [calendar spreads](https://www.moex.com/ru/spreads). When using synthetic matching, trades are formed based on orders arriving in different order books of related instruments (nearby futures contract, distant futures contract and calendar spread). Thus, during matching, synthetic depth of any level necessary to match active orders is built. Synthetic matching is described in detail in section 2.9 of [PLAZA II gateway](https://ftp.moex.com/pub/ClientsAPI/Spectra/CGate/prod/docs/p2gate_ru.pdf) documentation.
     
-    In the robot, market data for the Moscow Exchange futures market is received exclusively via `Orderlog` streams using the [FAST](creating-connection.md#tc.MOEX_FUT_OPT.FAST) and [SIMBA](creating-connection.md#tc.MOEX_FUT_OPT.SIMBA) protocols, as this is the fastest method of obtaining market information.
+Exchange can broadcast order book in two variants: as already assembled aggregated order book or as full list of status changes for all orders for an instrument. In second case, building aggregated order book is performed on side of robot or terminal. Most often, trading terminals use receiving ready-made aggregated order book from exchange. When broadcasting aggregated order book, exchange also indicatively broadcasts 5 levels formed by synthetic orders. More details on what synthetic indicative quotes are and how they are used in aggregated order book can be found in section 2.9.2 of [PLAZA II gateway](https://ftp.moex.com/pub/ClientsAPI/Spectra/CGate/prod/docs/p2gate_ru.pdf) documentation.
+    
+In robot, to obtain market data for futures market of the Moscow Exchange, only `Orderlog` streams of connections via [FAST](creating-connection.md#tc.MOEX_FUT_OPT.FAST) and [SIMBA](creating-connection.md#tc.MOEX_FUT_OPT.SIMBA) protocols are used, as this is the fastest method of obtaining market information. Building aggregated order book for an instrument is performed by robot based only on data for this instrument. Data for related instruments is not used for several reasons:
+* Instruments lack machine-readable attributes defining connection with other instruments. Identification is possible only by instrument names.
+* Completing synthetic levels requires obtaining data for other instruments and takes significant time.
+* It is unclear how many levels need to be completed. 5 levels completed by exchange when broadcasting aggregated order books do not reflect full picture, which will be built inside exchange only directly at the moment of matching.
     
     </details>
 ---
@@ -222,12 +227,13 @@ summary: Answers to common questions about trading, portfolio setup, and robot b
     </details>
 ---    
 - <details>
-    <summary><i>What are the system requirements for the computer on which the robot website will be opened?<Anchor :ids="['faq.requirements']" /></i></summary>
-
-    System requirements are described [here](introduction.md#requirements).
+    <summary><i>Is it possible to participate in testing conducted by Moscow Exchange on production environment on non-trading day? <Anchor :ids="['faq.moex_testing']" /></i></summary>
+    
+    Participation of our robots in such testing is not provided. Connections to markets of Moscow Exchange are automatically disabled on weekends to avoid test data entering production systems, as recommended by exchange itself.
+    
+    Before updating trading system on production environment, Moscow Exchange first deploys new version of trading system on test environment T1, where we test robot operation with new version of trading system. Thus, by the time of production environment update, robot compatibility with new version of trading system is already tested, and trader participation in testing on production environment is not required.
     
     </details>
-
 ---
 - <details>
     <summary><i>Does the robot require the 'Cancel on Disconnect' option to be enabled in the trading connection? <Anchor :ids="['faq.cod']" /></i></summary>

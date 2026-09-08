@@ -53,8 +53,7 @@ summary: 'Формулы на C++: доступ к биржевым данным
 
 - Если используются лучшие цены на покупку/продажу финансовых инструментов, то рекомендуется проверять [есть ли эти цены на самом деле](#bid-offer-check) (т.е. цена финансового инструмента и объем этой цены должны быть отличны от нуля)
 - Если используются торговые стаканы, то рекомендуется проверять [доступен ли вообще стакан для заданного финансового инструмента](#order-book-check). Так же рекомендуется проверять каждую из сторон стакана на пустоту
-- Если используются лучшие цены на покупку/продажу финансовых инструментов и/или торговые стаканы, то рекомендуется проверять что лучшая цена покупки строго меньше лучшей цены продажи (для некоторых бирж нормально
-    когда лучшая цена покупки больше или равна лучшей цене продажи, но не понятно по какой логике в такой ситуации осуществлять торговлю, легко начать продавать заведомо дешевле, чем покупаешь)
+- Если используются лучшие цены на покупку/продажу финансовых инструментов и/или торговые стаканы, то рекомендуется проверять что лучшая цена покупки строго меньше лучшей цены продажи (для некоторых бирж нормально когда лучшая цена покупки больше или равна лучшей цене продажи, но не понятно по какой логике в такой ситуации осуществлять торговлю, легко начать продавать заведомо дешевле, чем покупаешь)
 - Для понимания актуальности текущих биржевых данных рекомендуется проверять что [маркет-дата подключение находится в подключенном состоянии (`online`)](#market-data-check)
 - В некоторых ситуациях рекомендуется проверять [торгуется ли финансовый инструмент на бирже в данный момент](#trading-status-check)
 
@@ -207,39 +206,39 @@ if (t.tick())
 | double mc_level_close()                | получить "Level close" инструмента портфеля                       |
 | long long max_trans_musec()            | получить "Max trans time" инструмента портфеля                    |
 | long long ban_period()                 | получить "Ban period" инструмента портфеля                        |
-| void set_count(long long v)            | изменить "Count" инструмента портфеля на значение v               |
-| void set_depth_ob(int v)               | изменить "Depth OB" инструмента портфеля на значение v            |
-| void set_ob_c_p_t(int v)               | изменить "Calc price OB" инструмента портфеля на значение v       |
-| void set_ob_t_p_t(int v)               | изменить "Trading price OB" инструмента портфеля на значение v    |
-| void set_decimals(int v)               | изменить "Decimals" инструмента портфеля на значение v            |
-| void set_client_code(const std::string& v) | изменить "Client code" инструмента портфеля на значение v         |
-| void set_on_buy(int v)                 | изменить "On buy" инструмента портфеля на значение v              |
-| void set_leverage(int v)               | изменить "Leverage" инструмента портфеля на значение v            |
-| void set_count_type(int v)             | изменить "Count type" инструмента портфеля на значение v          |
-| void set_k(double v)                   | изменить "k" инструмента портфеля на значение v                   |
-| void set_sle(bool v)                   | изменить "SLE" инструмента портфеля на значение v                 |
-| void set_sl(double v)                  | изменить "SL" инструмента портфеля на значение v                  |
-| void set_tp(double v)                  | изменить "TP" инструмента портфеля на значение v                  |
-| void set_k_sl(double v)                | изменить "k_sl" инструмента портфеля на значение v                |
-| void set_te(bool v)                    | изменить "TE" инструмента портфеля на значение v                  |
-| void set_timer(int v)                  | изменить "Timer" инструмента портфеля на значение v               |
-| void set_ratio_sign(int v)             | изменить "Ratio sign" инструмента портфеля на значение v          |
-| void set_ratio_type(int v)             | изменить "Ratio type" инструмента портфеля на значение v          |
-| void set_percent_of_quantity(double v) | изменить "Percent of quantity" инструмента портфеля на значение v |
-| void set_fin_res_mult(double v)        | изменить "Fin res multiplier" инструмента портфеля на значение v  |
-| void set_comission_sign(int v)         | изменить "Commission type" инструмента портфеля на значение v     |
-| void set_comission(double v)           | изменить "Commission" инструмента портфеля на значение v          |
-| void set_mm(bool v)                    | изменить "MM" инструмента портфеля на значение v                  |
-| void set_maker(bool v)                 | изменить "Only maker" инструмента портфеля на значение v          |
-| void set_move_limits(bool v)           | изменить "FUT move limits" инструмента портфеля на значение v     |
-| void set_move_limits1(bool v)          | изменить "SPOT move limits" инструмента портфеля на значение v    |
-| void set_depth_ob(int v)               | изменить "Depth OB" инструмента портфеля на значение v            |
-| void set_ob_c_p_t(int v)               | изменить "Calc price OB" инструмента портфеля на значение v       |
-| void set_ob_t_p_t(int v)               | изменить "Trading price OB" инструмента портфеля на значение v    |
-| void set_mc_level_to0(double v)        | изменить "Level to0" инструмента портфеля на значение v           |
-| void set_mc_level_close(double v)      | изменить "Level close" инструмента портфеля на значение v         |
-| void set_max_trans_musec(long long v)  | изменить "Max trans time" инструмента портфеля на значение v      |
-| void set_ban_period(long long v)       | изменить "Ban period" инструмента портфеля на значение v          |
+| void set_count(long long v)            | изменить "Count" инструмента портфеля на значение `v`               |
+| void set_depth_ob(int v)               | изменить "Depth OB" инструмента портфеля на значение `v`            |
+| void set_ob_c_p_t(int v)               | изменить "Calc price OB" инструмента портфеля на значение `v`       |
+| void set_ob_t_p_t(int v)               | изменить "Trading price OB" инструмента портфеля на значение `v`    |
+| void set_decimals(int v)               | изменить "Decimals" инструмента портфеля на значение `v`            |
+| void set_client_code(const std::string& v) | изменить "Client code" инструмента портфеля на значение `v`         |
+| void set_on_buy(int v)                 | изменить "On buy" инструмента портфеля на значение `v`              |
+| void set_leverage(int v)               | изменить "Leverage" инструмента портфеля на значение `v`            |
+| void set_count_type(int v)             | изменить "Count type" инструмента портфеля на значение `v`          |
+| void set_k(double v)                   | изменить "k" инструмента портфеля на значение `v`                   |
+| void set_sle(bool v)                   | изменить "SLE" инструмента портфеля на значение `v`                 |
+| void set_sl(double v)                  | изменить "SL" инструмента портфеля на значение `v`                  |
+| void set_tp(double v)                  | изменить "TP" инструмента портфеля на значение `v`                  |
+| void set_k_sl(double v)                | изменить "k_sl" инструмента портфеля на значение `v`                |
+| void set_te(bool v)                    | изменить "TE" инструмента портфеля на значение `v`                  |
+| void set_timer(int v)                  | изменить "Timer" инструмента портфеля на значение `v`               |
+| void set_ratio_sign(int v)             | изменить "Ratio sign" инструмента портфеля на значение `v`          |
+| void set_ratio_type(int v)             | изменить "Ratio type" инструмента портфеля на значение `v`          |
+| void set_percent_of_quantity(double v) | изменить "Percent of quantity" инструмента портфеля на значение `v` |
+| void set_fin_res_mult(double v)        | изменить "Fin res multiplier" инструмента портфеля на значение `v`  |
+| void set_comission_sign(int v)         | изменить "Commission type" инструмента портфеля на значение `v`     |
+| void set_comission(double v)           | изменить "Commission" инструмента портфеля на значение `v`          |
+| void set_mm(bool v)                    | изменить "MM" инструмента портфеля на значение `v`                  |
+| void set_maker(bool v)                 | изменить "Only maker" инструмента портфеля на значение `v`          |
+| void set_move_limits(bool v)           | изменить "FUT move limits" инструмента портфеля на значение `v`     |
+| void set_move_limits1(bool v)          | изменить "SPOT move limits" инструмента портфеля на значение `v`    |
+| void set_depth_ob(int v)               | изменить "Depth OB" инструмента портфеля на значение `v`            |
+| void set_ob_c_p_t(int v)               | изменить "Calc price OB" инструмента портфеля на значение `v`       |
+| void set_ob_t_p_t(int v)               | изменить "Trading price OB" инструмента портфеля на значение `v`    |
+| void set_mc_level_to0(double v)        | изменить "Level to0" инструмента портфеля на значение `v`           |
+| void set_mc_level_close(double v)      | изменить "Level close" инструмента портфеля на значение `v`         |
+| void set_max_trans_musec(long long v)  | изменить "Max trans time" инструмента портфеля на значение `v`      |
+| void set_ban_period(long long v)       | изменить "Ban period" инструмента портфеля на значение `v`          |
 
 Методы `order_pool`:
 
@@ -347,48 +346,48 @@ if (t.tick())
 | void set_uf0(const user_value& v)                           | изменить "пользовательское поле" под номером 0 (пользовательские значения никак НЕ используются в штатном алгоритме робота)|
 | ...                                                         | ...                                                                                                      |
 | void set_uf19(const user_value& v)                          | изменить "пользовательское поле" под номером 19 (пользовательские значения никак НЕ используются в штатном алгоритме робота)|
-| void set_decimals(int v)                                    | изменить "Decimals" портфеля на значение v                                                               |
-| void set_comment(const std::string& v)                      | изменить "Comment" портфеля на значение v                                                                |
-| void set_color(const std::string& v)                        | изменить "Color" портфеля на значение v в hex формате [валидного CSS цвета](https://www.w3schools.com/colors/default.asp)  |
-| void set_re_sell(bool v)                                    | изменить "re_sell" портфеля на значение v                                                                |
-| void set_re_buy(bool v)                                     | изменить "re_buy" портфеля на значение v                                                                 |
-| void set_use_tt(bool v)                                     | изменить "Use timetable" портфеля на значение v                                                          |
-| void set_portfolio_type(int v)                              | изменить "Type" портфеля на значение v                                                                   |
-| void set_v_side(int v)                                      | изменить "v_side" портфеля на значение v                                                                   |
-| void set_v_in_l(long long v)                                | изменить "v_in_left" портфеля на значение v                                                              |
-| void set_v_in_r(long long v)                                | изменить "v_in_right" портфеля на значение v                                                             |
-| void set_v_out_l(long long v)                               | изменить "v_out_left" портфеля на значение v                                                             |
-| void set_v_out_r(long long v)                               | изменить "v_out_right" портфеля на значение v                                                            |
-| void set_v_min(long long v)                                 | изменить "v_min" портфеля на значение v                                                                  |
-| void set_v_max(long long v)                                 | изменить "v_max" портфеля на значение v                                                                  |
-| void set_k(double v)                                        | изменить "K" портфеля на значение v                                                                      |
-| void set_k1(double v)                                       | изменить "K1" портфеля на значение v                                                                     |
-| void set_k2(double v)                                       | изменить "K2" портфеля на значение v                                                                     |
-| void set_tp(double v)                                       | изменить "TP" портфеля на значение v                                                                     |
-| void set_x(double v)                                        | изменить "X" портфеля на значение v                                                                     |
-| void set_equal_prices(bool v)                               | изменить "Equal prices" портфеля на значение v                                                           |
-| void set_always_limits_timer(bool v)                        | изменить "Always timer" портфеля на значение v                                                           |
-| void set_lim_s(double v)                                    | изменить "Lim_Sell" портфеля на значение v                                                               |
-| void set_lim_b(double v)                                    | изменить "Lim_Buy" портфеля на значение v                                                                |
-| void set_delta(double v)                                    | изменить "Delta" портфеля на значение v                                                                  |
-| void set_first_delta(double v)                              | изменить "First delta" портфеля на значение v                                                            |
-| void set_mkt_volume(long long v)                            | изменить "Market volume" портфеля на значение v                                                          |
-| void set_type_trade(int v)                                  | изменить "Type trade" портфеля на значение v                                                             |
-| void set_price_type(int v)                                  | изменить "Type price" портфеля на значение v                                                             |
-| void set_simply_first(bool v)                               | изменить "Simply first" портфеля на значение v                                                           |
-| void set_quote(bool v)                                      | изменить "Quote" портфеля на значение v                                                                  |
-| void set_percent(double v)                                  | изменить "Percent" портфеля на значение v                                                                |
-| void set_timer(int v)                                       | изменить "Limits timer" портфеля на значение v                                                           |
-| void set_to0(bool v)                                        | изменить "To0" портфеля на значение v                                                                    |
-| void set_virtual_0_pos(bool v)                              | изменить "Virt 0 pos" портфеля на значение v                                                             |
-| void set_opened(double v)                                   | изменить "Opened" портфеля на значение v                                                                 |
-| void set_opened_comission(double v)                         | изменить "Commission sum" портфеля на значение v                                                         |
-| void set_n_perc_fill(int v)                                 | изменить "n_perc_fill" портфеля на значение v                                                            |
-| void set_max_not_hedged(int v)                              | изменить "Max not hedged" портфеля на значение v                                                         |
-| void set_return_first(double v)                             | изменить "Return first" портфеля на значение v                                                           |
-| void set_price_check(double v)                              | изменить "Price check" портфеля на значение v                                                            |
-| void set_hedge_after(int v)                                 | изменить "Hedge (sec)" портфеля на значение v                                                            |
-| void set_overlay(long long v)                               | изменить "Overlay" портфеля на значение v                                                                |
+| void set_decimals(int v)                                    | изменить "Decimals" портфеля на значение `v`                                                               |
+| void set_comment(const std::string& v)                      | изменить "Comment" портфеля на значение `v`                                                                |
+| void set_color(const std::string& v)                        | изменить "Color" портфеля на значение `v` в hex формате [валидного CSS цвета](https://www.w3schools.com/colors/default.asp)  |
+| void set_re_sell(bool v)                                    | изменить "re_sell" портфеля на значение `v`                                                                |
+| void set_re_buy(bool v)                                     | изменить "re_buy" портфеля на значение `v`                                                                 |
+| void set_use_tt(bool v)                                     | изменить "Use timetable" портфеля на значение `v`                                                          |
+| void set_portfolio_type(int v)                              | изменить "Type" портфеля на значение `v`                                                                   |
+| void set_v_side(int v)                                      | изменить "v_side" портфеля на значение `v`                                                                   |
+| void set_v_in_l(long long v)                                | изменить "v_in_left" портфеля на значение `v`                                                              |
+| void set_v_in_r(long long v)                                | изменить "v_in_right" портфеля на значение `v`                                                             |
+| void set_v_out_l(long long v)                               | изменить "v_out_left" портфеля на значение `v`                                                             |
+| void set_v_out_r(long long v)                               | изменить "v_out_right" портфеля на значение `v`                                                            |
+| void set_v_min(long long v)                                 | изменить "v_min" портфеля на значение `v`                                                                  |
+| void set_v_max(long long v)                                 | изменить "v_max" портфеля на значение `v`                                                                  |
+| void set_k(double v)                                        | изменить "K" портфеля на значение `v`                                                                      |
+| void set_k1(double v)                                       | изменить "K1" портфеля на значение `v`                                                                     |
+| void set_k2(double v)                                       | изменить "K2" портфеля на значение `v`                                                                     |
+| void set_tp(double v)                                       | изменить "TP" портфеля на значение `v`                                                                     |
+| void set_x(double v)                                        | изменить "X" портфеля на значение `v`                                                                     |
+| void set_equal_prices(bool v)                               | изменить "Equal prices" портфеля на значение `v`                                                           |
+| void set_always_limits_timer(bool v)                        | изменить "Always timer" портфеля на значение `v`                                                           |
+| void set_lim_s(double v)                                    | изменить "Lim_Sell" портфеля на значение `v`                                                               |
+| void set_lim_b(double v)                                    | изменить "Lim_Buy" портфеля на значение `v`                                                                |
+| void set_delta(double v)                                    | изменить "Delta" портфеля на значение `v`                                                                  |
+| void set_first_delta(double v)                              | изменить "First delta" портфеля на значение `v`                                                            |
+| void set_mkt_volume(long long v)                            | изменить "Market volume" портфеля на значение `v`                                                          |
+| void set_type_trade(int v)                                  | изменить "Type trade" портфеля на значение `v`                                                             |
+| void set_price_type(int v)                                  | изменить "Type price" портфеля на значение `v`                                                             |
+| void set_simply_first(bool v)                               | изменить "Simply first" портфеля на значение `v`                                                           |
+| void set_quote(bool v)                                      | изменить "Quote" портфеля на значение `v`                                                                  |
+| void set_percent(double v)                                  | изменить "Percent" портфеля на значение `v`                                                                |
+| void set_timer(int v)                                       | изменить "Limits timer" портфеля на значение `v`                                                           |
+| void set_to0(bool v)                                        | изменить "To0" портфеля на значение `v`                                                                    |
+| void set_virtual_0_pos(bool v)                              | изменить "Virt 0 pos" портфеля на значение `v`                                                             |
+| void set_opened(double v)                                   | изменить "Opened" портфеля на значение `v`                                                                 |
+| void set_opened_comission(double v)                         | изменить "Commission sum" портфеля на значение `v`                                                         |
+| void set_n_perc_fill(int v)                                 | изменить "n_perc_fill" портфеля на значение `v`                                                            |
+| void set_max_not_hedged(int v)                              | изменить "Max not hedged" портфеля на значение `v`                                                         |
+| void set_return_first(double v)                             | изменить "Return first" портфеля на значение `v`                                                           |
+| void set_price_check(double v)                              | изменить "Price check" портфеля на значение `v`                                                            |
+| void set_hedge_after(int v)                                 | изменить "Hedge (sec)" портфеля на значение `v`                                                            |
+| void set_overlay(long long v)                               | изменить "Overlay" портфеля на значение `v`                                                                |
 
 Для того чтобы иметь возможность обращаться по индексу к "пользовательским полям" есть массивы:<Anchor :ids="['user-fields']"/>
 ```C

@@ -29,79 +29,9 @@ Using the Move Order command is optional for supported connections. This feature
 
 ## Rules for moving Lim_Sell and Lim_Buy
 
-Signal prices [Lim_Sell](params-description.md#p.lim_s) and [Lim_Buy](params-description.md#p.lim_s) are moved only upon trade execution in the [Is first](params-description.md#s.is_first) instrument of the portfolio, except when [Always timer](params-description.md#p.always_limits_timer) is enabled.
+These rules depend on [Shift_mode](params-description.md#p.shift_mode) parameter value.
 
-The rules for moving signal prices can be divided into two cases: a sale occurred in the [Is first](params-description.md#s.is_first) instrument and a purchase occurred in the [Is first](params-description.md#s.is_first) instrument. Within each of these cases, the algorithm is further split into two subcases: the portfolio position before the trade was zero or non-zero.
-
-We define the following notation:
-- `diffpos` - signed lot quantity in the trade of the [Is first](params-description.md#s.is_first) instrument;
-- `V` - [v_in_left](params-description.md#p.v_in_l) × [Count](params-description.md#s.count) or [v_out_left](params-description.md#p.v_out_l) × [Count](params-description.md#s.count), depending on whether the order opens or closes a position;
-- [Count](params-description.md#s.count) - `Count` of the [Is first](params-description.md#s.is_first) instrument;
-- [Curpos](params-description.md#s.pos) - current position in the [Is first](params-description.md#s.is_first) instrument of the portfolio (i.e., the just-executed trade is not yet included);
-- subscript 0 - previous value of a parameter, subscript 1 — new value of a parameter. 
-With this notation, the algorithm for moving signal prices is as follows:
-
-
-- if a sell trade has been executed (with a quantity of `diffpos`):
-    
-    - if the current position before the trade was $curpos\neq 0$:
-
-        $k3=\left(|{Lim\_Sell_0- Lim\_Buy_0}|-TP-K\right)\times\frac{V}{curpos},$
-
-        $k4=
-  \begin{cases}k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
-              -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0 
-  \end{cases},$ 
-
-        $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
-    \begin{cases} 
-       k4, &\text{if}\enspace curpos>0\\ 
-       K1, &\text{if}\enspace curpos<0 
-    \end{cases},$
-
-        $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
-   \begin{cases} 
-     K2, &\text{if}\enspace curpos>0\\ 
-      K, &\text{if}\enspace curpos<0 
-   \end{cases},$
-
-    - if the current position before the trade was $curpos=0$:
-
-        $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times K,$
-
-        $Lim\_Buy_1=Lim\_Sell_0-TP,$
-
-- if a buy trade has been executed (with a quantity of `diffpos`):
-
-    - if the current position before the trade was $curpos\neq 0$:
-
-        $k3=\left(|Lim\_Sell_0-Lim\_Buy_0|-TP-K\right)\times\frac{V}{curpos},$
-
-        $k4=
-  \begin{cases} 
-    -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
-     k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0
-  \end{cases},$
-	
-        $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
-   \begin{cases} 
-     k4, &\text{if}\enspace curpos<0\\
-     K1, &\text{if}\enspace curpos>0 
-   \end{cases},$
-   	
-        $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
-   \begin{cases} 
-     K2, &\text{if}\enspace curpos<0\\
-      K, &\text{if}\enspace curpos>0 
-   \end{cases},$
-
-    - if the current position before the trade was $curpos=0$:
-	
-        $Lim\_Sell_1=Lim\_Buy_0+TP,$
-	
-        $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times K.$
-
-Signal price adjustment also occurs when an order cannot be placed due to restrictions defined by [v_min](params-description.md#p.v_min), [v_max](params-description.md#p.v_max), [To0](params-description.md#p.to0). If the bot cannot buy due to [v_max](params-description.md#p.v_max) restrictions, then according to the portfolio parameters [Limits timer](params-description.md#p.timer) and [Percent](params-description.md#p.percent), the [Lim_Sell](params-description.md#p.lim_s) and [Lim_Buy](params-description.md#p.lim_b) prices are decreased by the value of the portfolio parameter [K](params-description.md#p.k), If the bot cannot sell due to [v_min](params-description.md#p.v_min) restrictions, then according to the portfolio parameters [Limits timer](params-description.md#p.timer) and [Percent](params-description.md#p.percent) the [Lim_Sell](params-description.md#p.lim_s) and [Lim_Buy](params-description.md#p.lim_b) values are increased by the value of the portfolio parameter [K](params-description.md#p.k).
+Signal prices are also moved when an order cannot be placed due to [v_min](params-description.md#p.v_min), [v_max](params-description.md#p.v_max), [To0](params-description.md#p.to0) restrictions. If the bot cannot buy due to [v_max](params-description.md#p.v_max) restrictions, then according to portfolio parameters [Limits timer](params-description.md#p.timer) and [Percent](params-description.md#p.percent), [Lim_Sell](params-description.md#p.lim_s) and [Lim_Buy](params-description.md#p.lim_b) prices are decreased by [K](params-description.md#p.k) parameter value, and if the bot cannot sell due to [v_min](params-description.md#p.v_min) restrictions, then according to portfolio parameters [Limits timer](params-description.md#p.timer) and [Percent](params-description.md#p.percent), [Lim_Sell](params-description.md#p.lim_s) and [Lim_Buy](params-description.md#p.lim_b) values are increased by [K](params-description.md#p.k) parameter value.
 
 ## Behavior of Orders Re-Posted Based on SL or Timer <Anchor :ids="['sl_timer']" />
 

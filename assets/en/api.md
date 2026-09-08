@@ -97,6 +97,8 @@ Up to 16 simultaneous connections are allowed per API key.
 
 Response examples in this API documentation are for illustration only. Required fields will always match the documentation, but optional fields in examples may differ from those in actual responses.
 
+In addition to fields described in documentation, API may contain service fields, which values must not be used by the client, as such fields and their contents may be changed without any prior notice.
+
 ## Authorization <Anchor :ids="['api.authorization']" />
 
 Up to 16 simultaneous connections are allowed per API key.
@@ -2910,7 +2912,7 @@ Payload:
 | >> ll | y | string |  | Label |
 | >> de | y | number |  | Elapsed days, 0 means expired, -1 means unknown |
 | >> dt | y | number | epoch_msec | Robot date/time (0 means unknown) |
-| >> tz | y | number |  | Robot's server timezone offset in seconds |
+| >> tz | y | number |  | Robot server timezone offset in seconds |
 | >> mtc | y | number |  | Robot transaction connections limit |
 | >> mc | y | number |  | Robot main loop counter |
 | >> mdc | y | number | stream_status | Market-data connections status |
@@ -3071,7 +3073,7 @@ Payload:
 | >> ll | n | string |  | Label |
 | >> de | n | number |  | Elapsed days, 0 means expired, -1 means unknown |
 | >> dt | n | number | epoch_msec | Robot date/time (0 means unknown) |
-| >> tz | n | number |  | Robot's server timezone offset in seconds |
+| >> tz | n | number |  | Robot server timezone offset in seconds |
 | >> mtc | n | number |  | Robot transaction connections limit |
 | >> mc | n | number |  | Robot main loop counter |
 | >> mdc | n | number | stream_status | Market-data connections status |
@@ -6604,7 +6606,7 @@ Example:
 
 ### Subscribe to Robot Market Data Connection Updates
 
-Subscribe to updates on the status of the robot's market data connections
+Subscribe to updates on the status of the robot market data connections
 
 A snapshot may be sent at any time
 
@@ -7146,7 +7148,7 @@ Example:
 
 ### Unsubscribe from Robot Market Data Connections
 
-Unsubscribe from updates on the status of the robot's market data connections
+Unsubscribe from updates on the status of the robot market data connections
 
 <details>
 <summary>Request</summary>
@@ -7944,7 +7946,7 @@ Example:
 
 ### Get Financial Instruments Traded via Transactional Connection
 
-Retrieve the financial instruments that are present in the robot's portfolios and whose client code belongs specifically to this transactional connection
+Retrieve the financial instruments that are present in the robot portfolios and whose client code belongs specifically to this transactional connection
 
 <details>
 <summary>Request</summary>
@@ -8524,9 +8526,9 @@ Example:
 ```
 </details>    
 
-### Subscribe to Active Orders of Robot's Transactional Connection
+### Subscribe to Active Orders of the Robot Transactional Connection 
 
-Subscribe to active orders from the robot's transactional connection
+Subscribe to active orders from the Robot transactional connection
 
 A snapshot may be sent at any time
 
@@ -8736,9 +8738,9 @@ Example:
 ```
 </details>    
 
-### Unsubscribe from Active Orders of Robot's Transactional Connection
+### Unsubscribe from Active Orders of Robot Transactional Connection
 
-Unsubscribe from active orders of the robot's transactional connection
+Unsubscribe from active orders of the robot transactional connection
 
 <details>
 <summary>Request</summary>
@@ -8821,9 +8823,9 @@ Example:
 ```
 </details>    
 
-### Cancel Active Order on Robot's Transactional Connection
+### Cancel Active Order on Robot Transactional Connection
 
-Cancel an active order on the robot's transactional connection. A successful response indicates only that the cancellation request was successfully received by the robot, not that the order has been successfully cancelled. Messages regarding the success or failure of the cancellation are sent in the log.
+Cancel an active order on the robot transactional connection. A successful response indicates only that the cancellation request was successfully received by the robot, not that the order has been successfully cancelled. Messages regarding the success or failure of the cancellation are sent in the log.
 
 <details>
 <summary>Request</summary>
@@ -8941,9 +8943,9 @@ Example:
 ```
 </details>    
 
-### Subscribe to Positions of Robot's Transactional Connection
+### Subscribe to Positions of Robot Transactional Connection
 
-Subscribe to positions from the robot's transactional connection
+Subscribe to positions from the robot transactional connection
 
 A snapshot may be sent at any time
 
@@ -9187,9 +9189,9 @@ Example:
 ```
 </details>    
 
-### Unsubscribe from Positions of Robot's Transactional Connection
+### Unsubscribe from Positions of Robot Transactional Connection
 
-Unsubscribe from positions of the robot's transactional connection
+Unsubscribe from positions of the robot transactional connection
 
 <details>
 <summary>Request</summary>
@@ -9272,7 +9274,7 @@ Example:
 ```
 </details>    
 
-### Modify Position Parameters of Robot's Transactional Connection
+### Modify Position Parameters of Robot Transactional Connection
 
 A successful response means the request has reached the robot and the parameters being modified have valid values. Updated field values will be sent in the position updates (if you are subscribed to them)
 

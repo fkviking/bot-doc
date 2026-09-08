@@ -333,6 +333,33 @@ This widget can be opened for portfolios where parameter history recording is no
 
 Note that chart data represents periodic snapshots of real-time parameter values used by the robot. Data updates are sent by the robot approximately 3 times per second; therefore, if multiple values occur within 0.3 seconds, only the most recent value will be displayed on the chart. No averaging over 0.3 seconds is performed
 
+### Users <Anchor :ids="['widget_users']" />
+
+Users widget is available only to [Head of traders](introduction.md#head_of_traders_role) and [Head view only](introduction.md#head_view_only_role) roles.
+
+Main table of widget contains following columns:
+
+- **Company** — name of company to which robot belongs and in which roles are assigned to user, more details in [brief role model](introduction.md#roles).
+- **Email** — email address of user to whom roles are assigned in company. To be able to add user to company, user must log in to platform at least once with this email.
+- **Roles** — roles of user in company. [Head of traders](introduction.md#head_of_traders_role) and [Head view only](introduction.md#head_view_only_role) already see all robots and portfolios, so choosing robots and portfolios is necessary only if user has `trader` role.
+- **Robots** — number of one or several robots to which access is granted.
+- **Portfolios** — one or several portfolios to which access is granted.
+- **Edit user** — entry to menu for editing roles and access of user, detailed description of [Edit user](interface.md#widget_users_edit_user) below.
+- **Delete user** — button for deleting user from company. After deletion, user loses access to robots and portfolios in selected company, but robots and portfolios themselves are not deleted. It is assumed that [Head of traders](introduction.md#head_of_traders_role) timely deletes all users who no longer need access.
+
+#### Edit user <Anchor :ids="['widget_users_edit_user']" />
+
+- **Company** — duplicates table, cannot be changed. This is name of company to which robot belongs and in which roles are assigned to user, more details in [brief role model](introduction.md#roles).
+- **Email** — duplicates table, cannot be changed. This is email address of user to whom roles are assigned in company. To be able to add user to company, user must log in to platform at least once with this email.
+- **Roles** — here you can choose one or several roles of user in company.
+
+**Important!** [Head of traders](introduction.md#head_of_traders_role) and [Head view only](introduction.md#head_view_only_role) already see all robots and portfolios, so choosing robots and portfolios makes sense only if user has `trader` role. Choosing portfolios and robots for [Head of traders](introduction.md#head_of_traders_role) and [Head view only](introduction.md#head_view_only_role) does not create any restrictions and has no practical meaning.  
+
+**Important!** It is assumed that [Head of traders](introduction.md#head_of_traders_role) monitors data access and timely removes from users those who, for example, left company, no longer need access, and in other similar cases. 
+
+- **Robots** — here you can set flags for numbers of robots to which access is granted.
+- **Portfolios** — here you can set flags for portfolios to which access is granted.
+
 ## Other User Interface Elements
 
 ### Status Panel
