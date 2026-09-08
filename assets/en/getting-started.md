@@ -90,16 +90,22 @@ Portfolio management commands are located in the `ACTIONS` dropdown menu of the 
 
 - **Hard stop** <Anchor :ids="['portfolio_actions.hard_stop']" /> - stops trading for selected portfolios (clears the [re_sell](params-description.md#p.re_sell) and [re_buy](params-description.md#p.re_buy) flags),  attempts to cancel all active orders on both legs, and disables the trading schedule (the `Use timetable` flag is cleared). This is a complete shutdown of trading for the selected portfolios, after which no order submissions or replacements will occur for any of the portfolio instruments. 
 
-    **Important!** If certain portfolios have formulas that programmatically control the [re_sell](params-description.md#p.re_sell) and [re_buy](params-description.md#p.re_buy) flags,  trading may resume according to those formulas.
+  **Important!** If certain portfolios have formulas that programmatically control the [re_sell](params-description.md#p.re_sell) and [re_buy](params-description.md#p.re_buy) flags,  trading may resume according to those formulas.
 
-- **Stop formulas** <Anchor :ids="['portfolio_actions.stop_formulas']" /> - stops trading for selected portfolios (clears the [re_sell](params-description.md#p.re_sell) and [re_buy](params-description.md#p.re_buy) flags), attempts to cancel all active orders on both legs, and disables the trading schedule (the `Use timetable` flag is cleared). Additionally, all formula calculations are disabled—i.e., the [Custom trade](params-description.md#p.custom_trade) and [Extra formulas](params-description.md#p.ext_formulas) portfolio flags are cleared, and for each instrument in the portfolio, the [Count type](params-description.md#s.count_type) and [Ratio type](params-description.md#s.ratio_type) fields are set to constant value types. To use formulas again later, they must be manually re-enabled.
+- **Stop formulas** <Anchor :ids="['portfolio_actions.stop_formulas']" /> - stops trading for selected portfolios (clears [re_sell](params-description.md#p.re_sell), [re_buy](params-description.md#p.re_buy) flags), attempts to cancel active orders on both legs, and disables schedule (clears `Use timetable` flag).
+Additionally, all formula calculations are disabled:
+    - clears portfolio flags [Custom trade](params-description.md#p.custom_trade) and [Extra formulas](params-description.md#p.ext_formulas).
+    - If [Shift mode](params-description.md#p.shift_mode) was set to `C++ formula`, `Stop formulas` switches it to `Standard` mode.
+    - For each portfolio instrument, [Count type](params-description.md#s.count_type) and [Ratio type](params-description.md#s.ratio_type) fields are set to constant value type.
+      
+To use formulas again later, they must be enabled manually.
 
 - **Reset statuses** <Anchor :ids="['portfolio_actions.reset_statuses']" /> - resets internal statuses of all orders for all instruments in the selected portfolios. There are situations when, for some reason, the exchange does not send an update about an order or sends it in a format not compliant with exchange documentation and thus unsupported by the robot. For example, the robot submits an order, the order is placed, the robot sends a cancellation request, the exchange cancels the order, but does not send confirmation of cancellation. In this case, the actual order status on the exchange and the internal status in the robot diverge, and because the robot is waiting for a response, the order remains stuck in the "canceling" status. 
 This button should be used ONLY IN EXTREME CASES, when trading is disabled for the portfolio and you are certain there are no active orders for that portfolio. Otherwise, the robot may lose track of active orders, leading to incorrect financial instrument positions in the robot.
 
-    **Important!**  Note that, unlike double-clicking the [Sell status](params-description.md#p.sell_status) and [Buy status](params-description.md#p.buy_status) fields in the `Portfolios table` widget, using this button resets internal statuses for all orders on both legs of the portfolio.
+  **Important!**  Note that, unlike double-clicking the [Sell status](params-description.md#p.sell_status) and [Buy status](params-description.md#p.buy_status) fields in the `Portfolios table` widget, using this button resets internal statuses for all orders on both legs of the portfolio.
     
-    **Important!**  After using this button, ensure there are no active orders on the exchange and that exchange positions match those in the robot.
+  **Important!**  After using this button, ensure there are no active orders on the exchange and that exchange positions match those in the robot.
 
 - **To market** <Anchor :ids="['portfolio_actions.to_market']" /> - forcibly aligns positions of the selected portfolios. The behavior is identical to using the [To market](params-description.md#p.to_market) clicker on the selected portfolios.
 
@@ -107,7 +113,7 @@ This button should be used ONLY IN EXTREME CASES, when trading is disabled for t
 
 - **Group TradingDays** <Anchor :ids="['portfolio_actions.trading_days']" /> - allows setting trading days for selected portfolios. Behavior is similar to setting trading days in each portfolio’s settings on the [Timetable](params-description.md#p.trading_days) tab, with the difference that only the entered changes are applied. For example, if two portfolios have different trading day lists—one with Monday, Tuesday, Friday, and another with Monday, Tuesday, Friday, Saturday, Sunday—you can add Thursday to both lists via this widget, but the lists will not become identical.
     
-    **Important!**  This widget modifies only the list of trading days; the time intervals defining trading hours and the [Timetable](params-description.md#p.use_tt) checkbox itself remain unchanged.
+  **Important!**  This widget modifies only the list of trading days; the time intervals defining trading hours and the [Timetable](params-description.md#p.use_tt) checkbox itself remain unchanged.
 
 - **Group Timetable** <Anchor :ids="['portfolio_actions.timetable']" /> - allows setting trading intervals for selected portfolios or copying trading intervals from an existing timetable of another portfolio. The behavior is similar to setting trading intervals in each portfolio’s settings on the [Timetable](params-description.md#p.use_tt) tab, with the added ability to copy intervals from another portfolio.
 
@@ -115,15 +121,17 @@ This button should be used ONLY IN EXTREME CASES, when trading is disabled for t
 
 - **Remove** <Anchor :ids="['portfolio_actions.remove_portfolio']" /> - deletes the selected portfolios.
 
+**Important!** When deleting portfolio from the robot, associated log entries and trades are also deleted. Accordingly, they will also stop displaying in widgets.
+
 - **Clone portfolio** <Anchor :ids="['portfolio_actions.clone_portfolio']" /> - creates a clone of the selected portfolio. The button clones the selected portfolio in the robot that contains the original portfolio being cloned. To transfer portfolios between different robots, we recommend you use [Export portfolio \ Import portfolio](portfolio_actions.disable_portfolio).
 
-    **Important!**  When cloning a portfolio, values that exist only as variables within formula code—including indicators and their states—are not copied.
+**Important!**  When cloning a portfolio, values that exist only as variables within formula code—including indicators and their states—are not copied.
     
 - **Disable portfolio \ Enable portfolio** <Anchor :ids="['portfolio_actions.disable_portfolio', 'portfolio_actions.enable_portfolio']" />  - excludes selected portfolios from calculations or returns them to normal operation by clearing or setting the [Disabled](params-description.md#p.disabled) flag.  Do not confuse this with enabling/disabling trading for a portfolio. Using `Disable` allows excluding an unused portfolio from calculations. Market data and order books for all its instruments will stop updating (unless those instruments are used in other portfolios). Editing portfolio parameters is not possible while in `Disabled` status. Be careful! Before disabling a portfolio, ensure trading is stopped, no orders are active or being submitted, and that the portfolio’s fields and instruments are not used in formulas of other portfolios. Also note that re-enabling a portfolio may trigger the reopening of the trading order book.
 
 - **Export portfolio \ Import portfolio** <Anchor :ids="['portfolio_actions.export_portfolio', 'portfolio_actions.import_portfolio']" />  - exports selected portfolios from the robot to your computer as `.ini` files, or imports portfolios into the robot.
 
-  **Important!** The portfolio settings file, in addition to user-defined parameters, also contains exchange information about trading instruments. Therefore, when editing this file manually (via a text editor), any information not related to the user-defined parameters must remain unchanged.
+**Important!** The portfolio settings file, in addition to user-defined parameters, also contains exchange information about trading instruments. Therefore, when editing this file manually (via a text editor), any information not related to the user-defined parameters must remain unchanged.
 
 ## Charts
 
@@ -150,7 +158,7 @@ Customized chart layouts are preserved as long as the chart widget remains open,
 Note that chart data represents periodic snapshots of real-time parameter values used by the robot. Data is updated approximately 3 times per second; therefore, if parameter values change multiple times within 0.3 seconds, only the most recent value will be displayed on the chart.
 
 
-## Two-Factor Authentication
+## Two-Factor Authentication <Anchor :ids="['two-factor-authentication']" />
 
 To enhance user account security on the platform, two-factor authentication (2FA) is implemented. By default, 2FA is disabled.
 
