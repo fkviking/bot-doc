@@ -929,6 +929,35 @@ Parameter used in calculating the [Buy](params-description.md#p.buy) price, defi
 
 Parameter used in calculating the [Sell](params-description.md#p.sell) price, defined as code in [C++](c-api.md#cpp) programming language. You write only the function body and must return a value of type `double`.
 
+### FUT move limits <Anchor :ids="['s.move_limits']" />
+
+Flag, if set, triggers automatic limit moving at each day change. Moving occurs when two conditions are met:
+
+1. current day differs from day when previous moving was performed, day is determined by server time (server time can be viewed in [Robots table](interface.md#robots_table) widget), i.e., automatic limit moving will not trigger multiple times within one calendar day
+2. both financial instruments (marked with `FUT move limits` and marked with [SPOT move limits](params-description.md#s.move_limits1)) are tradable, meaning corresponding status on exchange.
+
+Formulas for limit moving:
+
+$$Lim\_Sell_1=Lim\_Sell_0- \frac{\left(Lim\_Sell_0+Lim\_Buy_0 \right) \times days\_to\_expiry\_{SPOT}}
+                                {2\times days\_to\_expiry},$$
+ 
+$$Lim\_Buy_1=Lim\_Buy_0- \frac{\left(Lim\_Sell_0+Lim\_Buy_0 \right)\times days\_to\_expiry\_{SPOT}}
+	                      {2\times days\_to\_expiry},$$
+
+where days_to_expiry - integer number of days to expiration of this financial instrument;  
+days_to_expirySPOT - integer number of days to expiration of financial instrument marked with [SPOT move limits](params-description.md#s.move_limits1) flag, or 1 if such financial instrument is not specified;  
+subscript 0 means current value of parameter;  
+subscript 1 means new value of parameter.
+
+Note that with `FUT move limits` flag set, auto-shift at each day change will trigger even when [re_sell](params-description.md#p.re_sell), [re_buy](params-description.md#p.re_buy) are disabled.
+
+**Non-obvious point!**  
+If conditions described above start to be met not simultaneously, then moving will be performed immediately after last condition is met. I.e., for example, first day changed, then trading session opened for one instrument, condition of open session for second financial instrument remains unmet, as soon as "tradable" status arrives for it, and if status of first financial instrument remains "tradable", limit moving will be performed immediately.
+
+### SPOT move limits <Anchor :ids="['s.move_limits1']" />
+
+Flag, if set, then this financial instrument is used in formulas for [FUT move limits](params-description.md#s.move_limits).
+
 ### Depth OB <Anchor :ids="['s.depth_ob']" />
 
 Maximum depth level of the order book up to which prices and volumes are calculated (measured in number of price steps, counting from bid/ask). Available only for non-[Is first](params-description.md#s.is_first) instruments, and used only in [Type price](params-description.md#p.price_type) = `Orderbook` and [Type price](params-description.md#p.price_type) = `Orderbook + filter` modes.  
