@@ -97,6 +97,8 @@ Up to 16 simultaneous connections are allowed per API key.
 
 Response examples in this API documentation are for illustration only. Required fields will always match the documentation, but optional fields in examples may differ from those in actual responses.
 
+In addition to fields described in documentation, API may contain service fields, which values must not be used by the client, as such fields and their contents may be changed without any prior notice.
+
 ## Authorization <Anchor :ids="['api.authorization']" />
 
 Up to 16 simultaneous connections are allowed per API key.
