@@ -342,7 +342,7 @@ Main table of widget contains following columns:
 - **Company** — name of company to which robot belongs and in which roles are assigned to user, more details in [brief role model](introduction.md#roles).
 - **Email** — email address of user to whom roles are assigned in company. To be able to add user to company, user must log in to platform at least once with this email.
 - **Roles** — roles of user in company. [Head of traders](introduction.md#head_of_traders_role) and [Head view only](introduction.md#head_view_only_role) already see all robots and portfolios, so choosing robots and portfolios is necessary only if user has `trader` role.
-- **Robots** — number of one or several robots to which access is granted.
+- **Robots** — robot ID or several robot IDs to which access is granted.
 - **Portfolios** — one or several portfolios to which access is granted.
 - **Edit user** — entry to menu for editing roles and access of user, detailed description of [Edit user](interface.md#widget_users_edit_user) below.
 - **Delete user** — button for deleting user from company. After deletion, user loses access to robots and portfolios in selected company, but robots and portfolios themselves are not deleted. It is assumed that [Head of traders](introduction.md#head_of_traders_role) timely deletes all users who no longer need access.
@@ -357,7 +357,7 @@ Main table of widget contains following columns:
 
 **Important!** It is assumed that [Head of traders](introduction.md#head_of_traders_role) monitors data access and timely removes from users those who, for example, left company, no longer need access, and in other similar cases. 
 
-- **Robots** — here you can set flags for numbers of robots to which access is granted.
+- **Robots** — here you can set flags for robot IDs to which access is granted.
 - **Portfolios** — here you can set flags for portfolios to which access is granted.
 
 ## Other User Interface Elements
