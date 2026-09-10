@@ -229,7 +229,7 @@ In robot, to obtain market data for futures market of the Moscow Exchange, only 
 - <details>
     <summary><i>Is it possible to participate in testing conducted by Moscow Exchange on production environment on non-trading day? <Anchor :ids="['faq.moex_testing']" /></i></summary>
     
-    Participation of our robots in such testing is not provided. Connections to markets of Moscow Exchange are automatically disabled on weekends to avoid test data entering production systems, as recommended by exchange itself.
+    Participation of our robots in such testing is not provided. Connections to markets of Moscow Exchange are automatically disabled on non-trading days to avoid test data entering production systems, as recommended by exchange itself.
     
     Before updating trading system on production environment, Moscow Exchange first deploys new version of trading system on test environment T1, where we test robot operation with new version of trading system. Thus, by the time of production environment update, robot compatibility with new version of trading system is already tested, and trader participation in testing on production environment is not required.
     
