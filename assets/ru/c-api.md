@@ -296,6 +296,7 @@ if (t.tick())
 | int portfolio_type()                                        | получить "Type" портфеля                                                                                 |
 | int shift_mode()                                            | получить "Shift mode" портфеля                                                                                 |
 | int v_side()                                                | получить "v_side" портфеля                                                                                 |
+| int calc_method()                                            | получить "Calculation method" портфеля                                                                                 |
 | long long v_in_l()                                          | получить "v_in_left" портфеля                                                                            |
 | long long v_in_r()                                          | получить "v_in_right" портфеля                                                                           |
 | long long v_out_l()                                         | получить "v_out_left" портфеля                                                                           |
