@@ -9,7 +9,9 @@ summary: 'Что менялось в роботе и документации о
 
 ## 2026-09-14
 
-- В [WebSocket API](api.md) добавлен лимит в 8 одинаковых подписок на одну вебсокет сессию
+- В [WebSocket API](api.md) добавлен лимит в 8 одинаковых подписок на одну вебсокет сессию;
+- Добавлен параметр портфеля [Calculation method](params-description.md#p.calc_method), отвечающий за новый метод расчета раздвижки, в связи с этим обновлены формулы расчета
+[Sell/Buy](params-description.md#p.sell), [Price_s/Price_b](params-description.md#p.price_s), [Equal prices](params-description.md#p.equal_prices).
 
 ## 2026-08-21
 

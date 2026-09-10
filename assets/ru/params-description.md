@@ -72,6 +72,14 @@ v\_out\_left, &\text{if } \enspace close\enspace pose
 
 Глубина стакана определяется значением параметра инструмента портфеля  [Depth OB](params-description.md#s.depth_ob).
 
+### Calculation method <Anchor :ids="['p.calc_method']" />
+
+Метод расчета раздвижки:
+
+- `Absolute spread` - разность цен
+
+- `Relative spread (%)` - отношение цен
+
 ### Quote <Anchor :ids="['p.quote']" />
 
 Флаг, отвечающий за котирование [Is first](params-description.md#s.is_first) инструмента. Если флаг установлен, то заявка по [Is first](params-description.md#s.is_first) инструменту всегда держится в стакане, если флаг снят, то заявки по [Is first](params-description.md#s.is_first) инструменту выставляются при выполнении следующих условий: заявка на продажу выставляется когда [Sell](params-description.md#p.sell) ≥ [Lim_sell](params-description.md#p.lim_s)
@@ -125,35 +133,66 @@ $Price\_b_1=\min\left(Price\_b_0,bid+step\right),$
 
 ### Equal prices <Anchor :ids="['p.equal_prices']" />
 
-Если галка не стоит, то цена второй ноги определяется исходя из цен, которые были на момент сигнала на выставление заявки по `is first` инструменту. Если галка стоит, то заявка по второй ноге будет выставлена по такой цене, чтобы [Sell](params-description.md#p.sell) = [Lim_sell](params-description.md#p.lim_s) и [Buy](params-description.md#p.buy) = [Lim_buy](params-description.md#p.lim_b) (работает только для портфелей с двумя финансовыми инструментами).  
+Если галка не стоит, то цена не [Is first](params-description.md#s.is_first) инструмента (второй ноги) определяется исходя из цен, которые были на момент сигнала на выставление заявки по `is first` инструменту. Если галка стоит, то заявка по второй ноге будет выставлена по такой цене,
+чтобы [Sell](params-description.md#p.sell) = [Lim_sell](params-description.md#p.lim_s) и [Buy](params-description.md#p.buy) = [Lim_buy](params-description.md#p.lim_b) (работает только для портфелей с двумя финансовыми инструментами).  
 Таким образом цены в заявках будут строго соответствовать [Lim_sell](params-description.md#p.lim_s), даже если в моменте были лучшие цены.
 Включение параметра способствует меньшему числу проскальзываний по второй ноге, но и уменьшает количество положительных проскальзываний (когда купили по цене лучшей, чем хотели).
 
-_Пример_: в первой ноге стоит цена 100, в второй цена 95. Мы хотим купить в первой ноге по 100, если в второй тоже будет цена сто, т.е. раздвижка будет ноль. В моменте во второй ноге резко рынок дергается вверх и достигает 110.
-Если галка стоит, то мы купим первую ногу по сто, и попытаемся продать вторую по 100 (т.к. нас устраивала раздвижка ноль).
-Если галка НЕ стоит, то мы кинем на цену которые дали сигнал к сделке , т.е. первую также купим по сто, вторую попытаемся продать по 110.
+Формулы для цены второй ноги:
 
-Формула для цены второй ноги для покупки:
+* [Calculation method](params-description.md#p.calc_method) равен `Absolute spread`
 
-$$Price=\pm\left(Lim\_sell-Price\_s
-\begin{cases}+,& Ratio\_sign_1=+\\
-        \times,& Ratio\_sign_1=\times\end{cases}
-ratio_1\right)
-\begin{cases}-,& Ratio\_sign_2=+\\
-        /,& Ratio\_sign_2=\times\end{cases}
-ratio_2$$
+    при продаже портфеля:
 
-для продажи:
+    $$Price=\pm\left(Lim\_sell-\left(Price\_s
+    \begin{cases}+,& Ratio\_sign_1=+\\
+            \times,& Ratio\_sign_1=\times\end{cases}
+    ratio_1\right)\right)
+    \begin{cases}-,& Ratio\_sign_2=+\\
+            /,& Ratio\_sign_2=\times\end{cases}
+    ratio_2$$
 
-$$Price=\pm\left(Lim\_buy-Price\_b
-\begin{cases}+,& Ratio\_sign_1=+\\
-        \times,& Ratio\_sign_1=\times\end{cases}
-ratio_1\right)
-\begin{cases}-,& Ratio\_sign_2=+\\
-        /,& Ratio\_sign_2=\times\end{cases}
-ratio_2$$
+    при покупке портфеля:
 
-Знак ± - зависит от того, какое выставлено значение параметра [On_buy](params-description.md#s.on_buy) на 2-й ноге (если  Buy, то "+", если  Sell, то "-").
+    $$Price=\pm\left(Lim\_buy-\left(Price\_b
+    \begin{cases}+,& Ratio\_sign_1=+\\
+            \times,& Ratio\_sign_1=\times\end{cases}
+    ratio_1\right)\right)
+    \begin{cases}-,& Ratio\_sign_2=+\\
+            /,& Ratio\_sign_2=\times\end{cases}
+    ratio_2$$
+
+    Знак `±` - зависит от того, какое выставлено значение параметра [On_buy](params-description.md#s.on_buy) на второй ноге (если  `Buy`, то `+`, если  `Sell`, то `-`).
+
+* [Calculation method](params-description.md#p.calc_method) равен `Relative spread (%)`
+
+    при продаже портфеля:
+    
+    - если [On_buy](params-description.md#s.on_buy) на второй ноге равен `Sell`
+    
+        $$Price=\frac{Price\_s\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1}{Lim\_sell \times 0.01 + 1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+    
+    - если [On_buy](params-description.md#s.on_buy) на второй ноге равен `Buy`
+    
+        $$Price=\frac{Lim\_sell \times 0.01 + 1}{Price\_s\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+    
+    при покупке портфеля:
+    
+    - если [On_buy](params-description.md#s.on_buy) на второй ноге равен `Sell`
+    
+        $$Price=\frac{Price\_b\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1}{Lim\_buy \times 0.01 + 1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+    
+    - если [On_buy](params-description.md#s.on_buy) на второй ноге равен `Buy`
+    
+        $$Price=\frac{Lim\_buy \times 0.01 + 1}{Price\_b\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+
+**Важно!** Данный параметр имеет смысл использовать только в том случае, когда [Price_s](params-description.md#p.price_s) и [Price_b](params-description.md#p.price_b) считаются НЕ только от [Lim_sell](params-description.md#p.lim_s), [Lim_buy](params-description.md#p.lim_b) и цены НЕ
+[Is first](params-description.md#s.is_first) инструмента, а как-то модифицируются потом, например, через [Simply first](params-description.md#p.simply_first) или через какие-то хитрые расчеты в формулах. В противном случае цена заявки по не [Is first](params-description.md#s.is_first) инструменту
+никак не изменится, т.к. мы просто выразим данную цену через обратную формулу.
+
+_Пример_: [Price_b](params-description.md#p.price_b) получили равным `100`, при этом [Lim_buy](params-description.md#p.lim_b) равен `0`, а цена продажи не [Is first](params-description.md#s.is_first) инструмента `100`. Но `100` по [Is first](params-description.md#s.is_first) инструменту
+попадает в противоположную сторону стакана и будет тут же исполнена, включаем [Simply first](params-description.md#p.simply_first), он отодвигает [Price_b](params-description.md#p.price_b) на меньшую цену, пусть, `90`, т.е. делает дешевле и оставляет в покупках в стакане. Теперь если пересчитать
+цену заявки по не [Is first](params-description.md#s.is_first) инструменту, получим уже `90`, т.е. мы готовы продать дешевле и тем самым увеличить шанс заявки на исполнение, но компенсируем мы это тем, что [Is first](params-description.md#s.is_first) инструмент мы хотим купить дешевле.
 
 ### Volumes <Anchor :ids="['p._volumes']" />
 
@@ -579,35 +618,57 @@ Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) и
 
 `Sell` – расчетная цена на продажу. Нередактируемый параметр.  
 `Buy` – расчетная цена на покупку. Нередактируемый параметр.  
-Упрощенная формула для двух финансовых инструментов:
 
-${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$
+* [Calculation method](params-description.md#p.calc_method) равен `Absolute spread`
 
-${Buy=offer_1Ratio\_sign_1ratio_1-bid_2Ratio\_sign_2ratio_2}$
+    Упрощенные формулы для двух финансовых инструментов:
 
-${Sell=bid_1Ratio\_sign_1ratio_1-offer_2Ratio\_sign_2ratio_2}$
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+    
+    $${Sell=(bid_1Ratio\_sign_1ratio_1)-(offer_2Ratio\_sign_2ratio_2)}$$
 
-${Ratio\_sign =+\enspace or\enspace \times}$
+    $${Buy=(offer_1Ratio\_sign_1ratio_1)-(bid_2Ratio\_sign_2ratio_2)}$$
 
-Формулы расчета `Sell` и `Buy` для любого количества ног:
+    $${Ratio\_sign =+\enspace or\enspace \times}$$
 
-$$Buy=\sum_{i} 
-        \begin{cases}-bid_i,& On\enspace buy_i=Sell\\
-                     offer_i,& On\enspace buy_i=Buy\end{cases} 
-        \begin{cases}+,& Ratio\_sign_i=+\\
-                \times,& Ratio\_sign_i=\times\end{cases} 
+    Формулы расчета `Sell` и `Buy` для любого количества финансовых инструментов:
+
+    $$Sell=\sum_{i} 
+            \begin{cases}bid_i,& On\enspace buy_i=Buy\\
+                      -offer_i,& On\enspace buy_i=Sell\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
         ratio_i$$
+    
+    $$Buy=\sum_{i} 
+            \begin{cases}-bid_i,& On\enspace buy_i=Sell\\
+                         offer_i,& On\enspace buy_i=Buy\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
+            ratio_i$$
 
-$$Sell=\sum_{i} 
-        \begin{cases}bid_i,& On\enspace buy_i=Buy\\
-                  -offer_i,& On\enspace buy_i=Sell\end{cases} 
-        \begin{cases}+,& Ratio\_sign_i=+\\
-                \times,& Ratio\_sign_i=\times\end{cases} 
-	ratio_i$$
+    Видео, наглядно демонстрирующее работу параметров `Sell/Buy`:
 
-Наглядно продемонстрирована работа данных параметров в этом видео:
+    <iframe width="735" height="415" src="https://www.youtube.com/embed/p69X-3l-VLc" title="Описание параметра Sell Buy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-<iframe width="735" height="415" src="https://www.youtube.com/embed/p69X-3l-VLc" title="Описание параметра Sell Buy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+* [Calculation method](params-description.md#p.calc_method) равен `Relative spread (%)`
+
+    Упрощенные формулы для двух финансовых инструментов:
+
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+    
+    $${Sell=\left(\frac{bid_1 Ratio\_sign_1 ratio_1}{offer_2 Ratio\_sign_2 ratio_2} - 1 \right) \times 100}$$
+
+    $${Buy=\left(\frac{offer_1 Ratio\_sign_1 ratio_1}{bid_2 Ratio\_sign_2 ratio_2} - 1 \right) \times 100}$$
+
+    $${Ratio\_sign =+\enspace or\enspace \times}$$
+
+    Формулы расчета `Sell` и `Buy` для любого количества финансовых инструментов:
+    
+    $$Sell=\left(\frac{\prod\limits_{i, On\enspace buy_i=Buy} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i, On\enspace buy_i=Sell} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} - 1 \right) \times 100$$
+    
+    $$Buy=\left(\frac{\prod\limits_{i, On\enspace buy_i=Buy} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i, On\enspace buy_i=Sell} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} - 1 \right) \times 100$$
+
 
 ### Price_s/Price_b <Anchor :ids="['p.price_s', 'p.price_b']" />
 
@@ -615,55 +676,91 @@ $$Sell=\sum_{i}
 `Price_b` – цена выставления заявки на покупку по [Is first](params-description.md#s.is_first) финансовому инструменту, вычисляется как обратная функция для [Buy](params-description.md#p.buy), где цена [Buy](params-description.md#p.buy) заменяется на [Lim_Buy](params-description.md#p.lim_b). В общем случае это та цена, по которой робот "хочет" купить и продать по [Is first](params-description.md#s.is_first) инструменту.
 Нередактируемый параметр.
 
-Формулы расчета `Price_s` и `Price_b` для двух финансовых инструментов:
+* [Calculation method](params-description.md#p.calc_method) равен `Absolute spread`
 
-$$Price\_s=\left(Lim\_sell+offer_2
-\begin{cases}+,& Ratio\_sign_2=+\\
-        \times,& Ratio\_sign_2=\times\end{cases}
-ratio_2\right)
-\begin{cases}-,& Ratio\_sign_1=+\\
-        /,& Ratio\_sign_1=\times\end{cases}
-ratio_1 - k_1$$
+    Упрощенные формулы для двух финансовых инструментов:
+    
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
 
-$$Price\_b=\left(Lim\_buy+bid_2
-\begin{cases}+,& Ratio\_sign_2=+\\
-        \times,& Ratio\_sign_2=\times\end{cases}
-ratio_2\right)
-\begin{cases}-,& Ratio\_sign_1=+\\
-        /,& Ratio\_sign_1=\times\end{cases}
-ratio_1 + k_1$$
+    $$Price\_s=\left(Lim\_sell+offer_2
+    \begin{cases}+,& Ratio\_sign_2=+\\
+            \times,& Ratio\_sign_2=\times\end{cases}
+    ratio_2\right)
+    \begin{cases}-,& Ratio\_sign_1=+\\
+            /,& Ratio\_sign_1=\times\end{cases}
+    ratio_1 - k_1$$
 
-Формулы расчета `Price_s` и `Price_b` для любого количества ног:
-   
-$$Price\_s=\left(Lim\_sell-\sum_{i \neq isfirst}
-\begin{cases}bid_i,& On\enspace buy_i=Buy\\
-                  -offer_i,& On\enspace buy_i=Sell\end{cases} 
-        \begin{cases}+,& Ratio\_sign_i=+\\
-                \times,& Ratio\_sign_i=\times\end{cases} 
-	ratio_i
-\right) 
-               \begin{cases}
-	          -,& Ratio\_sign=+\\
-                  /,& Ratio\_sign=\times 
-	       \end{cases} 
-                 ratio\_s_{isfirst} - k_{isfirst}$$
+    $$Price\_b=\left(Lim\_buy+bid_2
+    \begin{cases}+,& Ratio\_sign_2=+\\
+            \times,& Ratio\_sign_2=\times\end{cases}
+    ratio_2\right)
+    \begin{cases}-,& Ratio\_sign_1=+\\
+            /,& Ratio\_sign_1=\times\end{cases}
+    ratio_1 + k_1$$
 
-$$Price\_b=\left(Lim\_buy-\sum_{i \neq isfirst}
-\begin{cases}-bid_i,& On\enspace buy_i=Sell\\
-                     offer_i,& On\enspace buy_i=Buy\end{cases} 
-        \begin{cases}+,& Ratio\_sign_i=+\\
-                \times,& Ratio\_sign_i=\times\end{cases} 
+    Формулы расчета `Price_s` и `Price_b` для любого количества финансовых инструментов:
+       
+    $$Price\_s=\left(Lim\_sell-\sum_{i \neq isfirst}
+    \begin{cases}bid_i,& On\enspace buy_i=Buy\\
+                      -offer_i,& On\enspace buy_i=Sell\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
         ratio_i
-\right) 
-             \begin{cases}
-	       -,& Ratio\_sign=+\\
-               /,& Ratio\_sign=\times 
-	     \end{cases} 
-                ratio\_b_{isfirst} + k_{isfirst}$$
+    \right) 
+                   \begin{cases}
+                  -,& Ratio\_sign_{isfirst}=+\\
+                      /,& Ratio\_sign_{isfirst}=\times 
+               \end{cases} 
+                     ratio\_s_{isfirst} - k_{isfirst}$$
 
-Видео, наглядно объясняющее работу параметров `Price_s/Price_b`:
+    $$Price\_b=\left(Lim\_buy-\sum_{i \neq isfirst}
+    \begin{cases}-bid_i,& On\enspace buy_i=Sell\\
+                         offer_i,& On\enspace buy_i=Buy\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
+            ratio_i
+    \right) 
+                 \begin{cases}
+               -,& Ratio\_sign_{isfirst}=+\\
+                   /,& Ratio\_sign_{isfirst}=\times 
+             \end{cases} 
+                    ratio\_b_{isfirst} + k_{isfirst}$$
 
-<iframe width="735" height="415" src="https://www.youtube.com/embed/PKGbweKJbNE" title="Описание параметра Prices" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    Видео, наглядно демонстрирующее работу параметров `Price_s/Price_b`:
+
+    <iframe width="735" height="415" src="https://www.youtube.com/embed/PKGbweKJbNE" title="Описание параметра Prices" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+* [Calculation method](params-description.md#p.calc_method) равен `Relative spread (%)`
+
+    Упрощенные формулы для двух финансовых инструментов:
+
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+    
+    $$Price\_s = \left( \frac{Lim\_sell}{100} +1 \right) \times \left( offer_2 \begin{cases}+,& Ratio\_sign_2=+\\ \times,& Ratio\_sign_2=\times\end{cases} ratio_2 \right) \begin{cases}
+                  -,& Ratio\_sign_{1}=+\\
+                      /,& Ratio\_sign_{1}=\times 
+               \end{cases} 
+                     ratio_{1} - k_{1}$$
+    
+    $$Price\_b = \left( \frac{Lim\_buy}{100} +1 \right) \times \left( bid_2 \begin{cases}+,& Ratio\_sign_2=+\\ \times,& Ratio\_sign_2=\times\end{cases} ratio_2 \right) \begin{cases}
+                  -,& Ratio\_sign_{1}=+\\
+                      /,& Ratio\_sign_{1}=\times 
+               \end{cases} 
+                     ratio_{1} - k_{1}$$
+    
+    Формулы расчета `Price_s` и `Price_b` для любого количества финансовых инструментов:
+    
+    $$Price\_s = \left( \frac{Lim\_sell}{100} +1 \right) \times \frac{\prod\limits_{i \neq isfirst, On\enspace buy_i=Sell} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i \neq isfirst, On\enspace buy_i=Buy} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} \begin{cases}
+                  -,& Ratio\_sign_{isfirst}=+\\
+                      /,& Ratio\_sign_{isfirst}=\times 
+               \end{cases} 
+                     ratio\_s_{isfirst} - k_{isfirst}$$
+    
+    $$Price\_b = \left( \frac{Lim\_buy}{100} +1 \right) \times \frac{\prod\limits_{i \neq isfirst, On\enspace buy_i=Sell} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i \neq isfirst, On\enspace buy_i=Buy} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} \begin{cases}
+               -,& Ratio\_sign_{isfirst}=+\\
+                   /,& Ratio\_sign_{isfirst}=\times 
+             \end{cases} 
+                    ratio\_b_{isfirst} + k_{isfirst}$$
 
 ### Sell/Buy status <Anchor :ids="['p.sell_status', 'p.buy_status']" />
 
