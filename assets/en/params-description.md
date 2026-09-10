@@ -308,6 +308,137 @@ when `Threshold = 0` , this parameter has no effect on the algorithm — effecti
 
 A group of parameters responsible for creating the arbitrage channel.
 
+#### Shift mode <Anchor :ids="['p.shift_mode']" />
+
+Price moving mode for [Lim_sell](params-description.md#p.lim_s) and [Lim_buy](params-description.md#p.lim_b).
+
+- `Standard`
+
+   Signal prices [Lim_Sell](params-description.md#p.lim_s) and [Lim_Buy](params-description.md#p.lim_b) are moved only upon trade execution on [Is first](params-description.md#s.is_first) financial instrument of portfolio, except when using [Always timer](params-description.md#p.always_limits_timer).
+
+    Rules for moving signal prices can be divided into two cases: a sale occurred on [Is first](params-description.md#s.is_first) financial instrument and a purchase occurred on [Is first](params-description.md#s.is_first) financial instrument. Within each of these cases, algorithm is further split into two subcases: portfolio position before trade execution was zero or non-zero.
+
+    Let us introduce following notation:
+    * `diffpos` - signed lot quantity in trade on [Is first](params-description.md#s.is_first) financial instrument, `V` is `v_in ×`[Count](params-description.md#s.count) or `v_out ×`[Count](params-description.md#s.count) depending on whether we open or close position with this order,
+    `v_in` equals [v_in_left](params-description.md#p.v_in_l) if [v_side](params-description.md#p.v_side) equals `v_left` and equals [v_in_right](params-description.md#p.v_in_r) if [v_side](params-description.md#p.v_side) equals `v_right`,
+    `v_out` equals [v_out_left](params-description.md#p.v_out_l) if [v_side](params-description.md#p.v_side) equals `v_left` and equals [v_out_right](params-description.md#p.v_out_r) if [v_side](params-description.md#p.v_side) equals `v_right`,
+    [Count](params-description.md#s.count) is `Count` of [Is first](params-description.md#s.is_first) financial instrument
+    * [Curpos](params-description.md#s.pos) - current position on [Is first](params-description.md#s.is_first) financial instrument of portfolio (i.e., just executed trade is NOT yet accounted for), subscript 0 is previous value of parameter, 1 is new value of parameter. With this notation, algorithm for moving signal prices takes following form:
+
+    Algorithm for moving signal prices itself:
+    - if a sale occurred (in quantity `diffpos`, respectively):
+        
+        - if current position before trade execution was $curpos\neq 0$, then:
+
+            $k3=\left(|{Lim\_Sell_0- Lim\_Buy_0}|-TP-K\right)\times\frac{V}{curpos},$
+
+            $k4=
+      \begin{cases}k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
+                  -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0 
+      \end{cases},$ 
+
+            $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
+        \begin{cases} 
+           k4, &\text{if}\enspace curpos>0\\ 
+           K1, &\text{if}\enspace curpos<0 
+        \end{cases},$
+
+            $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos>0\\ 
+          K, &\text{if}\enspace curpos<0 
+       \end{cases},$
+
+        - if current position before trade execution was $curpos=0$, then:
+
+            $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times K,$
+
+            $Lim\_Buy_1=Lim\_Sell_0-TP,$
+
+    - if a purchase occurred (in quantity `diffpos`, respectively):
+
+        - if current position before trade execution was $curpos\neq 0$, then:
+
+            $k3=\left(|Lim\_Sell_0-Lim\_Buy_0|-TP-K\right)\times\frac{V}{curpos},$
+
+            $k4=
+      \begin{cases} 
+        -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
+         k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0
+      \end{cases},$
+        
+            $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         k4, &\text{if}\enspace curpos<0\\
+         K1, &\text{if}\enspace curpos>0 
+       \end{cases},$
+        
+            $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos<0\\
+          K, &\text{if}\enspace curpos>0 
+       \end{cases},$
+
+        - if current position before trade execution was $curpos=0$, then:
+        
+            $Lim\_Sell_1=Lim\_Buy_0+TP,$
+        
+            $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times K.$ 
+
+- `Standard + X`
+
+   Signal prices [Lim_Sell](params-description.md#p.lim_s) and [Lim_Buy](params-description.md#p.lim_b) are moved only upon trade execution on [Is first](params-description.md#s.is_first) financial instrument of portfolio, except when using [Always timer](params-description.md#p.always_limits_timer).
+
+    Rules for moving signal prices can be divided into two cases: a sale occurred on [Is first](params-description.md#s.is_first) financial instrument and a purchase occurred on [Is first](params-description.md#s.is_first) financial instrument.
+
+    Let us introduce following notation:
+    * `diffpos` - signed lot quantity in trade on [Is first](params-description.md#s.is_first) financial instrument, `V` is `v_in ×`[Count](params-description.md#s.count) or `v_out ×`[Count](params-description.md#s.count) depending on whether we open or close position with this order,
+    `v_in` equals [v_in_left](params-description.md#p.v_in_l) if [v_side](params-description.md#p.v_side) equals `v_left` and equals [v_in_right](params-description.md#p.v_in_r) if [v_side](params-description.md#p.v_side) equals `v_right`,
+    `v_out` equals [v_out_left](params-description.md#p.v_out_l) if [v_side](params-description.md#p.v_side) equals `v_left` and equals [v_out_right](params-description.md#p.v_out_r) if [v_side](params-description.md#p.v_side) equals `v_right`,
+    [Count](params-description.md#s.count) is `Count` of [Is first](params-description.md#s.is_first) financial instrument
+    * [Curpos](params-description.md#s.pos) - current position on [Is first](params-description.md#s.is_first) financial instrument of portfolio (i.e., just executed trade is NOT yet accounted for), subscript 0 is previous value of parameter, 1 is new value of parameter. With this notation, algorithm for moving signal prices takes following form:
+
+    Algorithm for moving signal prices itself:
+    - if a sale occurred (in quantity `diffpos`, respectively):
+        
+        $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
+        \begin{cases} 
+           X, &\text{if}\enspace curpos>0\\ 
+           K1, &\text{if}\enspace curpos<0 
+        \end{cases},$
+
+        $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos>0\\ 
+          K, &\text{if}\enspace curpos<0 
+       \end{cases},$
+
+    - if a purchase occurred (in quantity `diffpos`, respectively):
+
+        $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         X, &\text{if}\enspace curpos<0\\
+         K1, &\text{if}\enspace curpos>0 
+       \end{cases},$
+        
+        $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos<0\\
+          K, &\text{if}\enspace curpos>0 
+       \end{cases},$
+
+- `C++ formula` 
+
+    Use [Shift formula](params-description.md#p.shift_formula)
+
+#### v_side <Anchor :ids="['p.v_side']" />
+
+- `v_left` - use [v_in_left](params-description.md#p.v_in_l) and [v_out_left](params-description.md#p.v_out_l) when moving [Lim_sell](params-description.md#p.lim_s) and [Lim_buy](params-description.md#p.lim_b)
+- `v_right` - use [v_in_right](params-description.md#p.v_in_r) and [v_out_right](params-description.md#p.v_out_r) when moving [Lim_sell](params-description.md#p.lim_s) and [Lim_buy](params-description.md#p.lim_b)
+
+**Important!** In [Shift mode](params-description.md#p.shift_mode) equal to `C++ formula`, suffix `formula` will be added to parameter name, this means that parameter is not used in limit moving algorithm, but can be used in formula code.
+Suffix `formula` does not create new parameter and does not change its value - only displayed name and role in algorithm are changed.
+
 #### K <Anchor :ids="['p.k']" />
 
 Price shift coefficient that improves the order price for each subsequent entry.  
@@ -328,6 +459,24 @@ For example, if [Lim_buy](params-description.md#p.lim_b) = 100 from the previous
 The coefficient that shifts the order price to improve it for each subsequent exit.
 [Lim_sell](params-description.md#p.lim_s) (in case of selling) or [Lim_buy](params-description.md#p.lim_b)(in case of buying) is shifted by the value of `K2` when exiting a position. In other words, this defines how much the next exit order improves after a prior fill (a "fill" is defined as a trade with volume no less than [v_out_left](params-description.md#p.v_out_l)).
 From the earlier example, where [Lim_buy](params-description.md#p.lim_b) = 105, with `K2` = 3, after a fill at [Lim_buy](params-description.md#p.lim_b), its value becomes 105 - 3 = 102.
+
+#### X <Anchor :ids="['p.x']" />
+
+Coefficient for shifting opposite signal level when exiting position. Used only in [Shift mode](params-description.md#p.shift_mode) equal to `Standard + X`.
+After each trade reducing position, current exit level shifts by [K2](params-description.md#p.k2), and opposite level intended for new entry shifts by `X`.
+When closing short position by buying, [Lim_sell](params-description.md#p.lim_s) decreases by `X`, and when closing long position by selling, [Lim_buy](params-description.md#p.lim_b) increases by `X`.
+Thus, `X` determines how much potential re-entry level shifts following exit level during position unloading.
+
+**Important!** In [Shift mode](params-description.md#p.shift_mode) equal to `C++ formula`, suffix `formula` will be added to parameter name, this means that parameter is not used in limit moving algorithm, but can be used in formula code.
+Suffix `formula` does not create new parameter and does not change its value - only displayed name and role in algorithm are changed.
+
+### Shift formula <Anchor :ids="['p.shift_formula']" />
+
+Formula in [C++](c-api.md#cpp) programming language, which is called upon each trade on [Is first](params-description.md#s.is_first) financial instrument of portfolio by algorithm (i.e., similar to logic used for [Shift mode](params-description.md#p.shift_mode) equal to `Standard` and `Standard + X`). This function is called BEFORE changing position by trade quantity that initiated `Shift formula` call. If [Virt_0_pos](params-description.md#p.virtual_0_pos) flag is set, then quantity in trade reversing position will be divided into two parts, and formula will be called twice: separately with quantity closing position and separately with quantity opening new position. Used only in [Shift mode](params-description.md#p.shift_mode) equal to `C++ formula`.
+
+[Examples of `Shift formula` implementation for `Shift mode` `Standard` and `Standard + X`](c-api.md#__shift_formula__)
+
+**Important!** Value returned by this formula is NOT used by algorithm in any way, it is kept for compatibility so that all formula functions have signature of type `double FORMULA_NAME()` (i.e., function without arguments returning value of type `double`).
 
 ### Limits timer <Anchor :ids="['p.timer']" />
 
@@ -681,38 +830,39 @@ Indicates whether the financial instrument is the primary (main) instrument of t
 
 ### k <Anchor :ids="['s.k']" />
 
-Sets the amount of artificial slippage, defining by how many ticks the price may deviate to the worse side from the specified price. Applied when:
-- placing orders according to the algorithm for the first and second legs;
-- and also when placing orders using the [Sell/Buy](params-description.md#p.buy_portfolio) buttons.
+Sets the artificial slippage size, determining the maximum number of points by which the execution price can deviate from the specified price in the worst direction. It is applied when:
+- placing orders for the first and second legs according to the algorithm;
+- and also when placing orders using [Sell/Buy](params-description.md#p.buy_portfolio) clickers.
 
-The `k` parameter is applied as follows:
-1. When placing the first leg according to the algorithm, this slippage is already taken into account when calculating the [Price_s/Price_b](params-description.md#p.price_s) price.
-2. When placing the second leg according to the algorithm, this slippage is applied from the market price or from the price found in the order book (depending on the [Type price](params-description.md#p.price_type) parameter settings).
-3. When placing orders via the [Sell/Buy](params-description.md#p.buy_portfolio) buttons, this slippage is used for instruments of both legs. The slippage is applied from the market price, i.e., when buying, the placement price is `offer + k`; when selling, the placement price is `bid − k`, where `bid` and `offer` are the best bid and ask prices, respectively.
+Parameter `k` is applied as follows:
+1. When placing the first leg order via the algorithm, this deviation is already factored into [Price_s/Price_b](params-description.md#p.price_s) calculation. 
+1. When placing the second leg order via the algorithm, this is a deviation from the market price or from the price found in the order book (depending on [Type price](params-description.md#p.price_type) and [Trading price OB](params-description.md#s.ob_t_p_t) parameter settings). 
+1. When placing orders via [Sell/Buy](params-description.md#p.buy_portfolio) clickers, this deviation is used for the instruments of both legs; the deviation is applied from the market price, i.e., when buying, the order price is `offer + k`, when selling, the order price is `bid−k`, where `bid` and `offer` are the best buy and sell prices, respectively.
 
-**Important!** The value of this parameter is not taken into account when calculating the spread. That is, with a positive `k` value, the spread may end up worse than calculated even without repositioning due to stop‑loss or timer.
+**Important!** Value of this parameter is not considered when calculating slippage. This means that with a positive `k` value, the actual slippage may be worse than calculated even without re-placing orders via [stop-loss](params-description.md#s.sle) or [timer](params-description.md#s.timer).
 
-**Important!** All order placements in the bot use slippage `k` or [k_sl](params-description.md#s.k_sl), except for the [Place order](params-description.md#p.order_security) button and the `Pos leveling` mode of the [Trade connections positions](interface.md#trade_connections_positions) widget. In these two cases, no slippage from the price specified by the user is used.
+**Important!** All order placements in the robot use `k` or [k_sl](params-description.md#s.k_sl) deviation, except for [Place order](params-description.md#p.order_security) clicker and `Pos leveling` mode of [Trade connections positions](interface.md#trade_connections_positions) widget. In these two cases, no deviations from the user-specified price are used.
 
 ### k_sl <Anchor :ids="['s.k_sl']" />
 
-Similar to parameter `k`, but used only:
-1. during order repositioning due to [SLE](params-description.md#s.sle) and [TE](params-description.md#s.te);
-2. and also in situations treated as equivalent:
-    - when using the [To market](params-description.md#p.to_market) button,
-    - when using the `Close` and `To market` flags in the [Timetable](params-description.md#p.use_tt).
+An analog of `k` parameter, it also sets the artificial slippage size, defining the maximum number of points by which the price can deviate from the specified price in the worst direction, but is used only:
+1. during order re-placements via [SLE](params-description.md#s.sle) and [TE](params-description.md#s.te);
+2. as well as in equivalent situations: 
 
-Defines the amount of artificial slippage, namely an offset from the market price, i.e., for a buy order, the placement price is `offer` + `k_sl`; for a sell order, the placement price is `bid` − `k_sl`, where `bid` and `offer` are the best bid and ask prices, respectively. The displayed prices (e.g., in [Portfolios table](interface.md#portfolios_table) widget) for [Price_s/Price_b](params-description.md#p.price_s) already include the `k_sl` parameter. The `k_sl` coefficient is used for all placements except for placements via the [Place order](params-description.md#p.order_security) button. If `Type price: Orderbook` is selected for calculations on the second leg, the portfolio instrument parameters [Calc price OB](params-description.md#s.ob_c_p_t) and [Trading price OB](params-description.md#s.ob_t_p_t) are used. The `k` or `k_sl` coefficients are applied after the calculation taking these parameters into account.
+   - when using [To market](params-description.md#p.to_market) clicker,
+   - when using `Close` and `To market` flags in [Timetable](params-description.md#p.use_tt).
 
-**Important!** All order placements in the bot use slippage [k](params-description.md#s.k) or `k_sl`, except for the [Place order](params-description.md#p.order_security) button and the `Pos leveling` mode of the [Trade connections positions](interface.md#trade_connections_positions) widget. In these two cases, no slippage from the price specified by the user is used.
+When re-placing a buy order, the new order will be placed at the price `offer + k_sl`; when re-placing a sell order, the new order will be placed at the price `bid−k_sl`, where `bid` and `offer` are the best buy and sell prices, respectively.
+
+**Important!** All order placements in the robot use [k](params-description.md#s.k) or `k_sl` deviation, except for [Place order](params-description.md#p.order_security) clicker and `Pos leveling` mode of [Trade connections positions](interface.md#trade_connections_positions) widget. In these two cases, no deviations from the user-specified price are used.
 
 ### SLE <Anchor :ids="['s.sle']" />
 
-Enable/disable stop-loss re-quoting functionality. Orders re-quoted due to stop-loss will subsequently be re-quoted according to a specific [algorithm](algorithm-comments.md#sl_timer).
+Enable/disable stop-loss re-placement function. Orders re-placed via [stop-loss](params-description.md#s.sl) are subsequently re-placed according to [algorithm](algorithm-comments.md#sl_timer).
 
 ### SL <Anchor :ids="['s.sl']" />
 
-Stop-loss value; when reached, the order (if not yet filled) must be canceled and resubmitted at the current market price. The stop-loss is measured from the original order placement price.
+[Stop-loss](params-description.md#s.sle) value at which an order must be canceled if not executed by that moment, and placed again at new market price (stop-loss is offset from initial order placement price).
 
 ### TE <Anchor :ids="['s.te']" />
 
@@ -778,6 +928,35 @@ Parameter used in calculating the [Buy](params-description.md#p.buy) price, defi
 ### Ratio sell formula <Anchor :ids="['s.ratio_s_formula']" />
 
 Parameter used in calculating the [Sell](params-description.md#p.sell) price, defined as code in [C++](c-api.md#cpp) programming language. You write only the function body and must return a value of type `double`.
+
+### FUT move limits <Anchor :ids="['s.move_limits']" />
+
+Flag, if set, triggers automatic limit moving at each day change. Moving occurs when two conditions are met:
+
+1. current day differs from day when previous moving was performed, day is determined by server time (server time can be viewed in [Robots table](interface.md#robots_table) widget), i.e., automatic limit moving will not trigger multiple times within one calendar day
+2. both financial instruments (marked with `FUT move limits` and marked with [SPOT move limits](params-description.md#s.move_limits1)) are tradable, meaning corresponding status on exchange.
+
+Formulas for limit moving:
+
+$$Lim\_Sell_1=Lim\_Sell_0- \frac{\left(Lim\_Sell_0+Lim\_Buy_0 \right) \times days\_to\_expiry\_{SPOT}}
+                                {2\times days\_to\_expiry},$$
+ 
+$$Lim\_Buy_1=Lim\_Buy_0- \frac{\left(Lim\_Sell_0+Lim\_Buy_0 \right)\times days\_to\_expiry\_{SPOT}}
+	                      {2\times days\_to\_expiry},$$
+
+where days_to_expiry - integer number of days to expiration of this financial instrument;  
+days_to_expirySPOT - integer number of days to expiration of financial instrument marked with [SPOT move limits](params-description.md#s.move_limits1) flag, or 1 if such financial instrument is not specified;  
+subscript 0 means current value of parameter;  
+subscript 1 means new value of parameter.
+
+Note that with `FUT move limits` flag set, auto-shift at each day change will trigger even when [re_sell](params-description.md#p.re_sell), [re_buy](params-description.md#p.re_buy) are disabled.
+
+**Non-obvious point!**  
+If conditions described above start to be met not simultaneously, then moving will be performed immediately after last condition is met. I.e., for example, first day changed, then trading session opened for one instrument, condition of open session for second financial instrument remains unmet, as soon as "tradable" status arrives for it, and if status of first financial instrument remains "tradable", limit moving will be performed immediately.
+
+### SPOT move limits <Anchor :ids="['s.move_limits1']" />
+
+Flag, if set, then this financial instrument is used in formulas for [FUT move limits](params-description.md#s.move_limits).
 
 ### Depth OB <Anchor :ids="['s.depth_ob']" />
 
