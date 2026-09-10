@@ -616,8 +616,8 @@ Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) и
 
 ### Sell/Buy <Anchor :ids="['p.sell', 'p.buy']" />
 
-`Sell` – расчетная цена на продажу. Нередактируемый параметр.  
-`Buy` – расчетная цена на покупку. Нередактируемый параметр.  
+`Sell` — расчетное значение спреда для продажи. Нередактируемый параметр.  
+`Buy` — расчетное значение спреда для покупки. Нередактируемый параметр.  
 
 * [Calculation method](params-description.md#p.calc_method) равен `Absolute spread`
 
@@ -672,8 +672,8 @@ Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) и
 
 ### Price_s/Price_b <Anchor :ids="['p.price_s', 'p.price_b']" />
 
-`Price_s` – цена выставления заявки на продажу по [Is first](params-description.md#s.is_first) финансовому инструменту, вычисляется как обратная функция для [Sell](params-description.md#p.sell), где цена [Sell](params-description.md#p.sell) заменяется на [Lim_Sell](params-description.md#p.lim_s). Нередактируемый параметр.  
-`Price_b` – цена выставления заявки на покупку по [Is first](params-description.md#s.is_first) финансовому инструменту, вычисляется как обратная функция для [Buy](params-description.md#p.buy), где цена [Buy](params-description.md#p.buy) заменяется на [Lim_Buy](params-description.md#p.lim_b). В общем случае это та цена, по которой робот "хочет" купить и продать по [Is first](params-description.md#s.is_first) инструменту.
+`Price_s` — цена выставления заявки на продажу по [Is first](params-description.md#s.is_first) финансовому инструменту, вычисляется как обратная функция для [Sell](params-description.md#p.sell), где цена [Sell](params-description.md#p.sell) заменяется на [Lim_Sell](params-description.md#p.lim_s). Нередактируемый параметр.  
+`Price_b` — цена выставления заявки на покупку по [Is first](params-description.md#s.is_first) финансовому инструменту, вычисляется как обратная функция для [Buy](params-description.md#p.buy), где цена [Buy](params-description.md#p.buy) заменяется на [Lim_Buy](params-description.md#p.lim_b). В общем случае это та цена, по которой робот "хочет" купить и продать по [Is first](params-description.md#s.is_first) инструменту.
 Нередактируемый параметр.
 
 * [Calculation method](params-description.md#p.calc_method) равен `Absolute spread`
