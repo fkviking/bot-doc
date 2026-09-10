@@ -76,9 +76,9 @@ v\_out\_left, &\text{if } \enspace close\enspace pose
 
 Метод расчета раздвижки:
 
-- `Absolute spread` - разность цен
+- `Absolute spread` - разность цен, т.е. $P_1 - P_2$
 
-- `Relative spread (%)` - отношение цен
+- `Relative spread (%)` - отношение цен, т.е. $\left(\frac{P_1}{P_2} - 1 \right) \times 100$
 
 ### Quote <Anchor :ids="['p.quote']" />
 
