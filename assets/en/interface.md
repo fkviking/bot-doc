@@ -44,17 +44,17 @@ Let us detail the interface elements of the widget marked with numbers in Figure
 
 Access to most table functions is provided either through the widget controls described above or via the column headers. Clicking a column header triggers sorting. Hovering over a column header reveals a menu button; the open menu appears as shown in Figure 3. To enhance data visibility, conditional color highlighting may be applied to values in specific columns across different widget tables when certain conditions are met (for example, when few days remain until license expiration). Additionally, if insufficient data is available for a value calculation, an exclamation mark will appear next to the cell value (a common case being a portfolio field that cannot be computed because the market data connection is offline).
 
-- **Sorting** - sorting table rows based on values in a specific column..
-- **Grouping** - grouping table rows by values in a specific column. An example of grouping by the `Robot` column is shown in Figure 4.
+- **Sorting** — sorting table rows based on values in a specific column..
+- **Grouping** — grouping table rows by values in a specific column. An example of grouping by the `Robot` column is shown in Figure 4.
     
  |![Alt text](@images/table_group.png)|
  |:--:|
  | *Fig. 4* |
 
-- **Column pinning** - locking a column to the left or right side of the table. Such a column remains visible during horizontal scrolling. Columns that uniquely identify a row—such as robot ID or portfolio name—are typically pinned. Multiple columns can be pinned simultaneously.
-- **Auto-resize column width** - automatically adjusting the column width to fit the content of all table rows.
-- **Bold text** - applying bold formatting to all values in the selected column.
-- **Color change** - changing the text color of all values in the selected column.
+- **Column pinning** — locking a column to the left or right side of the table. Such a column remains visible during horizontal scrolling. Columns that uniquely identify a row—such as robot ID or portfolio name—are typically pinned. Multiple columns can be pinned simultaneously.
+- **Auto-resize column width** — automatically adjusting the column width to fit the content of all table rows.
+- **Bold text** — applying bold formatting to all values in the selected column.
+- **Color change** — changing the text color of all values in the selected column.
 
 ### Chart Features
 
@@ -78,11 +78,11 @@ This widget displays important log entries from all robots accessible to the use
 
 The main table in the widget includes the following columns:
 
-- **Date/Time** - date and time when the event occurred, displayed in the user’s local time according to the device's time zone;
-- **Level** - logging level;
-- **Robot** - robot identifie;
-- **Portfolio** -  portfolio name;
-- **Message** - message text;
+- **Date/Time** — date and time when the event occurred, displayed in the user’s local time according to the device's time zone;
+- **Level** — logging level;
+- **Robot** — robot identifie;
+- **Portfolio** —  portfolio name;
+- **Message** — message text;
 
 ### Robots <Anchor :ids="['robots_table']" />
 
@@ -90,17 +90,17 @@ A widget displaying a list of available robots along with reference information 
 
 The main table of the widget contains the following columns:
 
-- **Robot ID** - robot identifier; this should be included when contacting support regarding issues with the robot;
-- **Name** - robot name, essentially a label for easier identification, which can be modified by support staff or the `Head of traders`;
-- **Company** - name of the company to which the robot belongs;
-- **Days paid** - number of remaining paid days according to your license;
-- **Robot time** - local time of the server where the robot is running;
-- **Connection limit** - maximum number of trading connections that can be added to the robot according to your license;
-- **Process status** - status of the robot’s main process, indicating whether it is running or not;
-- **Trading status** -  trading state of the robot; the robot is considered to be trading if trading is active in at least one of its portfolios. Hovering over this status displays a tooltip showing detailed information on whether each portfolio is currently trading;
-- **Connect to back** - status of the robot’s connection to the backend control server, which aggregates data from all robots for delivery to the website or via API;
-- **Market data** - status of the robot’s market data connections. Possible statuses:
- * `Connected` - displayed only when all market data connections are online or disabled by schedule (this ensures the cell remains green, as both "connected" and "disabled by time" are normal operational states). Examples of these two cases are shown in Figures 6 and 7 below;
+- **Robot ID** — robot identifier; this should be included when contacting support regarding issues with the robot;
+- **Name** — robot name, essentially a label for easier identification, which can be modified by support staff or the `Head of traders`;
+- **Company** — name of the company to which the robot belongs;
+- **Days paid** — number of remaining paid days according to your license;
+- **Robot time** — local time of the server where the robot is running;
+- **Connection limit** — maximum number of trading connections that can be added to the robot according to your license;
+- **Process status** — status of the robot’s main process, indicating whether it is running or not;
+- **Trading status** —  trading state of the robot; the robot is considered to be trading if trading is active in at least one of its portfolios. Hovering over this status displays a tooltip showing detailed information on whether each portfolio is currently trading;
+- **Connect to back** — status of the robot’s connection to the backend control server, which aggregates data from all robots for delivery to the website or via API;
+- **Market data** — status of the robot’s market data connections. Possible statuses:
+ * `Connected` — displayed only when all market data connections are online or disabled by schedule (this ensures the cell remains green, as both "connected" and "disabled by time" are normal operational states). Examples of these two cases are shown in Figures 6 and 7 below;
  
   |![Doc](@images/md_connected.png)|
   |:--:|
@@ -110,23 +110,23 @@ The main table of the widget contains the following columns:
   |:--:|
   | *Fig. 7* |
  
- * `Disconnected` -  displayed only when all market data connections are offline;
- * `Connecting` - displayed when some market data connections are online and others are offline;
+ * `Disconnected` —  displayed only when all market data connections are offline;
+ * `Connecting` — displayed when some market data connections are online and others are offline;
  hovering over this status shows a tooltip with detailed information about the state of each market data connection;
   
-- **Trade connection** - status of the robot’s trading connections. Possible statuses:
- * `Connected` - displayed only when all trading connections are online or disabled by schedule;
- * `Disconnected` - displayed only when all trading connections are offline;
- * `Connecting` - displayed when some trading connections are online and others are offline;
+- **Trade connection** — status of the robot’s trading connections. Possible statuses:
+ * `Connected` — displayed only when all trading connections are online or disabled by schedule;
+ * `Disconnected` — displayed only when all trading connections are offline;
+ * `Connecting` — displayed when some trading connections are online and others are offline;
  
  hovering over this status shows a tooltip with detailed information about the state of each trading connection;
  
-- **Production transactions count** - total number of trading transactions (order placements, cancellations, re-quotes) sent during the day across all live (non-`Virtual`) connections of the robot. The value resets daily at 5:40 server time. Hovering over this field displays a tooltip with detailed transaction counts per connection;
-- **Virtual transactions count** - number of trading transactions (placements, cancellations, re-quotes) executed within the `Virtual` connection (i.e., without actual transmission to any exchange) during the day. The value resets daily at 5:40 server time;
-- **Version number** -  version number of the binary file currently running for the robot. If it differs from `Server version number`, the field is highlighted in yellow;
-- **Version date** - date of the latest changes in the source code included in the currently running robot binary;
-- **Server version number** - version number of the binary file uploaded to the server and used when restarting the robot. Thus, upon restart, the robot always updates to the latest available version on the server. If it differs from `Version number`, the field is highlighted in yellow;
-- **Server version date** - date of the latest changes in the source code included in the robot binary uploaded to the server and used upon restart.
+- **Production transactions count** — total number of trading transactions (order placements, cancellations, re-quotes) sent during the day across all live (non-`Virtual`) connections of the robot. The value resets daily at 5:40 server time. Hovering over this field displays a tooltip with detailed transaction counts per connection;
+- **Virtual transactions count** — number of trading transactions (placements, cancellations, re-quotes) executed within the `Virtual` connection (i.e., without actual transmission to any exchange) during the day. The value resets daily at 5:40 server time;
+- **Version number** —  version number of the binary file currently running for the robot. If it differs from `Server version number`, the field is highlighted in yellow;
+- **Version date** — date of the latest changes in the source code included in the currently running robot binary;
+- **Server version number** — version number of the binary file uploaded to the server and used when restarting the robot. Thus, upon restart, the robot always updates to the latest available version on the server. If it differs from `Version number`, the field is highlighted in yellow;
+- **Server version date** — date of the latest changes in the source code included in the robot binary uploaded to the server and used upon restart.
 
 ### Portfolios table <Anchor :ids="['portfolios_table']" />
 
@@ -138,11 +138,11 @@ A widget displaying logs for a specific robot over a defined time period. It dis
 
 The main table of the widget includes the following columns:
 
-- **Date/Time** - date and time when the event occurred, displayed in the user’s local time according to the device's time zone;
-- **Level** - logging level;
-- **Robot** - robot identifier;
-- **Portfolio** - portfolio name;
-- **Message** - message text.
+- **Date/Time** — date and time when the event occurred, displayed in the user’s local time according to the device's time zone;
+- **Level** — logging level;
+- **Robot** — robot identifier;
+- **Portfolio** — portfolio name;
+- **Message** — message text.
 
 ### Finres for today <Anchor :ids="['finres_for_today']" />
 
@@ -154,15 +154,15 @@ The average spread is calculated directly from the trades forming the spreads wi
 
 The main table of the widget includes the following columns:
 
-- **Date/Time** - date and time when the last trade in the spread was executed, displayed in the user’s local time according to the device's time zone;
-- **Robot** - robot identifier;
-- **Portfolio** - portfolio name;
-- **Price** - spread value calculated based on trade prices. Due to the robot’s focus on maximum speed, specific exchange connection characteristics, and trade aggregation on certain platforms, instead of the actual trade price, the displayed value may represent the order price, average execution price for the order, or the worst price among trades executed under that order; 
-- **Direction** -  trading direction for the portfolio (same as the order direction on the first-leg instrument): `Buy` or `Sell`;
-- **Sell/Buy** - the calculated sell/buy price at the time of placing an order for the [Is first](params-description.md#s.is_first) financial instrument. The value is entered according to the order direction. When using the clicker, the fields are left empty;
-- **Lim_S/Lim_B** - the signal sell/buy price at the time of placing an order for the [Is first](params-description.md#s.is_first) financial instrument. The value is entered according to the order direction. When using the clicker, the fields are left empty;
-- **Quantity** - number of portfolios bought or sold;
-- **SL** - flag indicating whether all second-leg orders were filled immediately or had to be re-quoted due to stop-loss or timer.
+- **Date/Time** — date and time when the last trade in the spread was executed, displayed in the user’s local time according to the device's time zone;
+- **Robot** — robot identifier;
+- **Portfolio** — portfolio name;
+- **Price** — spread value calculated based on trade prices. Due to the robot’s focus on maximum speed, specific exchange connection characteristics, and trade aggregation on certain platforms, instead of the actual trade price, the displayed value may represent the order price, average execution price for the order, or the worst price among trades executed under that order; 
+- **Direction** —  trading direction for the portfolio (same as the order direction on the first-leg instrument): `Buy` or `Sell`;
+- **Sell/Buy** — the calculated sell/buy price at the time of placing an order for the [Is first](params-description.md#s.is_first) financial instrument. The value is entered according to the order direction. When using the clicker, the fields are left empty;
+- **Lim_S/Lim_B** — the signal sell/buy price at the time of placing an order for the [Is first](params-description.md#s.is_first) financial instrument. The value is entered according to the order direction. When using the clicker, the fields are left empty;
+- **Quantity** — number of portfolios bought or sold;
+- **SL** — flag indicating whether all second-leg orders were filled immediately or had to be re-quoted due to stop-loss or timer.
 
 A yellow highlight in the `Price` field corresponds to the `SL` flag being set. The `SL` flag is provided as a separate column to allow grouping spreads by this field. Such grouping enables separation of spreads into two categories: those where all second-leg orders were filled immediately (no re-quoting occurred), and those where second-leg orders were re-quoted due to timer or stop-loss activation. Hovering over the `Price` field displays a tooltip containing detailed information about the trades forming the given spread. Fields in the tooltip correspond to those in the [Deals for today](interface.md#deals_for_today) widget table.
 
@@ -176,15 +176,15 @@ The average spread is calculated directly from the trades forming the spreads wi
 
 The main table of the widget includes the following columns:
 
-- **Date/Time** - date and time when the last trade in the spread was executed, displayed in the user’s local time according to the device's time zone;
-- **Robot** - robot identifier;
-- **Portfolio** - portfolio name;
-- **Price** - spread value calculated based on trade prices. Due to the robot’s focus on maximum speed, specific exchange connection characteristics, and trade aggregation on certain platforms, instead of the actual trade price, the displayed value may represent the order price, average execution price for the order, or the worst price among trades executed under that order; 
-- **Direction** -  trading direction for the portfolio (same as the order direction on the first-leg instrument): `Buy` or `Sell`;
-- **Sell/Buy** - the calculated sell/buy price at the time of placing an order for the [Is first](params-description.md#s.is_first) financial instrument. The value is entered according to the order direction. When using the clicker, the fields are left empty;
-- **Lim_S/Lim_B** - the signal sell/buy price at the time of placing an order for the [Is first](params-description.md#s.is_first) financial instrument. The value is entered according to the order direction. When using the clicker, the fields are left empty;
-- **Quantity** - number of portfolios bought or sold;
-- **SL** - flag indicating whether all second-leg orders were filled immediately or had to be re-quoted due to stop-loss or timer.
+- **Date/Time** — date and time when the last trade in the spread was executed, displayed in the user’s local time according to the device's time zone;
+- **Robot** — robot identifier;
+- **Portfolio** — portfolio name;
+- **Price** — spread value calculated based on trade prices. Due to the robot’s focus on maximum speed, specific exchange connection characteristics, and trade aggregation on certain platforms, instead of the actual trade price, the displayed value may represent the order price, average execution price for the order, or the worst price among trades executed under that order; 
+- **Direction** —  trading direction for the portfolio (same as the order direction on the first-leg instrument): `Buy` or `Sell`;
+- **Sell/Buy** — the calculated sell/buy price at the time of placing an order for the [Is first](params-description.md#s.is_first) financial instrument. The value is entered according to the order direction. When using the clicker, the fields are left empty;
+- **Lim_S/Lim_B** — the signal sell/buy price at the time of placing an order for the [Is first](params-description.md#s.is_first) financial instrument. The value is entered according to the order direction. When using the clicker, the fields are left empty;
+- **Quantity** — number of portfolios bought or sold;
+- **SL** — flag indicating whether all second-leg orders were filled immediately or had to be re-quoted due to stop-loss or timer.
 
 A yellow highlight in the `Price` field corresponds to the `SL` flag being set. The `SL` flag is provided as a separate column to allow grouping spreads by this field. Such grouping enables separation of spreads into two categories: those where all second-leg orders were filled immediately (no re-quoting occurred), and those where second-leg orders were re-quoted due to timer or stop-loss activation. Hovering over the `Price` field displays a tooltip containing detailed information about the trades forming the given spread. Fields in the tooltip correspond to those in the [Deals for today](interface.md#deals_for_today) widget table.
 
@@ -197,16 +197,16 @@ The robot does not provide a separate interface for adding market data connectio
 
 The main table of the widget includes the following columns:
 
-- **Exchange** - name of the exchange, market, or broker (if the connection is a data aggregator from multiple venues provided by a broker);
-- **Name** - name of the connection or its individual data stream (for connections where each data stream appears as a separate row in the connections table);
-- **Status** -  status of the connection and its individual streams. Possible statuses:
- * "Online" - snapshot requests and other required data have been successfully sent and received; currently, the connection/stream receives and processes updates as they arrive. Stream names in "online" status are displayed on a green background;
- * "Connecting" -  the connection is being established or requested data (snapshots, order information, etc.) is pending. Stream names in "connecting" status are displayed on a yellow background;
- * "Disconnected" -  the socket is not connected, and no data is currently being received. Stream names in "disconnected" status are displayed on a red background;
- * "Disconnected by time" - the socket is disconnected and no data is being received, but the current time falls outside the exchange/broker’s operating hours, so this state is considered normal. Stream names in "disconnected by time" status are displayed within a green border;
+- **Exchange** — name of the exchange, market, or broker (if the connection is a data aggregator from multiple venues provided by a broker);
+- **Name** — name of the connection or its individual data stream (for connections where each data stream appears as a separate row in the connections table);
+- **Status** —  status of the connection and its individual streams. Possible statuses:
+ * "Online" — snapshot requests and other required data have been successfully sent and received; currently, the connection/stream receives and processes updates as they arrive. Stream names in "online" status are displayed on a green background;
+ * "Connecting" —  the connection is being established or requested data (snapshots, order information, etc.) is pending. Stream names in "connecting" status are displayed on a yellow background;
+ * "Disconnected" —  the socket is not connected, and no data is currently being received. Stream names in "disconnected" status are displayed on a red background;
+ * "Disconnected by time" — the socket is disconnected and no data is being received, but the current time falls outside the exchange/broker’s operating hours, so this state is considered normal. Stream names in "disconnected by time" status are displayed within a green border;
  
  a connection is considered "online" only when all elements in the corresponding cell are online (i.e., shown in green);
-- **Security manager** - a widget for searching instruments and building an instrument list in connections where the full list of instruments is not broadcast.
+- **Security manager** — a widget for searching instruments and building an instrument list in connections where the full list of instruments is not broadcast.
 
 ### Trade connections <Anchor :ids="['trade_connections']" />
 
@@ -214,18 +214,18 @@ A widget displaying trading (transactional) connections. It allows adding new co
 
 The main table of the widget includes the following columns:
 
-- **Exchange** - name of the exchange, market, or broker (if the connection is a data aggregator from multiple venues provided by a broker);
-- **Name** - user-defined name of the connection;
-- **Trans count** - number of trading transactions (order submissions, cancellations, re-quotes) sent through the connection during the day. The value resets daily at 5:40 server time;
-- **Status** - status of the connection and its individual streams. Possible statuses:
- * "Online" - snapshot requests and other required data have been successfully sent and received; currently, the connection/stream receives and processes updates as they arrive. Stream names in "online" status are displayed on a green background;
- * "Connecting" -  the connection is being established or requested data (snapshots, order information, etc.) is pending. Stream names in "connecting" status are displayed on a yellow background;
- * "Disconnected" -  the socket is not connected, and no data is currently being received. Stream names in "disconnected" status are displayed on a red background;
- * "Disconnected by time" - the socket is disconnected and no data is currently being received, but the current time falls outside the exchange/broker’s operating hours, so this state is considered normal. Stream names in "disconnected by time" status are displayed within a green border;
+- **Exchange** — name of the exchange, market, or broker (if the connection is a data aggregator from multiple venues provided by a broker);
+- **Name** — user-defined name of the connection;
+- **Trans count** — number of trading transactions (order submissions, cancellations, re-quotes) sent through the connection during the day. The value resets daily at 5:40 server time;
+- **Status** — status of the connection and its individual streams. Possible statuses:
+ * "Online" — snapshot requests and other required data have been successfully sent and received; currently, the connection/stream receives and processes updates as they arrive. Stream names in "online" status are displayed on a green background;
+ * "Connecting" —  the connection is being established or requested data (snapshots, order information, etc.) is pending. Stream names in "connecting" status are displayed on a yellow background;
+ * "Disconnected" —  the socket is not connected, and no data is currently being received. Stream names in "disconnected" status are displayed on a red background;
+ * "Disconnected by time" — the socket is disconnected and no data is currently being received, but the current time falls outside the exchange/broker’s operating hours, so this state is considered normal. Stream names in "disconnected by time" status are displayed within a green border;
  
  a connection is considered "online" only when all elements in the corresponding cell are online (i.e., shown in green);
-- **Positions** - button that opens the [Trade connections positions](interface.md#trade_connections_positions) widget, pre-selected for the relevant connection (unlike opening the widget from the main widgets menu). For connections that do not support this functionality, the button is inactive;
-- **Orders** - button that opens the [Trade connections orders](interface.trade_connections_orders) widget, pre-selected for the relevant connection (unlike opening the widget from the main widgets menu). For connections that do not support this functionality, the button is inactive.
+- **Positions** — button that opens the [Trade connections positions](interface.md#trade_connections_positions) widget, pre-selected for the relevant connection (unlike opening the widget from the main widgets menu). For connections that do not support this functionality, the button is inactive;
+- **Orders** — button that opens the [Trade connections orders](interface.trade_connections_orders) widget, pre-selected for the relevant connection (unlike opening the widget from the main widgets menu). For connections that do not support this functionality, the button is inactive.
 
 ### Trade connections orders <Anchor :ids="['trade_connections_orders']" />
 
@@ -235,15 +235,15 @@ The widget is not available for all connections. Unsupported connections cannot 
 
 The main table of the widget includes the following columns::
 
-- **SecKey** - unique exchange instrument identifier;
-- **Order number** - order number, which in most cases matches the exchange-assigned number, or otherwise contains the exchange number;
-- **CLOrdId** - user-defined order identifier;
-- **Price** - price specified in the order at submission;
-- **Quantity** - quantity specified in the order at submission;
-- **Amount left** -  remaining quantity in the order;
-- **Buy/Sell** - order direction: `Buy` or `Sell`;
-- **Time** -  time when the last update for the order was received, displayed in local time according to the device's time zone;
-- **Cancel order** - button to cancel the order.
+- **SecKey** — unique exchange instrument identifier;
+- **Order number** — order number, which in most cases matches the exchange-assigned number, or otherwise contains the exchange number;
+- **CLOrdId** — user-defined order identifier;
+- **Price** — price specified in the order at submission;
+- **Quantity** — quantity specified in the order at submission;
+- **Amount left** —  remaining quantity in the order;
+- **Buy/Sell** — order direction: `Buy` or `Sell`;
+- **Time** —  time when the last update for the order was received, displayed in local time according to the device's time zone;
+- **Cancel order** — button to cancel the order.
 
 ### Trade connections positions <Anchor :ids="['trade_connections_positions']" />
 
@@ -255,21 +255,21 @@ In the instrument positions table, the exchange position for each instrument and
 
 The instrument positions/limits table includes the following columns:
 
-- **SecKey** - unique exchange instrument identifier;
-- **SecCode** - instrument symbol on the exchange;
-- **Pos** - exchange position in the instrument;
-- **Robot pos** - robot’s calculated position in the instrument, computed as the sum of positions across all portfolios containing this instrument;
-- **Mark. price** - mark price received from the exchange;
-- **Liq. price** - liquidation price received from the exchange;
-- **Pos lag** - threshold for allowable difference between `Pos` and `Robot pos`; the exact behavior is determined by the flags below;;
-- **Check equality** - flag; if set, the absolute difference between `Pos` and `Robot pos` is checked for equality with `Pos lag`, and a notification is issued if they are not equal. If the flag is not set, a notification is issued only if the absolute difference exceeds `Pos lag`;
-- **Tgr notify** - flag indicating whether notifications about position mismatches should be sent to Telegram; requires a connected [Telegram bot](getting-started.md#telegram-bot);
-- **Pos leveling** - button that opens a position alignment window. This function allows placing an order "outside" the robot’s algorithm—i.e., such an order will not be tracked by the robot, will not belong to any portfolio, and therefore will not affect the robot’s position calculation. Essentially, placing such an order is equivalent to placing it via an exchange terminal.
+- **SecKey** — unique exchange instrument identifier;
+- **SecCode** — instrument symbol on the exchange;
+- **Pos** — exchange position in the instrument;
+- **Robot pos** — robot’s calculated position in the instrument, computed as the sum of positions across all portfolios containing this instrument;
+- **Mark. price** — mark price received from the exchange;
+- **Liq. price** — liquidation price received from the exchange;
+- **Pos lag** — threshold for allowable difference between `Pos` and `Robot pos`; the exact behavior is determined by the flags below;;
+- **Check equality** — flag; if set, the absolute difference between `Pos` and `Robot pos` is checked for equality with `Pos lag`, and a notification is issued if they are not equal. If the flag is not set, a notification is issued only if the absolute difference exceeds `Pos lag`;
+- **Tgr notify** — flag indicating whether notifications about position mismatches should be sent to Telegram; requires a connected [Telegram bot](getting-started.md#telegram-bot);
+- **Pos leveling** — button that opens a position alignment window. This function allows placing an order "outside" the robot’s algorithm—i.e., such an order will not be tracked by the robot, will not belong to any portfolio, and therefore will not affect the robot’s position calculation. Essentially, placing such an order is equivalent to placing it via an exchange terminal.
 
 The currency positions/limits table includes the following columns:
 
-- **Currency** - currency name;
-- **Pos/Limit** - exchange position or exchange limit for the currency.
+- **Currency** — currency name;
+- **Pos/Limit** — exchange position or exchange limit for the currency.
 
 
 
@@ -283,17 +283,17 @@ A widget displaying the most recent trades. It allows viewing all trades for the
 
 The main table of the widget includes the following columns:
 
-- **Date/Time** - trade date and time, displayed in the user’s local time according to the device's time zone;
-- **oNo** - internal order number, which does not always match the exchange-assigned number (for MOEX, the internal number matches the exchange number);
-- **Portfolio** - portfolio name;
-- **Security** - financial instrument name;
-- **Target price** - price of the originally submitted order; this value is shown only for second-leg orders. In case a second-leg order was re-quoted due to stop-loss or timer, this field will always display the price of the very first order in the chain—i.e., the price based on the bid or offer recorded at the moment the first-leg order was placed;
-- **Price** - execution price of the trade. Due to the robot’s focus on maximum speed, specific exchange connection characteristics, and trade aggregation on certain platforms, instead of the actual trade price, the displayed value may represent the order price, average execution price for the order, or the worst price among trades executed under that order;
-- **Buy/Sell** - order direction: `Buy` or `Sell`;
-- **Quantity** - traded quantity. If the `Aggregated` flag is present, the displayed quantity may differ from the actual quantity in a single terminal trade, as the row marked with `Aggregated` may represent an aggregation of several consecutive trades from the same order;
-- **Curpos** - position in the portfolio’s instrument after processing this trade;
-- **Connection** - trading connection through which the order leading to this trade was submitted;
-- **Aggregated** - flag indicating that the displayed trade may actually be an aggregation of multiple individual trades.
+- **Date/Time** — trade date and time, displayed in the user’s local time according to the device's time zone;
+- **oNo** — internal order number, which does not always match the exchange-assigned number (for MOEX, the internal number matches the exchange number);
+- **Portfolio** — portfolio name;
+- **Security** — financial instrument name;
+- **Target price** — price of the originally submitted order; this value is shown only for second-leg orders. In case a second-leg order was re-quoted due to stop-loss or timer, this field will always display the price of the very first order in the chain—i.e., the price based on the bid or offer recorded at the moment the first-leg order was placed;
+- **Price** — execution price of the trade. Due to the robot’s focus on maximum speed, specific exchange connection characteristics, and trade aggregation on certain platforms, instead of the actual trade price, the displayed value may represent the order price, average execution price for the order, or the worst price among trades executed under that order;
+- **Buy/Sell** — order direction: `Buy` or `Sell`;
+- **Quantity** — traded quantity. If the `Aggregated` flag is present, the displayed quantity may differ from the actual quantity in a single terminal trade, as the row marked with `Aggregated` may represent an aggregation of several consecutive trades from the same order;
+- **Curpos** — position in the portfolio’s instrument after processing this trade;
+- **Connection** — trading connection through which the order leading to this trade was submitted;
+- **Aggregated** — flag indicating that the displayed trade may actually be an aggregation of multiple individual trades.
 
 ### Deals history <Anchor :ids="['deals_history']" />
 
@@ -301,17 +301,17 @@ A widget displaying trades over a specified time period (up to 100,000 entries).
 
 The main table of the widget includes the following columns:
 
-- **Date/Time** - trade date and time, displayed in the user’s local time according to the device's time zone;
-- **oNo** - internal order number, which does not always match the exchange-assigned number (for MOEX, the internal number matches the exchange number);
-- **Portfolio** - portfolio name;
-- **Security** - financial instrument name;
-- **Target price** - price of the originally submitted order; this value is shown only for second-leg orders. In case a second-leg order was re-quoted due to stop-loss or timer, this field will always display the price of the very first order in the chain—i.e., the price based on the bid or offer recorded at the moment the first-leg order was placed;
-- **Price** - execution price of the trade. Due to the robot’s focus on maximum speed, specific exchange connection characteristics, and trade aggregation on certain platforms, instead of the actual trade price, the displayed value may represent the order price, average execution price for the order, or the worst price among trades executed under that order;
-- **Buy/Sell** - order direction: `Buy` or `Sell`;
-- **Quantity** - traded quantity. If the `Aggregated` flag is present, the displayed quantity may differ from the actual quantity in a single terminal trade, as the row marked with `Aggregated` may represent an aggregation of several consecutive trades from the same order;
-- **Curpos** - position in the portfolio’s instrument after processing this trade;
-- **Connection** - trading connection through which the order leading to this trade was submitted;
-- **Aggregated** - flag indicating that the displayed trade may actually be an aggregation of multiple individual trades.
+- **Date/Time** — trade date and time, displayed in the user’s local time according to the device's time zone;
+- **oNo** — internal order number, which does not always match the exchange-assigned number (for MOEX, the internal number matches the exchange number);
+- **Portfolio** — portfolio name;
+- **Security** — financial instrument name;
+- **Target price** — price of the originally submitted order; this value is shown only for second-leg orders. In case a second-leg order was re-quoted due to stop-loss or timer, this field will always display the price of the very first order in the chain—i.e., the price based on the bid or offer recorded at the moment the first-leg order was placed;
+- **Price** — execution price of the trade. Due to the robot’s focus on maximum speed, specific exchange connection characteristics, and trade aggregation on certain platforms, instead of the actual trade price, the displayed value may represent the order price, average execution price for the order, or the worst price among trades executed under that order;
+- **Buy/Sell** — order direction: `Buy` or `Sell`;
+- **Quantity** — traded quantity. If the `Aggregated` flag is present, the displayed quantity may differ from the actual quantity in a single terminal trade, as the row marked with `Aggregated` may represent an aggregation of several consecutive trades from the same order;
+- **Curpos** — position in the portfolio’s instrument after processing this trade;
+- **Connection** — trading connection through which the order leading to this trade was submitted;
+- **Aggregated** — flag indicating that the displayed trade may actually be an aggregation of multiple individual trades.
 
 ### Portfolios historical chart <Anchor :ids="['portfolios_historical_chart']" />
 
@@ -342,7 +342,7 @@ Main table of widget contains following columns:
 - **Company** — name of company to which robot belongs and in which roles are assigned to user, more details in [brief role model](introduction.md#roles).
 - **Email** — email address of user to whom roles are assigned in company. To be able to add user to company, user must log in to platform at least once with this email.
 - **Roles** — roles of user in company. [Head of traders](introduction.md#head_of_traders_role) and [Head view only](introduction.md#head_view_only_role) already see all robots and portfolios, so choosing robots and portfolios is necessary only if user has `trader` role.
-- **Robots** — number of one or several robots to which access is granted.
+- **Robots** — robot ID or several robot IDs to which access is granted.
 - **Portfolios** — one or several portfolios to which access is granted.
 - **Edit user** — entry to menu for editing roles and access of user, detailed description of [Edit user](interface.md#widget_users_edit_user) below.
 - **Delete user** — button for deleting user from company. After deletion, user loses access to robots and portfolios in selected company, but robots and portfolios themselves are not deleted. It is assumed that [Head of traders](introduction.md#head_of_traders_role) timely deletes all users who no longer need access.
@@ -357,7 +357,7 @@ Main table of widget contains following columns:
 
 **Important!** It is assumed that [Head of traders](introduction.md#head_of_traders_role) monitors data access and timely removes from users those who, for example, left company, no longer need access, and in other similar cases. 
 
-- **Robots** — here you can set flags for numbers of robots to which access is granted.
+- **Robots** — here you can set flags for robot IDs to which access is granted.
 - **Portfolios** — here you can set flags for portfolios to which access is granted.
 
 ## Other User Interface Elements
