@@ -448,7 +448,7 @@ Client comment for orders.
 
 #### Bind IP <Anchor :ids="['tc.SPB.bind_ip']" />
 
-The IP address from which the connection to the exchange will be established. The IP address must be specified in the agreement.
+The IP address from which the connection to the exchange will be established: 0.0.0.0.
 
 ## EXANTE
 
@@ -1229,7 +1229,7 @@ Client comment for orders.
 
 #### Bind IP <Anchor :ids="['tc.IMEX.bind_ip']" />
 
-The IP address from which the connection to the exchange will be established. The IP address must be specified in the agreement.
+The IP address from which the connection to the exchange will be established: 0.0.0.0.
 
 ## ITS
 
@@ -1287,7 +1287,7 @@ Used to route orders to the desired liquidity pool; the required value should be
 
 #### Bind IP <Anchor :ids="['tc.ITS.bind_ip']" />
 
-The IP address from which the connection to the exchange will be established. The IP address must be specified in the agreement.
+The IP address from which the connection to the exchange will be established: 0.0.0.0.
 
 ## OREX
 
@@ -1345,7 +1345,7 @@ Used to route orders to the desired liquidity pool; the required value should be
 
 #### Bind IP <Anchor :ids="['tc.OREX.bind_ip']" />
 
-The IP address from which the connection to the exchange will be established. The IP address must be specified in the agreement.
+The IP address from which the connection to the exchange will be established: 0.0.0.0.
 
 ## J2T
 
