@@ -131,8 +131,8 @@ Methods of `security`:
 | double min_step()                | Minimum price tick size.                                                    |
 | double lot_round()               | For the Moscow Exchange fond/derivatives/currency markets, this is the number of financial instruments in a standard lot; for crypto connections (not all crypto connections have this option), this is the volume rounding value when placing an order (for example, for a financial instrument, the minimum order volume is 10; the volume will be rounded to a multiple of 10, that is `lot_round`) |
 | double lot_size()                | Multiplier for converting fractional volumes to integers.                   |
-| double funding_rate()            | Funding rate.                                                               |
-| long long funding_time()         | Time of the next funding, in epoch format.                                  |
+| double funding_rate()            | Funding rate; available only for some crypto connections                                                          |
+| long long funding_time()         | Time of the next funding, in epoch format; available only for some crypto connections                            |
 | const spb_commons& spb_common()  | Structure with additional fields (described below).                         |
 | order_book orderbook()           | Structure with methods (described below).                                   |
 
