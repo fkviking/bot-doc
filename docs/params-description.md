@@ -1,0 +1,1316 @@
+# 7. Описание параметров
+
+## 7.1. Используемые понятия
+
+Далее дано описание понятий и значений, не являющихся непосредственно параметрами портфеля, инструментов или подключений, но используемых при описании данных параметров.
+
+### 7.1.1. lot_size
+
+Множитель, используемый для конвертации количества в заявках/сделках и в позициях из целых чисел в дробные. Везде в роботе количества в заявках/сделках и в позициях - это целые числа, сделано это для того, чтобы не иметь проблем с точностью при проведении операций над вещественными числами. Для конвертации количеств и позиций в ту же размерность, в которой они отображаются на сайтах бирж (для тех бирж где возможны дробные значения в данных полях), используется множитель `lot_size`.  Для перевода из целых в дробные необходимо исходное значение умножить на `lot_size`, а для перевода из дробных в целые необходимо исходное значение разделить на `lot_size`.
+
+Например, для многих криптовалютных инструментов значение количества в спотовой торговле указывается с восемью знаками после запятой, в таком случае `lot_size` для таких инструментов будет равен 0.00000001.
+
+## 7.2. Параметры портфеля
+
+Далее дано описание параметров портфеля. Все параметры являются редактируемыми, если прямо не указано иное. Описания некоторых параметров портфеля объединены в группы для удобства восприятия.
+
+### 7.2.1. Name
+
+Имя портфеля. В данном поле можно использовать латинские буквы и цифры, максимум 30 символов. У существующего портфеля имя не редактируется. Для изменения имени можете выключить торговлю, склонировать портфель, задать желаемое имя у склонированного портфеля и удалить предыдущий портфель.
+
+
+### 7.2.2. re_sell/re_buy
+
+Разрешена продажа/покупка (при взведении флага включает робот на продажу/покупку).
+
+**Важно!** При снятии галок `re_sell` и `re_buy` происходит сброс счетчика ошибок робота.
+
+### 7.2.3. Type
+
+Тип торгового алгоритма портфеля:
+
+- `Arbitrage` - обычная арбитражная торговля с использованием всех заданных параметров. Сначала выставляется заявка по [Is first](params-description.md#s.is_first) инструменту, при её сведении в сделку выставляются заявки по остальным инструментам портфеля.
+
+- `Option hedge` - арбитражная торговля с использованием опционов и автоматическим подсчетом [Count](params-description.md#s.count) для обеих ног. Предполагается, что торговля будет вестись парой опцион и базовый актив. У такой пары главная нога это опцион и [Count](params-description.md#s.count) опциона вычисляется автоматически с использованием модели Блека-Шоулза таким образом, чтобы delta у [Count](params-description.md#s.count) опциона равнялась единице. [Count](params-description.md#s.count) второй ноги задается автоматически всегда единицей. 
+Пример: (если дельта 1 лота опциона равна 0.5, то для первой ноги (опцион) count = 2, для второй ноги (базовый актив) count = 1 )
+
+- `TP algo` - режим работы с выставлением "take profit" заявки по главному инструменту. По главному инструменту держится только одна TP заявка, после прохождения не TP заявок в сделку, заявка TP снимается и выставляется новым объёмом. Заявки по второй ноге при этом не выставляются.
+
+- `TP algo 2` - режим работы с выставлением "take profit" заявки по главному инструменту. После каждой сделки по не TP заявке, выставляется новая TP заявка. У выставленной заявки есть [Timer](params-description.md#s.timer) и [SL](params-description.md#s.sl). Заявки по второй ноге выставляются так же, как и в режиме `Arbitrage`.
+   
+   **Важно!** Если включен [Hedge (sec)](params-description.md#p.hedge_after), то каждые [Hedge (sec)](params-description.md#p.hedge_after) секунд если позиция по главному инструменту портфеля ненулевая и нет выставляющихся или стоящих заявок, сводящих эту позицию к нулю, будет выставляться заявка, сводящая позицию к нулю; описанное выше распространяется и на позиции, открытые кликером; закрытие по [Hedge (sec)](params-description.md#p.hedge_after) возможно только после того, как были сделки по главному финансовому инструменту по алгоритму (не по кликеру). Пока сделок не было, нет цен от которых откладывать тейк.
+
+### 7.2.4. Type trade
+
+Тип торговли, используется при расчете цен [Sell/Buy](params-description.md#p.sell), [Price_s/Price_b](params-description.md#p.price_s):
+
+- `Price` - режим торговли с использованием цен инструментов (bid и offer).
+
+- `IV` - режим торговли волатильностью (implied volatility) вычисленной по ценам инструментов с использованием модели Блека-Шоулза.
+
+### 7.2.5. Type price
+
+Тип определения цены инструмента:
+
+- `Bid/offer`- использовать лучшую цену на покупку и лучшую цену на продажу.
+
+- `Orderbook` - параметр позволяет искать цену в стакане, таким образом, чтобы набрать необходимый объем. Цены на покупку и продажу набираются среди цен в стакане, начиная от лучшей цены в нужном направлении и далее в глубине стакана. Поиск необходимого объема происходит с помощью данной формулы:
+
+$$Count \times Percent\enspace of\enspace quantity \times 0.01 \times 
+\begin{cases} 
+v\_in\_left, &\text{if } \enspace open\enspace pose\\
+v\_out\_left, &\text{if } \enspace close\enspace pose 
+\end{cases},$$
+
+- `Orderbook+filter` - аналогично Orderbook, но вычитать из набираемого объема цены своих заявок (если на соответствующих ценах присутствуют свои заявки).
+
+Глубина стакана определяется значением параметра инструмента портфеля  [Depth OB](params-description.md#s.depth_ob).
+
+### 7.2.6. Calculation method
+
+Метод расчета раздвижки:
+
+- `Absolute spread` - разность цен, т.е. $P_1 - P_2$
+
+- `Relative spread (%)` - отношение цен, т.е. $\left(\frac{P_1}{P_2} - 1 \right) \times 100$
+
+### 7.2.7. Quote
+
+Флаг, отвечающий за котирование [Is first](params-description.md#s.is_first) инструмента. Если флаг установлен, то заявка по [Is first](params-description.md#s.is_first) инструменту всегда держится в стакане, если флаг снят, то заявки по [Is first](params-description.md#s.is_first) инструменту выставляются при выполнении следующих условий: заявка на продажу выставляется когда [Sell](params-description.md#p.sell) ≥ [Lim_sell](params-description.md#p.lim_s)
+, а заявка на покупку выставляется когда [Buy](params-description.md#p.buy) ≤ [Lim_buy](params-description.md#p.lim_b).
+
+Видео объясняющее работу данного параметра:
+
+<iframe width="735" height="415" src="https://www.youtube.com/embed/CfY5ZeS8aJM" title="Описание параметра Quote" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+### 7.2.8. Order ID
+
+Идентификатор всех заявок портфеля, также определяет приоритет вызова торгового алгоритма портфеля.
+
+_Пример_:  
+Пусть есть несколько портфелей и во всех этих портфелях есть один и тот же инструмент. При изменении цены или объема лучшей цены на покупку или продажу по данному инструменту вызывается алгоритм торговли по всем портфелям, в которых этот инструмент присутствует. Торговый алгоритм портфелей будет вызываться в порядке возрастания `Order ID`, т.е. самым первым вызовется торговый алгоритм портфеля с `Order ID` = a, а самым последним с `Order ID` = z. При совпадении `Order ID` у разных портфелей порядок вызова торгового алгоритма портфелей НЕ определен и будет произвольным.
+
+### 7.2.9. Hedge (sec)
+
+Интервал времени в секундах по прошествии которого автоматически хеджировать незахеджированную позицию в случаях, когда заявка по второй ноге не выставилась по алгоритму (случаи связанные с техническими проблемами на самой бирже, ограничениями по рейтлимиту и другими не рыночными ситуациями). Если задать значение "-1", то проверка по таймеру на незахеджированность не осуществляется.
+
+**Неочевидный момент!**  
+Если позиция, с учетом прохождения текущих активных заявок, расходится больше чем на значение [Overlay](params-description.md#p.overlay) (активные заявки могут быть), то подравняется позиция не трогая текущих активных заявок. Если подравнивающая заявка выставилась, то скинется счетчик ошибок для данного финансового инструмента. Расхождение считается отдельно для каждого из инструментов второй ноги. Выравнивание также осуществляется по каждому из инструментов второй ноги отдельно. В один момент времени на каждом из инструментов второй ноги может висеть не более одной выравнивающей заявки. Выравнивающая заявка, в случае если она не прошла в сделку, переставляется раз в секунду.
+
+### 7.2.10. Only maker
+
+Меняет признак котирующих заявок (т.е. при включенном режиме [Quote](params-description.md#p.quote)) заявки по [Is first](params-description.md#s.is_first) финансовому инструменту выставятся с признаком "снять если заявка будет taker" (при условии что биржей поддерживается работа этого типа заявки). Режим [Quote](params-description.md#p.quote) должен быть сначала выбран и применен кнопкой Apply, чтобы флаг [Only maker](params-description.md#p.maker) стал доступным.
+
+**Важно!** Если вы используете данный параметр, то вероятнее всего вам понадобится взвести флаг [Simply first](params-description.md#p.simply_first). Для избежания избыточного числа отклоненных транзакций (в случаях когда попытка выставления заявки заканчивается неудачно, так как заявка попадает на встречную), что в итоге может привести к санкциям со стороны биржи.
+
+### 7.2.11. Simply first
+
+Режим [Quote](params-description.md#p.quote) должен быть сначала выбран и применен кнопкой Apply, чтобы флаг [Simply first](params-description.md#p.simply_first) стал доступным. Если параметр включен, то когда цены [Price_s/Price_b](params-description.md#p.price_s) попадают в широкий спред или на противоположную сторону стакана, то заявки по первой ноге всегда будут выставляться не глубже, чем на один шаг цены в спред, т.е. лучшей ценой в стакане. Более того, во время котирования выполнение данных условий будет поддерживаться при изменении цен в стакане, т.е. если перед нами будет выставлена чужая заявка или наоборот, будут сняты стоящие за нами заявки и образуется разница в цене между нашей и следующей заявкой, превышающая один шаг цены, то наша заявка будет переставлена. Цены выставления заявок первой ноги при этом будут следующими:
+
+$Price\_s_1=\max\left(Price\_s_0,offer-step\right),$
+
+$Price\_b_1=\min\left(Price\_b_0,bid+step\right),$
+
+где `bid`, `offer`, `step` - это бид, оффер и шаг цены по [Is first](params-description.md#s.is_first) финансовому инструменту, нижний индекс `0` означает текущее значение параметра, нижний индекс `1` означает новое значение параметра.  
+Если у [Is first](params-description.md#s.is_first) финансового инструмента взведен флаг [Only maker](params-description.md#p.maker) и текущий спред в стакане равен одному шагу цены, то заявка на продажу будет выставлена по цене `offer`, а на покупку по цене `bid` (в противном случае заявка просто не смогла бы выставиться и "спамила" бы биржу).
+
+**Важно!** Если наша заявка является бидом или оффером и при этом является единственной заявкой на данном ценовом уровне, то в качестве бида и оффера в предыдущей формуле используются бид и оффер без учета нашей заявки в стакане.
+
+**Важно!** Если полученная цена заявки выходит за границы разрешенных по инструменту цен, то цена будет скорректирована до граничной цены (т.е. если полученная цена заявки меньше минимально разрешенной цены, то в качестве цены выставления заявки берем минимально разрешенную, если полученная цена заявки больше максимально разрешенной цены, то в качестве цены выставления заявки берем максимально разрешенную).
+
+**Важно!** Для корректного использования данного параметра необходимо получение торгового стакана по главному инструменту. Поэтому, для тех маркет-дата подключений, где стакан включается отдельным потоком, его необходимо включить, а на крипто-рынках вместе с данным флагом не стоит использовать подключения, названия которых оканчиваются на `_top`, так как в таких подключениях стакан не транслируется.
+
+**Неочевидный момент!**  
+Всё вышеописанное происходит только если расчетные цены [Price_s/Price_b](params-description.md#p.price_s) попадают в широкий спред или на противоположную сторону стакана, если же эти цены попадают в "свою" сторону стакана (покупка для покупки, продажа для продажи), то параметр `Simply first` никакого влияния на цены не оказывает.
+
+Кроме того, если выполнено условие по параметру [Threshold](params-description.md#p.threshold), то пересчёт цен по `Simply first` также проведен не будет.
+
+### 7.2.12. Equal prices
+
+Если галка не стоит, то цена не [Is first](params-description.md#s.is_first) инструмента (второй ноги) определяется исходя из цен, которые были на момент сигнала на выставление заявки по `is first` инструменту. Если галка стоит, то заявка по второй ноге будет выставлена по такой цене,
+чтобы [Sell](params-description.md#p.sell) = [Lim_sell](params-description.md#p.lim_s) и [Buy](params-description.md#p.buy) = [Lim_buy](params-description.md#p.lim_b) (работает только для портфелей с двумя финансовыми инструментами).  
+Таким образом цены в заявках будут строго соответствовать [Lim_sell](params-description.md#p.lim_s), даже если в моменте были лучшие цены.
+Включение параметра способствует меньшему числу проскальзываний по второй ноге, но и уменьшает количество положительных проскальзываний (когда купили по цене лучшей, чем хотели).
+
+Формулы для цены второй ноги:
+
+* [Calculation method](params-description.md#p.calc_method) равен `Absolute spread`
+
+    при продаже портфеля:
+
+    $$Price=\pm\left(Lim\_sell-\left(Price\_s
+    \begin{cases}+,& Ratio\_sign_1=+\\
+            \times,& Ratio\_sign_1=\times\end{cases}
+    ratio_1\right)\right)
+    \begin{cases}-,& Ratio\_sign_2=+\\
+            /,& Ratio\_sign_2=\times\end{cases}
+    ratio_2$$
+
+    при покупке портфеля:
+
+    $$Price=\pm\left(Lim\_buy-\left(Price\_b
+    \begin{cases}+,& Ratio\_sign_1=+\\
+            \times,& Ratio\_sign_1=\times\end{cases}
+    ratio_1\right)\right)
+    \begin{cases}-,& Ratio\_sign_2=+\\
+            /,& Ratio\_sign_2=\times\end{cases}
+    ratio_2$$
+
+    Знак `±` - зависит от того, какое выставлено значение параметра [On_buy](params-description.md#s.on_buy) на второй ноге (если  `Buy`, то `+`, если  `Sell`, то `-`).
+
+* [Calculation method](params-description.md#p.calc_method) равен `Relative spread (%)`
+
+    при продаже портфеля:
+    
+    - если [On_buy](params-description.md#s.on_buy) на второй ноге равен `Sell`
+    
+        $$Price=\frac{Price\_s\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1}{Lim\_sell \times 0.01 + 1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+    
+    - если [On_buy](params-description.md#s.on_buy) на второй ноге равен `Buy`
+    
+        $$Price=\frac{Lim\_sell \times 0.01 + 1}{Price\_s\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+    
+    при покупке портфеля:
+    
+    - если [On_buy](params-description.md#s.on_buy) на второй ноге равен `Sell`
+    
+        $$Price=\frac{Price\_b\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1}{Lim\_buy \times 0.01 + 1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+    
+    - если [On_buy](params-description.md#s.on_buy) на второй ноге равен `Buy`
+    
+        $$Price=\frac{Lim\_buy \times 0.01 + 1}{Price\_b\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+
+**Важно!** Данный параметр имеет смысл использовать только в том случае, когда [Price_s](params-description.md#p.price_s) и [Price_b](params-description.md#p.price_b) считаются НЕ только от [Lim_sell](params-description.md#p.lim_s), [Lim_buy](params-description.md#p.lim_b) и цены НЕ
+[Is first](params-description.md#s.is_first) инструмента, а как-то модифицируются потом, например, через [Simply first](params-description.md#p.simply_first) или через какие-то хитрые расчеты в формулах. В противном случае цена заявки по не [Is first](params-description.md#s.is_first) инструменту
+никак не изменится, т.к. мы просто выразим данную цену через обратную формулу.
+
+_Пример_: [Price_b](params-description.md#p.price_b) получили равным `100`, при этом [Lim_buy](params-description.md#p.lim_b) равен `0`, а цена продажи не [Is first](params-description.md#s.is_first) инструмента `100`. Но `100` по [Is first](params-description.md#s.is_first) инструменту
+попадает в противоположную сторону стакана и будет тут же исполнена, включаем [Simply first](params-description.md#p.simply_first), он отодвигает [Price_b](params-description.md#p.price_b) на меньшую цену, пусть, `90`, т.е. делает дешевле и оставляет в покупках в стакане. Теперь если пересчитать
+цену заявки по не [Is first](params-description.md#s.is_first) инструменту, получим уже `90`, т.е. мы готовы продать дешевле и тем самым увеличить шанс заявки на исполнение, но компенсируем мы это тем, что [Is first](params-description.md#s.is_first) инструмент мы хотим купить дешевле.
+
+### 7.2.13. Volumes
+
+Группа параметров отвечающих за объем выставляемых заявок. Группу можно разделить на две пары параметров: [v_in_left/v_in_right](params-description.md#p.v_in_l) и [v_out_left/v_out_right](params-description.md#p.v_out_l), а так же параметры [Virt_0_pos](params-description.md#p.virtual_0_pos) и [n_perc_fill](params-description.md#p.n_perc_fill).
+
+#### 7.2.13.1. v_min/v_max
+
+Минимальная/максимальная разрешенная позиция по портфелю. Измеряется в штуках портфелей.
+
+#### 7.2.13.2. v_in_left/v_in_right
+
+Отвечает за минимальный/максимальный разрешенный объем для однократного входа в позицию (в штуках портфелей);  
+Если тип определения цены [Type price](params-description.md#p.price_type) выбран `Orderbook` или `Orderbook+filter` то в качестве объема для однократного входа в позицию `v_in_right` не используется.
+
+#### 7.2.13.3. v_out_left/v_out_right
+
+Отвечает за минимальный/максимальный разрешенный объем для однократного выхода из позиции (в штуках портфелей);  
+Если тип определения цены [Type price](params-description.md#p.price_type) выбран `Orderbook` или `Orderbook+filter` то в качестве объема для однократного выхода из позиции `v_out_right` не используется.
+
+#### 7.2.13.4. Virt 0 pos
+
+Параметр позволяет [Is first](params-description.md#s.is_first) заявке, выставленной по алгоритму, по финансовому инструменту с направлением в сторону закрытия позиции не только сводить позицию к нулю, но и сразу открывать новую позицию с противоположным направлением, кроме того объем заявки никогда не может быть меньше [v_in_left](params-description.md#p.v_in_l) и [v_out_left](params-description.md#p.v_out_l).
+
+**Важно!** Если установлен флаг [To0](params-description.md#p.to0), то можно получить такое поведение робота, что позиция никогда не попадает ровно в 0, а все время переворачивается то в одну, то в другую сторону. При включенном параметре `Virt 0 pos` робот может не дойти до позиций [v_min/v_max](params-description.md#p.v_min), т.к. “упираемся” в [v_in_left/v_in_right](params-description.md#p.v_in_l) и [v_out_left/v_out_right](params-description.md#p.v_out_l) (робот не ставит меньше этих значений).
+
+#### 7.2.13.5. n_perc_fill
+
+Параметр отвечает за связь позиции по главному финансовому инструменту и позиции по портфелю. Исходя из этого параметра осуществляется округление отношения позиции ([Curpos](params-description.md#s.pos)) по главному инструменту к параметру [Count](params-description.md#s.count) того же инструмента. Параметр `n_perc_fill` может принимать только значения от 50 до 100 и 0. Значение `n_perc_fill` равное нулю отключает механизм округления, в результате позиция всегда округляется по модулю вниз. Во всех остальных случаях работают следующие правила:
+
+- если при изменении позиции по главному инструменту портфеля целая часть позиции не изменилась, а остаток от деления нацело [Curpos](params-description.md#s.pos) на [Count](params-description.md#s.count) находится в диапазоне от `(100 - n_perc_fill)` до `n_perc_fill` процентов от [Count](params-description.md#s.count), то позиция по портфелю не меняется, если остаток слева от диапазона, то округление идет по модулю вниз, если остаток справа от диапазона, то округление идет по модулю вверх;
+
+- если при увеличении позиции целая часть от деления нацело [Curpos](params-description.md#s.pos) на [Count](params-description.md#s.count) увеличилась, а модуль остатка от деления нацело [Curpos](params-description.md#s.pos) на [Count](params-description.md#s.count) больше или равен `n_perc_fill` процентов от [Count](params-description.md#s.count), то позицию по портфелю округляем по модулю вверх, иначе вниз;
+
+- если при уменьшении позиции целая часть от деления нацело [Curpos](params-description.md#s.pos) на [Count](params-description.md#s.count) уменьшилась, а модуль остатка от деления нацело [Curpos](params-description.md#s.pos) на [Count](params-description.md#s.count) меньше или равен `(100 - n_perc_fill)` процентов от [Count](params-description.md#s.count), то позицию по портфелю округляем по модулю вниз, иначе вверх.
+
+Таким образом, использование параметра `n_perc_fill` со значением отличным от нуля имеет смысл только когда [Count](params-description.md#s.count) инструмента первой ноги больше единицы. В таком случае значение параметра `n_perc_fill` отличное от нуля обеспечивает возможность в определенных пределах фильтровать "дребезг" позиции по инструменту первой ноги.
+
+### 7.2.14. Delta
+
+Минимальное отклонение [Price_s](params-description.md#p.price_s) и `[Price_b](params-description.md#p.price_b) от цены выставленной заявки на продажу или покупку, соответственно, при превышении которого робот может переставить котируемую заявку, то есть заявку по [Is first](params-description.md#s.is_first) инструменту (используется только при включенном режиме [Quote](params-description.md#p.quote));
+
+_Пример_:  
+Delta = 10, выставлена котирующая заявка на продажу по цене 95 (т.е на момент выставления этой заявки Price_s = 95). Как только Price_s станет меньше 85 или больше 105, заявка переставится по новой цене
+
+### 7.2.15. First delta
+
+Задается в процентах (%), это один из параметров, который ведет к перевыставлению заявки с новым объемом если ее текущий не исполненный объем стал меньше, чем `First delta` процентов от первоначального выставленного объема (используется только при включенном режиме [Quote](params-description.md#p.quote)). Таким образом можно поддерживать максимально необходимый объем в котируемой заявке.
+
+
+_Пример_:  
+First delta = 20. Вы котируете на продажу объёмом 100 и вашу заявку начинают выкупать по частям. Заявка висит до тех пор, пока её неисполненный объём больше или равен 20. Как только он становится меньше 20, заявка снимается и, если может, выставляется новая по цене `Price_s` в полном объёме.
+
+### 7.2.16. Market volume
+
+Данный параметр ограничивает выставление заявки по [Is first](params-description.md#s.is_first) инструменту в случаях, 
+если в очереди в стакане перед предполагаемой ценой выставления уже есть объем больший чем указан в `Market volume`. Значение отображается в той же размерности, в которой отображается позиция по инструменту в терминале биржи (если для конкретного подключения не указано иное).
+
+**Важно!** Для отображения на сайте используется [lot_size](params-description.md#pp.lot_size), в случае использования [С++ формул](c-api.md#cpp) или [API](api.md#api) для получения правильного значения параметра необходимо домножать на [lot_size](params-description.md#pp.lot_size) самостоятельно.
+
+### 7.2.17. Price check
+
+Если предполагаемая цена выставления заявки по [Is first](params-description.md#s.is_first) финансовому инструменту попадает в стакан глубже, чем на `Price check` пунктов, то заявка не выставляется.
+То есть, если `offer + Price check < Price_s`, где `offer` – лучшая цена на продажу [Is first](params-description.md#s.is_first) инструмента, то заявка выставлена не будет.
+Для покупки аналогично.
+
+### 7.2.18. Max not hedged
+
+Значение равное сумме допустимых незахеджированных открытий по [Is first](params-description.md#s.is_first) инструменту (т.е. когда по любому из не [Is first](params-description.md#s.is_first) инструментов "висит" в рынке не менее, чем `Max not hedged` активных заявок) и ошибок выставления (все ошибки, кроме кроссов), после которой торговля по [Is first](params-description.md#s.is_first) инструменту будет остановлена до тех пор пока хотя бы одна из незахеджированных позиций не захеджируется или не сбросится счетчик ошибок.
+
+**Важно!** Необходимо использовать параметр `Max not hedged` в связке с [Hedge (sec)](params-description.md#p.hedge_after), так как иначе при накоплении определенного количества ошибок произойдет остановка торговли.
+
+**Неочевидный момент!** На некоторых торговых площадках используется двунаправленная позиция, когда можно открыть позиции в покупку и в продажу одновременно, на таких площадках при выставлении заявки вместо двух возможных направлений: "покупка" и "продажа", используется четыре направления: "открыть покупку", "открыть продажу", "закрыть покупку", "закрыть продажу". При использовании в портфеле инструментов с таких торговых площадок в качестве инструментов второй ноги параметр `Max not hedged` может принимать только значение "1", в противном случае будет невозможно обеспечить корректную работу алгоритма робота.
+
+### 7.2.19. Overlay
+
+Хеджировать только если разница (в портфелях) между [Is first](params-description.md#s.is_first) финансовому инструменту и остальными инструментами портфеля больше или равна значению данного параметра (в штуках портфелей, то есть в той же размерности, что и [v_in_left/v_in_right](params-description.md#p.v_in_l)).
+
+### 7.2.20. Lim_sell/Lim_buy
+
+`Lim_Sell` – сигнальная цена на продажу, заявка по [Is first](params-description.md#s.is_first) финансовому инструменту выставляется если `Sell ≥ Lim_Sell` вне зависимости от того включен или нет режим [Quote](params-description.md#p.quote).
+
+`Lim_Buy` – сигнальная цена на покупку, заявка по [Is first](params-description.md#s.is_first) финансовому инструменту выставляется если `Buy ≤ Lim_Buy` вне зависимости от того включен или нет режим  [Quote](params-description.md#p.quote).
+
+Работа данных параметров наглядно продемонстрирована в этом видео:
+
+<iframe width="735" height="415" src="https://www.youtube.com/embed/DxLdFeUU_bM" title="Описание параметра Lim-sell и Lim-buy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+### 7.2.21. Threshold
+
+При `Threshold > 0` при сильном движении раздвижки на размер `Threshold`, т.е. при выполнении условий `Sell ≥ Lim_Sell + Threshold` или `Buy ≤ Lim_Buy - Threshold`, расчёт цен [Price_s](params-description.md#p.price_s) и [Price_b](params-description.md#p.price_b), соответственно, будет производиться как для ситуации со снятым флагом [Simply first](params-description.md#p.simply_first) вне зависимости от фактического значения параметра (т.е. параметр будет в моменте отключен), при выставлении заявки по [Is first](params-description.md#s.is_first) финансовому инструменту флаг [Only maker](params-description.md#p.maker) в заявке взведён не будет вне зависимости от фактического значения параметра. При этом видимые пользователю настройки портфеля не будут изменены, все отключения параметров происходят виртуально.
+
+При `Threshold = 0` данный параметр влияния на алгоритм не оказывает, т.е. по сути данное значение отключает функционал этого параметра.
+
+**Важно!** Нельзя переставить заявку на бирже, изменяя флаг [Only maker](params-description.md#p.maker) заявки, уже стоящей на этой бирже, поэтому при выполнении условий на `Threshold`, переставление всегда заменяется на отдельные снятие и выставление заявки.
+
+### 7.2.22. Trading signal shift
+
+Группа параметров, отвечающих за создание арбитражного канала.
+
+#### 7.2.22.1. Shift mode
+
+Режим подвижки цен [Lim_sell](params-description.md#p.lim_s) и [Lim_buy](params-description.md#p.lim_b). Их всего три: `Standard`, `Standard + X` и `C++ formula`.
+
+##### 7.2.22.1.1. Standard shift mode
+
+Сигнальные цены [Lim_Sell](params-description.md#p.lim_s) и [Lim_Buy](params-description.md#p.lim_s) перемещаются только при прохождении сделок по [Is first](params-description.md#s.is_first) финансовому инструменту портфеля кроме случая использования [Always timer](params-description.md#p.always_limits_timer).
+
+Правила перемещения сигнальных цен по [Is first](params-description.md#s.is_first) финансовому инструменту можно разделить на две части: продажа и покупка. Внутри каждой из этих частей алгоритм делится еще на две части: позиция портфеля до прохождения данной сделки была равна нулю и была не равна нулю: 
+
+Введем следующие обозначения:
+* `diffpos` - знаковое количество лотов в сделке по [Is first](params-description.md#s.is_first) финансовому инструменту, 
+* `V` - это `v_in ×`[Count](params-description.md#s.count) или `v_out ×`[Count](params-description.md#s.count) в зависимости от того открываем мы позицию или закрываем данной заявкой. `v_in` равен [v_in_left](params-description.md#p.v_in_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_in_right](params-description.md#p.v_in_r) если [v_side](params-description.md#p.v_side) равен `v_right`, `v_out` равен [v_out_left](params-description.md#p.v_out_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_out_right](params-description.md#p.v_out_r) если [v_side](params-description.md#p.v_side) равен `v_right`.
+* [Count](params-description.md#s.count) - это `Count` [Is first](params-description.md#s.is_first) финансового инструмента.
+* [Curpos](params-description.md#s.pos) - текущая позиция по [Is first](params-description.md#s.is_first) финансового инструмента портфеля (т.е. прошедшая только что сделка еще НЕ учтена), нижний индекс 0 - предыдущее значение параметра, 1 - новое значение параметра. 
+    
+В таких обозначениях алгоритм перемещения сигнальных цен примет вид:
+     
+1. если прошла продажа в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos\neq 0$, то:
+
+    $k3=\left(|{Lim\_Sell_0- Lim\_Buy_0}|-TP-K\right)\times\frac{V}{curpos},$
+
+    $k4=
+      \begin{cases}k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
+                  -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0 
+      \end{cases},$ 
+
+    $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
+        \begin{cases} 
+           k4, &\text{if}\enspace curpos>0\\ 
+           K1, &\text{if}\enspace curpos<0 
+        \end{cases},$
+
+    $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos>0\\ 
+          K, &\text{if}\enspace curpos<0 
+       \end{cases},$
+
+2. если прошла продажа в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos=0$, то:
+
+    $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times K,$
+
+    $Lim\_Buy_1=Lim\_Sell_0-TP,$
+
+
+3. если прошла покупка в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos\neq 0$, то:
+
+    $k3=\left(|Lim\_Sell_0-Lim\_Buy_0|-TP-K\right)\times\frac{V}{curpos},$
+
+    $k4=
+      \begin{cases} 
+        -k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0\geq 0\\
+         k3+K2, &\text{if}\enspace Lim\_Sell_0-Lim\_Buy_0<0
+      \end{cases},$
+        
+    $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         k4, &\text{if}\enspace curpos<0\\
+         K1, &\text{if}\enspace curpos>0 
+       \end{cases},$
+        
+    $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos<0\\
+          K, &\text{if}\enspace curpos>0 
+       \end{cases},$
+
+4. если прошла покупка в количестве `diffpos` и текущая позиция до момента совершения сделки была $curpos=0$, то:
+        
+    $Lim\_Sell_1=Lim\_Buy_0+TP,$
+        
+    $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times K.$ 
+
+##### 7.2.22.1.2. Standard + X shift mode
+
+Сигнальные цены [Lim_Sell](params-description.md#p.lim_s) и [Lim_Buy](params-description.md#p.lim_s) перемещаются только при прохождении сделок по [Is first](params-description.md#s.is_first) финансовому инструменту портфеля кроме случая использования [Always timer](params-description.md#p.always_limits_timer).
+
+Правила перемещения сигнальных цен можно разделить на две части: произошла продажа по [Is first](params-description.md#s.is_first) финансовому инструменту и произошла покупка по [Is first](params-description.md#s.is_first) финансовому инструменту.
+
+Введем следующие обозначения:
+* `diffpos` - знаковое количество лотов в сделке по [Is first](params-description.md#s.is_first) финансовому инструменту.
+* `V` - это `v_in ×`[Count](params-description.md#s.count) или `v_out ×`[Count](params-description.md#s.count) в зависимости от того открываем мы позицию или закрываем данной заявкой, `v_in` равен [v_in_left](params-description.md#p.v_in_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_in_right](params-description.md#p.v_in_r) если [v_side](params-description.md#p.v_side) равен `v_right` `v_out` равен [v_out_left](params-description.md#p.v_out_l) если [v_side](params-description.md#p.v_side) равен `v_left` и равен [v_out_right](params-description.md#p.v_out_r) если [v_side](params-description.md#p.v_side) равен `v_right`,
+* [Count](params-description.md#s.count) - это `Count` [Is first](params-description.md#s.is_first) финансового инструмента
+* [Curpos](params-description.md#s.pos) - текущая позиция по [Is first](params-description.md#s.is_first) финансового инструмента портфеля (т.е. прошедшая только что сделка еще НЕ учтена), нижний индекс 0 - предыдущее значение параметра, 1 - новое значение параметра. В данных обозначениях алгоритм перемещения сигнальных цен примет вид:
+
+В таких обозначениях алгоритм перемещения сигнальных цен примет вид:
+
+1. Если прошла продажа в количестве `diffpos`:
+        
+    $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
+        \begin{cases} 
+           X, &\text{if}\enspace curpos>0\\ 
+           K1, &\text{if}\enspace curpos<0 
+        \end{cases},$
+
+    $Lim\_Sell_1=Lim\_Sell_0+\frac{|{diffpos}|}{V}\times
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos>0\\ 
+          K, &\text{if}\enspace curpos<0 
+       \end{cases},$
+
+1. Если прошла покупка в количестве diffpos:
+
+    $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         X, &\text{if}\enspace curpos<0\\
+         K1, &\text{if}\enspace curpos>0 
+       \end{cases},$
+        
+    $Lim\_Buy_1=Lim\_Buy_0-\frac{|{diffpos}|}{V}\times 
+       \begin{cases} 
+         K2, &\text{if}\enspace curpos<0\\
+          K, &\text{if}\enspace curpos>0 
+       \end{cases},$
+
+##### 7.2.22.1.3. C++ formula shift mode
+
+В этом режиме подвижки цен используется [Shift formula](params-description.md#p.shift_formula)
+
+#### 7.2.22.2. v_side
+
+- `v_left` - использовать [v_in_left](params-description.md#p.v_in_l) и [v_out_left](params-description.md#p.v_out_l) при подвижке [Lim_sell](params-description.md#p.lim_s) и [Lim_buy](params-description.md#p.lim_b)
+- `v_right` - использовать [v_in_right](params-description.md#p.v_in_r) и [v_out_right](params-description.md#p.v_out_r) при подвижке [Lim_sell](params-description.md#p.lim_s) и [Lim_buy](params-description.md#p.lim_b)
+
+**Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов, но может быть использован в коде формул.
+Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
+
+#### 7.2.22.3. K
+
+Коэффициент сдвига заявки, что улучшает цену для каждого последующего входа.  
+На параметр `К` будут сдвинуты заявки [Lim_sell](params-description.md#p.lim_s) в случае продажи или [Lim_buy](params-description.md#p.lim_b) в случае покупки при наборе позиции. Другими словами, на сколько улучшится положение заявки после удара на вход (ударом считается сделка объемом не меньше [v_in_left](params-description.md#p.v_in_l)).
+
+Видео объясняющее работу параметра `К`:
+
+<iframe width="735" height="415" src="https://www.youtube.com/embed/2qUPvspTQq4" title="Описание параметра K" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+**Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов (кроме подвижки по [Limits timer](params-description.md#p.timer),
+[Percent](params-description.md#p.percent)), но может быть использован в коде формул. Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
+
+#### 7.2.22.4. ТР
+
+Уровень противоположной заявки после удара. С помощью параметра `ТР` вы указываете, где будет выставлена противоположная заявка после удара (работает только после первого удара).
+Если нас ударили по [Lim_sell](params-description.md#p.lim_s) = 150, то при 'ТР' = 50, [Lim_buy](params-description.md#p.lim_b) будет выставлен на 150 – 50 = 100.
+
+Видео объясняющее работу параметра `ТР`:
+
+<iframe width="735" height="415" src="https://www.youtube.com/embed/R2nuoUpGq9c" title="Описание параметра TP" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+**Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов, но может быть использован в коде формул.
+Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
+
+#### 7.2.22.5. K1
+
+Коэффициент указывает на сколько будет сдвинута противоположная заявка после второго удара.
+[Lim_buy](params-description.md#p.lim_b) = 100 из предыдущего примера, при `К1` = 5, будет установлена на 100 + 5 = 105, после второго удара по [Lim_sell](params-description.md#p.lim_s), после того как пройдет еще одна сделка, [Lim_buy](params-description.md#p.lim_b) будет увеличен еще на 5 и примет значение 110, после очередной сделки по [Lim_sell](params-description.md#p.lim_s), [Lim_buy](params-description.md#p.lim_b) примет значение 115 и т.д.
+
+Видео объясняющее работу параметра `К1`:
+
+<iframe width="735" height="415" src="https://www.youtube.com/embed/nYSPQR2LFhE" title="Описание параметра K1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+**Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов, но может быть использован в коде формул.
+Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
+
+#### 7.2.22.6. K2
+
+Коэффициент сдвига заявки, что улучшает цену заявки каждого последующего выхода.
+На параметр `К2` будут сдвинуты заявки [Lim_sell](params-description.md#p.lim_s) или [Lim_buy](params-description.md#p.lim_b) в случае продажи или покупки, соответственно, при выходе из позиции. Другими словами, на сколько улучшится положение следующей заявки на выход после предыдущего удара (ударом считается сделка объемом не меньше [v_out_left](params-description.md#p.v_out_l)).
+Из примера ранее где [Lim_buy](params-description.md#p.lim_b) = 105 при `К2` = 3. При ударе по [Lim_buy](params-description.md#p.lim_b) его значение станет равным 105 - 3 = 102.
+
+Видео объясняющее работу параметра К2:
+
+<iframe width="735" height="415" src="https://www.youtube.com/embed/9RbN893_eD0" title="Описание параметра K2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+**Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов, но может быть использован в коде формул.
+Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
+
+#### 7.2.22.7. X
+
+Коэффициент сдвига противоположного сигнального уровня при выходе из позиции. Используется только в режиме [Shift mode](params-description.md#p.shift_mode) равном `Standard + X`.
+После каждой сделки, уменьшающей позицию, текущий уровень выхода смещается на [K2](params-description.md#p.k2), а противоположный уровень, предназначенный для нового входа, на `X`.
+При закрытии короткой позиции покупкой [Lim_sell](params-description.md#p.lim_s) уменьшается на `X`, а при закрытии длинной позиции продажей [Lim_buy](params-description.md#p.lim_b) увеличивается на `X`.
+Таким образом, `X` определяет насколько уровень возможного повторного входа смещается вслед за уровнем выхода при разгрузке позиции.
+
+**Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов, но может быть использован в коде формул.
+Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
+
+### 7.2.23. Shift formula
+
+Формула на языке программирования [C++](c-api.md#cpp), которая вызывается при каждой сделке по [Is first](params-description.md#s.is_first) финансовому инструменту портфеля по алгоритму (т.е. аналогично той логике, которая используется для [Shift mode](params-description.md#p.shift_mode)
+равного `Standard` и `Standard + X`). Данная функция вызывается ДО изменения позиции на количество сделки, инициировавшей вызов `Shift formula`. Если установлен флаг [Virt_0_pos](params-description.md#p.virtual_0_pos), то количество в сделке, переворачивающей
+позицию, будет разделено на две части, и формула будет вызвана дважды: отдельно с количеством закрывающим позицию и отдельно с количеством открывающим новую позицию. Используется только в режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula`. Если вы используете метод [deal_item deal()](c-api.md#__last_deal__) в `Shift formula`, он вернет последнюю сделку только по [Is first](params-description.md#s.is_first) финансовому инструменту. 
+
+[Примеры реализации `Shift formula` для режимов `Shift mode` `Standard` и `Standard + X`](c-api.md#__shift_formula__)
+
+**Важно!** Значение, возвращаемое данной формулой, никак НЕ используется алгоритмом, оно оставлено для совместимости, чтобы все функции формул имели сигнатуру вида `double FORMULA_NAME()` (т.е. функция без агрументов, возвращающая значение типа `double`).
+
+### 7.2.24. Limits timer
+
+Время таймера (задается в секундах), по истечении которого происходит сдвиг обоих параметров [Lim_sell](params-description.md#p.lim_s) и [Lim_buy](params-description.md#p.lim_b) на значение [K](params-description.md#p.k). Таймер включается если торговля включена и проходит сигнал на покупку или продажу, но торговля запрещена из-за того, что робот уже набрал максимальную позицию (по [v_min/v_max](params-description.md#p.v_min)). Сдвиг по таймеру можно отключить, задав значение [Percent](params-description.md#p.percent) > 100%.
+
+Пример: значения `Limits timer` = 10 сек, `Percent` = 60. Возьмем временное окно 10 сек: допустим, сигнал был 2 сек, потом на 3 сек пропал, потом 4 сек был и снова на 1 сек пропал. За 10 сек сигнал был суммарно 6 сек, что больше или равно 60% от 10 сек, следовательно условие выполнено, сдвиг выполняется.
+
+
+### 7.2.25. Percent
+
+Процент от [Limits timer](params-description.md#p.timer) после которого происходит сдвиг. Если сигнал на торговлю продержался указанный процент времени от значения [Limits timer](params-description.md#p.timer), то [Lim_sell/Lim_buy](params-description.md#p.lim_s)) передвигаются на [K](params-description.md#p.k), несмотря на отсутствие сделок по [Is first](params-description.md#s.is_first) финансовому инструменту. Сдвиг по таймеру можно отключить, задав значение [Percent](params-description.md#p.percent) > 100%.
+
+
+### 7.2.26. Always timer
+
+Включенный `Always timer` позволяет всегда использовать [Limits timer](params-description.md#p.timer), даже когда позиция портфеля не достигла значений [v_min](params-description.md#p.v_min) или [v_max](params-description.md#p.v_max). При выключенном `Always timer` смещение уровней [Lim_sell](params-description.md#p.lim_s) и/или [Lim_buy](params-description.md#p.lim_b) происходит только когда происходят сделки или когда позиция портфеля достигла значений [v_min](params-description.md#p.v_min) или [v_max](params-description.md#p.v_max). Включение этого параметра позволяет двигать уровни, даже если сделка не совершилась, но робот только попытался выставить заявку.
+
+
+### 7.2.27. Pos
+
+Текущая позиция портфеля (в штуках портфелей), вычисляется по формуле:
+
+$Pos=[\frac{Curpos_{first}}{Count_{first}}],$
+
+где Curpos<sub>first</sub> и Count<sub>first</sub> - это параметры [Curpos](params-description.md#s.pos) и [Count](params-description.md#s.count) для инструмента портфеля с взведенным флагом [Is first](params-description.md#s.is_first), и округляется вверх или вниз в зависимости от значения параметра [n_perc_fill](params-description.md#p.n_perc_fill). Изменяется роботом, но может быть отредактирована пользователем вручную.
+
+### 7.2.28. Timetable
+
+Использовать торговлю по расписанию. Расписание состоит из списка дней недели (с понедельника по воскресенье, параметр `TradingDays`), из которых необходимо выбрать те дни, в которые будет осуществляться торговля, и списка торговых периодов (периоды одни и те же для всех торговых дней), для каждого из периодов задаются свои параметры:
+
+`Begin` - начало торгового периода.\
+`End` - окончание торгового периода.\
+`re_sell` - что делать с [re_sell](params-description.md#p.re_sell) в течение данного интервала: всегда включать, всегда выключать, "ручной" режим.\
+`re_buy` - что делать с [re_buy](params-description.md#p.re_buy) в течение данного интервала: всегда включать, всегда выключать, "ручной" режим.\
+`Close` - попытаться закрыть позицию сразу после окончания торгового периода (в течение 10 секунд).Закрытие позиции не гарантируется, так как заявки могут не выставиться по не зависящим от нас причинам.\
+`To market` - попытаться выровнить позицию сразу после окончания торгового периода (в течение 10 секунд). Выравнивание позиции не гарантируется, так как заявки могут не выставиться по не зависящим от нас причинам.\
+`To0` - что делать с [To0](params-description.md#p.to0) в течение данного интервала: всегда включать, всегда выключать, "ручной" режим.\
+`Save history` - сохранять ли историю изменения некоторых параметров портфеля в течение данного интервала.
+
+Если текущее локальное время на сервере (`curTime`) попадает в один из периодов, т.е. $Begin_i \le curTime \le End_i$, то управление параметрами портфеля, описанными выше, переходит к расписанию, в противном случае (если текущее время не попадает ни в один из периодов) параметры портфеля, описанные выше, автоматически выключаются.
+
+"Ручной" режим означает, что данный параметр портфеля на данном временном интервале НЕ контролируется расписанием, т.е. пользователь может изменять значения данного параметра "руками" даже при включенном расписании.
+
+Расписание торговых дней недели можно также установить сразу для нескольких портфелей, выделив их в виджете [Portfolios table](interface.md#portfolios_table) и выбрав пункт [TradingDays](getting-started.md#portfolio_actions.trading_days) в меню `Actions`.
+
+
+**Важно!** Текущее время определяется временем на сервере, где находится робот. В данный момент для роботов, торгующих на криптовалютных биржах, это UTC, для всех остальных это UTC +3 (МСК). Текущее время на сервере отображается в виджете [Robots](interface.md#robots_table) в столбце `Robot time`, настоятельно рекомендуется ориентироваться именно на это время.
+
+**Важно!** Ситуации, когда между торговыми периодами создан промежуточный неторговый период, начинающийся секунда в секунду за торговым периодом и заканчивающийся ровно перед следующим, и когда между торговыми периодами есть интервал по времени, но неторговый период в расписании не создан, не равнозначны. Во втором случае между периодами все описанные выше флаги будут сняты, в первом случае есть возможность настроить это поведение.
+
+### 7.2.29. To0
+
+Использование данного параметра позволяет вести торговлю только в сторону закрытия позиции. Когда позиция портфеля достигнет нуля, торговля остановится. 
+
+**Важно!** Если установлен флаг [Virt_0_pos](params-description.md#p.virtual_0_pos), то можно получить такое поведение робота, что позиция никогда не попадает ровно в 0, а все время переворачивается то в одну, то в другую сторону.
+
+### 7.2.30. Opened
+
+Параметр, используемый для подсчета финансового результата, вычисляется по формуле:
+
+$$Opened = -\left(\sum_{i\in bought}tradePrice_i\times tradeAmount_i\times lotSize_i\times Mult_i\right)+
+            \left(\sum_{i\in sold}tradePrice_i\times tradeAmount_i\times lotSize_i\times Mult_i\right),$$
+
+где tradePrice<sub>i</sub> - цена сделки;  
+tradeAmount<sub>i</sub> - количество лотов в сделке;  
+lotSize<sub>i</sub> - множитель для перевода целых объемов в дробные;  
+bought - список сделок на покупку;  
+sold - список сделок на продажу;  
+Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) инструмента портфеля.
+
+### 7.2.31. Commission sum
+
+Сумма комиссии по всем сделкам портфеля, используется для подсчёта финансового результата.
+
+### 7.2.32. Decimals
+
+Параметр, определяющий сколько знаков после десятичной точки отображается в параметрах, значение которых является дробным числом.
+Стоит отметить, что робот использует настоящие цены, пришедшие с биржи, в то время как в интерфейсе, при использовании параметра `Decimals`, может отображаться округленное значение.
+
+### 7.2.33. Custom trade
+
+При использовании данного флага отключается стандартный расчёт цены раздвижки, вместо него для расчёта цены раздвижки, отображаемой в виджетах [Finres history](interface.md#finres_history) и [Finres for today](interface.md#finres_for_today) в поле `Price` будет использоваться результат вычисления формулы, написанной в поле [Trade formula](params-description.md#p.trade_formula). Поэтому убедитесь, что при установке данного флага Вы так же задали корректную формулу в поле [Trade formula](params-description.md#p.trade_formula).
+
+### 7.2.34. Trade formula
+
+Формула на языке программирования [C++](c-api.md#cpp) для подсчета раздвижки, отображаемой в виджетах [Finres history](interface.md#finres_history) и [Finres for today](interface.md#finres_for_today) в поле `Price`, вы пишете только тело функции и должны вернуть значение типа `double`. Функция вызывается в момент когда получены все необходимые сделки для подсчета раздвижки и добавления
+ее в таблицу (при этом сделки могут быть НЕ по всем финансовым инструментам портфеля). На каждый финансовый инструмент портфеля будет доступно не больше одной сделки, если по какому-либо финансовому инструменту прошло несколько сделок, относящихся к данной раздвижке, то будет доступна только одна сделка, но с суммарным количеством и со средней ценой.
+
+**Важно!** Значения, получаемые с помощью этой формулы, используются только в поле `Price` виджетов [Finres history](interface.md#finres_history) и [Finres for today](interface.md#finres_for_today), и не используются нигде более. Подсчёт финансового результата в поле `Fin res` виджета [Portfolios table](interface.md#portfolios_table) осуществляется непосредственно по ценам сделок и от результата работы данной формулы не зависит.
+
+**Неочевидный момент!** Код формулы, заданный по умолчанию, возвращает нулевое значение, использовать его в боевой торговле нецелесообразно.
+
+### 7.2.35. Extra formulas
+
+Флаг, включает расчёт `Extra field#1` и `Extra field#2`.
+
+### 7.2.36. Extra field#1 и Extra field#2
+
+Поля для дополнительных формул на языке программирования [C++](c-api.md#cpp), вы пишете только тело функции и должны вернуть значение типа `double`.
+
+### 7.2.37. Shared formulas
+
+Флаг, если взведен, то разрешено редактировать поля данного портфеля из формул другого портфеля (в противном случае при попытке редактирования будет выброшено исключение `std::domain_error` с текстом
+`Editing "<FIELD_NAME>" value is not allowed`).
+
+### 7.2.38. Disable portfolio
+
+Полностью выключить портфель из всех расчетов и торговли, не удаляя его. Этот флаг не является заменой флагам [re_sell/re_buy](params-description.md#p.re_buy). При использовании флага `disabled` портфель перестает получать как рыночную информацию, так и обновления по собственным выставленным заявкам, если таковые имеются. Поэтому перед использованием данного флага следует убедиться, что торговля по портфелю выключена, и активные заявки по обеим ногам портфеля отсутствуют. 
+
+**Важно!** При снятии этой галки и восстановлении работы портфеля возможно переоткрытие торговых стаканов и, как следствие, приостановка торговли во всех портфелях, использующих то же дата подключение, на время переоткрытия стаканов.
+
+### 7.2.39. Sell/Buy clicker
+
+"Кликер", выставить заявку на продажу/покупку заданного количества портфелей. Заявки выставляются сразу по всем инструментам портфеля. Ручной способ совершения сделок всем портфелем сразу не дожидаясь срабатывания сигналов `Sell`>=`Lim_sell` и `Buy`<=`Lim_buy`.
+
+### 7.2.40. To market
+
+"Кликер" позволяет принудительно выровнять позицию по портфелю. При нажатии на него происходят следующие действия: сначала выполняется снятие всех заявок, кроме заявок первой ноги, выставленных по алгоритму, потом выставление заявок с теми же количествами в рынок с учетом параметра [k_sl](params-description.md#s.k_sl). Если видно, что даже при полном прохождении в сделки всех этих заявок, позиция по портфелю выровнена не будет, то по инструментам второй ноги выставляются выравнивающие заявки в количестве не более одной заявки по инструменту. Выравнивающие заявки так же ставятся в рынок с учетом параметра [k_sl](params-description.md#s.k_sl).
+
+### 7.2.41. Place order
+
+Позволяет выставить заявку по одному из инструментов портфеля, не дожидаясь срабатывания настроенных условий портфеля, в т.ч. при выключенной торговле портфеля. Для того, чтобы воспользоваться этой опцией необходимо сделать клик по голубой ячейке в столбце `Place order` в таблице `Portfolios table` и выбрать необходимые параметры заявки, далее нажать на кнопку `Place order`.  
+При включенной торговле выставленная таким образом заявка может привести к срабатыванию параметров:  
+`Hedge (sec)`, `SLE`, `TE`.  
+Удалить выставленную таким способом заявку можно либо вручную с помощью биржевого терминала, либо с помощью кнопки [Hard stop](getting-started.md#portfolio_actions.hard_stop).
+
+### 7.2.42. Sell/Buy
+
+`Sell` — расчетное значение спреда для продажи. Нередактируемый параметр.  
+`Buy` — расчетное значение спреда для покупки. Нередактируемый параметр.  
+
+* [Calculation method](params-description.md#p.calc_method) равен `Absolute spread`
+
+    Упрощенные формулы для двух финансовых инструментов:
+
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+    
+    $${Sell=(bid_1Ratio\_sign_1ratio_1)-(offer_2Ratio\_sign_2ratio_2)}$$
+
+    $${Buy=(offer_1Ratio\_sign_1ratio_1)-(bid_2Ratio\_sign_2ratio_2)}$$
+
+    $${Ratio\_sign =+\enspace or\enspace \times}$$
+
+    Формулы расчета `Sell` и `Buy` для любого количества финансовых инструментов:
+
+    $$Sell=\sum_{i} 
+            \begin{cases}bid_i,& On\enspace buy_i=Buy\\
+                      -offer_i,& On\enspace buy_i=Sell\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
+        ratio_i$$
+    
+    $$Buy=\sum_{i} 
+            \begin{cases}-bid_i,& On\enspace buy_i=Sell\\
+                         offer_i,& On\enspace buy_i=Buy\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
+            ratio_i$$
+
+    Видео, наглядно демонстрирующее работу параметров `Sell/Buy`:
+
+    <iframe width="735" height="415" src="https://www.youtube.com/embed/p69X-3l-VLc" title="Описание параметра Sell Buy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+* [Calculation method](params-description.md#p.calc_method) равен `Relative spread (%)`
+
+    Упрощенные формулы для двух финансовых инструментов:
+
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+    
+    $${Sell=\left(\frac{bid_1 Ratio\_sign_1 ratio_1}{offer_2 Ratio\_sign_2 ratio_2} - 1 \right) \times 100}$$
+
+    $${Buy=\left(\frac{offer_1 Ratio\_sign_1 ratio_1}{bid_2 Ratio\_sign_2 ratio_2} - 1 \right) \times 100}$$
+
+    $${Ratio\_sign =+\enspace or\enspace \times}$$
+
+    Формулы расчета `Sell` и `Buy` для любого количества финансовых инструментов:
+    
+    $$Sell=\left(\frac{\prod\limits_{i, On\enspace buy_i=Buy} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i, On\enspace buy_i=Sell} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} - 1 \right) \times 100$$
+    
+    $$Buy=\left(\frac{\prod\limits_{i, On\enspace buy_i=Buy} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i, On\enspace buy_i=Sell} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} - 1 \right) \times 100$$
+
+
+### 7.2.43. Price_s/Price_b
+
+`Price_s` — цена выставления заявки на продажу по [Is first](params-description.md#s.is_first) финансовому инструменту, вычисляется как обратная функция для [Sell](params-description.md#p.sell), где цена [Sell](params-description.md#p.sell) заменяется на [Lim_Sell](params-description.md#p.lim_s). Нередактируемый параметр.  
+`Price_b` — цена выставления заявки на покупку по [Is first](params-description.md#s.is_first) финансовому инструменту, вычисляется как обратная функция для [Buy](params-description.md#p.buy), где цена [Buy](params-description.md#p.buy) заменяется на [Lim_Buy](params-description.md#p.lim_b). В общем случае это та цена, по которой робот "хочет" купить и продать по [Is first](params-description.md#s.is_first) инструменту.
+Нередактируемый параметр.
+
+* [Calculation method](params-description.md#p.calc_method) равен `Absolute spread`
+
+    Упрощенные формулы для двух финансовых инструментов:
+    
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+
+    $$Price\_s=\left(Lim\_sell+offer_2
+    \begin{cases}+,& Ratio\_sign_2=+\\
+            \times,& Ratio\_sign_2=\times\end{cases}
+    ratio_2\right)
+    \begin{cases}-,& Ratio\_sign_1=+\\
+            /,& Ratio\_sign_1=\times\end{cases}
+    ratio_1 - k_1$$
+
+    $$Price\_b=\left(Lim\_buy+bid_2
+    \begin{cases}+,& Ratio\_sign_2=+\\
+            \times,& Ratio\_sign_2=\times\end{cases}
+    ratio_2\right)
+    \begin{cases}-,& Ratio\_sign_1=+\\
+            /,& Ratio\_sign_1=\times\end{cases}
+    ratio_1 + k_1$$
+
+    Формулы расчета `Price_s` и `Price_b` для любого количества финансовых инструментов:
+       
+    $$Price\_s=\left(Lim\_sell-\sum_{i \neq isfirst}
+    \begin{cases}bid_i,& On\enspace buy_i=Buy\\
+                      -offer_i,& On\enspace buy_i=Sell\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
+        ratio_i
+    \right) 
+                   \begin{cases}
+                  -,& Ratio\_sign_{isfirst}=+\\
+                      /,& Ratio\_sign_{isfirst}=\times 
+               \end{cases} 
+                     ratio\_s_{isfirst} - k_{isfirst}$$
+
+    $$Price\_b=\left(Lim\_buy-\sum_{i \neq isfirst}
+    \begin{cases}-bid_i,& On\enspace buy_i=Sell\\
+                         offer_i,& On\enspace buy_i=Buy\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
+            ratio_i
+    \right) 
+                 \begin{cases}
+               -,& Ratio\_sign_{isfirst}=+\\
+                   /,& Ratio\_sign_{isfirst}=\times 
+             \end{cases} 
+                    ratio\_b_{isfirst} + k_{isfirst}$$
+
+    Видео, наглядно демонстрирующее работу параметров `Price_s/Price_b`:
+
+    <iframe width="735" height="415" src="https://www.youtube.com/embed/PKGbweKJbNE" title="Описание параметра Prices" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+* [Calculation method](params-description.md#p.calc_method) равен `Relative spread (%)`
+
+    Упрощенные формулы для двух финансовых инструментов:
+
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+    
+    $$Price\_s = \left( \frac{Lim\_sell}{100} +1 \right) \times \left( offer_2 \begin{cases}+,& Ratio\_sign_2=+\\ \times,& Ratio\_sign_2=\times\end{cases} ratio_2 \right) \begin{cases}
+                  -,& Ratio\_sign_{1}=+\\
+                      /,& Ratio\_sign_{1}=\times 
+               \end{cases} 
+                     ratio_{1} - k_{1}$$
+    
+    $$Price\_b = \left( \frac{Lim\_buy}{100} +1 \right) \times \left( bid_2 \begin{cases}+,& Ratio\_sign_2=+\\ \times,& Ratio\_sign_2=\times\end{cases} ratio_2 \right) \begin{cases}
+                  -,& Ratio\_sign_{1}=+\\
+                      /,& Ratio\_sign_{1}=\times 
+               \end{cases} 
+                     ratio_{1} - k_{1}$$
+    
+    Формулы расчета `Price_s` и `Price_b` для любого количества финансовых инструментов:
+    
+    $$Price\_s = \left( \frac{Lim\_sell}{100} +1 \right) \times \frac{\prod\limits_{i \neq isfirst, On\enspace buy_i=Sell} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i \neq isfirst, On\enspace buy_i=Buy} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} \begin{cases}
+                  -,& Ratio\_sign_{isfirst}=+\\
+                      /,& Ratio\_sign_{isfirst}=\times 
+               \end{cases} 
+                     ratio\_s_{isfirst} - k_{isfirst}$$
+    
+    $$Price\_b = \left( \frac{Lim\_buy}{100} +1 \right) \times \frac{\prod\limits_{i \neq isfirst, On\enspace buy_i=Sell} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i \neq isfirst, On\enspace buy_i=Buy} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} \begin{cases}
+               -,& Ratio\_sign_{isfirst}=+\\
+                   /,& Ratio\_sign_{isfirst}=\times 
+             \end{cases} 
+                    ratio\_b_{isfirst} + k_{isfirst}$$
+
+### 7.2.44. Sell/Buy status
+
+Статус заявки на продажу/покупку по [Is first](params-description.md#s.is_first) финансовому инструменту, выставленной для котирования в режиме [Quote](params-description.md#p.quote) или при выполнении условия на [Buy](params-description.md#p.buy) и [Lim_Buy](params-description.md#p.lim_b) для заявки на покупку и [Sell](params-description.md#p.sell) и [Lim_Sell](params-description.md#p.lim_s) для заявки на продажу. Таким образом, поля `Sell status` и `Buy status` отображают статусы двух конкретных заявок. Статусы заявок, выставленных кликером, в данных полях не отображаются.
+
+Существуют следующие статусы:
+
+- `free` - заявка отсутствует
+- `adding` - заявка выставляется (на биржу отправлен приказ на выставление заявки, ответ еще не получен)
+- `moving` - заявка перемещается (на биржу отправлен приказ на изменение заявки, ответ еще не получен)
+- `deleting`/`first_deleting`/`sl_deleting` - заявка снимается (на биржу отправлен приказ на снятие заявки, ответ еще не получен)
+- `running` - заявка "висит" на бирже (ответ об успешном выставлении заявки получен, никаких других неотвеченных приказов по данной заявке нет)
+
+Заявка может долго находиться в статусах `free` и `running`, остальные статусы являются переходными. При транзакционном подключении в состоянии "онлайн" заявки не должны иметь переходный статус дольше нескольких секунд.
+
+Для того чтобы освободить "зависшую" заявку, необходимо сделать двойной клик на ячейке таблицы. Ручная смена статуса может привести к потере заявки роботом, данную операцию рекомендуется делать только в крайних случаях.
+
+### 7.2.45. Return first
+
+Оборот по [Is first](params-description.md#s.is_first) финансовому инструменту, вычисляется с момента старта серверной части робота как сумма модулей количества лотов в сделках по [Is first](params-description.md#s.is_first) инструменту. Можно установить ноль двойным кликом. Значение отображается в той же размерности, в которой отображается позиция по инструменту в терминале биржи (если для конкретного подключения не указано иное).
+
+**Важно!** Для отображения на сайте используется [lot_size](params-description.md#pp.lot_size), в случае использования [С++ формул](c-api.md#cpp) или [API](api.md#api) для получения правильного значения параметра необходимо домножать на [lot_size](params-description.md#pp.lot_size) самостоятельно.
+
+### 7.2.46. Fin res
+
+Предполагаемый финансовый результат портфеля, вычисляется по формуле:
+
+$$Fin\enspace res=Opened+Commission\enspace sum+\sum_{i\in secs}Curpos_i \times lotSize_i \times Mult_i \times
+   \begin{cases} 
+     secBid_i, &\text{if } Curpos_i>0\\ 
+   secOffer_i, &\text{if } Curpos_i<0 
+   \end{cases},$$
+
+где secBid<sub>i</sub> - лучшая цена на покупку инструмента портфеля;  
+secOffer<sub>i</sub> - лучшая цена на продажу инструмента портфеля;  
+lotSize<sub>i</sub> - множитель для перевода целых объемов в дробные;  
+Curpos<sub>i</sub> - текущая позиция инструмента портфеля;  
+Mult - [Fin res multiplier](params-description.md#s.fin_res_mult) инструмента портфеля;  
+secs - список инструментов портфеля.
+
+Инструкцию по расчету и настройке вывода финансового результата можно посмотреть здесь [Fin res manual](https://instructions.fkviking.com/fin_result_guide.pdf))
+
+### 7.2.47. Fin res wo C
+
+`Fin res` без учета комиссии. Вычисляется по формуле:
+
+$$Fin\enspace res=Opened+\sum_{i\in secs}Curpos_i \times lotSize_i \times Mult_i \times 
+   \begin{cases} 
+     secBid_i, &\text{if } Curpos_i> 0\\ 
+   secOffer_i, &\text{if } Curpos_i< 0 
+   \end{cases},$$
+
+где secBid<sub>i</sub> - лучшая цена на покупку инструмента портфеля;  
+secOffer<sub>i</sub> - лучшая цена на продажу инструмента портфеля;  
+lotSize<sub>i</sub> - множитель для перевода целых объемов в дробные;  
+Curpos<sub>i</sub> - текущая позиция инструмента портфеля;  
+Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) инструмента портфеля;  
+secs - список инструментов портфеля.
+
+### 7.2.48. Is trading
+
+Отображает текущий статус торговли по портфелю. Может принимать значения:
+
+- `Not trading` - торговля по портфелю выключена (т.е. галки [re_sell](#p.re_sell) и [re_buy](#p.re_buy) сняты), акивных заявок по портфелю на биржах нет;
+- `Trading`- включена торговля по портфелю (т.е. установлена хотя бы одна из галок [re_sell](#p.re_sell) и [re_buy](#p.re_buy));
+- `Has active orders` - торговля по портфелю выключена (т.е. галки [re_sell](#p.re_sell) и [re_buy](#p.re_buy) сняты), но на биржах остались активные заявки данного портфеля.
+
+Нередактируемый параметр.
+
+### 7.2.49. Comment
+
+При необходимости к каждому портфелю можно добавить свой комментарий. Максимально допустимое число символов для комментария 100.
+
+### 7.2.50. Color
+
+При необходимости можно выделить портфель цветом в поле `color`.
+
+## 7.3. Параметры инструментов портфеля
+
+Далее дано описание параметров инструментов портфеля. Все параметры являются редактируемыми, если прямо не указано иное.
+
+### 7.3.1. SecKey
+
+Уникальный идентификатор инструмента портфеля. Нередактируемый параметр.
+
+### 7.3.2. SecBoard
+
+Режим инструмента портфеля. Нередактируемый параметр.
+
+### 7.3.3. SecCode
+
+Код инструмента портфеля. Нередактируемый параметр.
+
+### 7.3.4. Exchange
+
+Название биржи, на которой торгуется этот финансовый инструмент. Нередактируемый параметр.
+
+### 7.3.5. Curpos
+
+Текущая позиция портфеля по данному инструменту. Значение отображается в той же размерности, в которой отображается позиция по инструменту в терминале биржи (если для конкретного подключения не указано иное).
+
+**Важно!** Для отображения на сайте используется [lot_size](params-description.md#pp.lot_size), в случае использования [С++ формул](c-api.md#cpp) или [API](api.md#api) для получения правильного значения параметра необходимо домножать на [lot_size](params-description.md#pp.lot_size) самостоятельно.
+
+### 7.3.6. Count type
+
+Параметр позволяет выбрать константное значение [Count](params-description.md#s.count) или использовать [Count formula](params-description.md#s.count_formula)
+
+### 7.3.7. Count
+
+Количество инструмента в единице портфеля. Значение отображается в той же размерности, в которой отображается позиция по инструменту в терминале биржи (если для конкретного подключения не указано иное).
+
+**Важно!** Для отображения на сайте используется [lot_size](params-description.md#pp.lot_size), в случае использования [С++ формул](c-api.md#cpp) или [API](api.md#api) для получения правильного значения параметра необходимо домножать на [lot_size](params-description.md#pp.lot_size) самостоятельно.
+
+**Важно!** При включенном [Virt 0 pos](params-description.md#p.virtual_0_pos) `Count` – это минимальное количество, которым торгует робот по соответствующему инструменту, в противном случае может быть выставлена заявка в количестве меньшем чем `Count` (в случае закрытия позиции и чтобы "попасть" в [v_min/v_max](params-description.md#p.v_min)).
+
+### 7.3.8. Count formula
+
+Количество лотов инструмента в одном портфеле, задаётся как код на языке программирования [C++](c-api.md#cpp). Вы пишете только тело функции, и должны вернуть значение типа `double`.
+
+**Важно!** Значения [Count](params-description.md#s.count)
+ или [Count formula](params-description.md#s.count_formula) определяют соотношение именно между позициями инструментов портфеля (соотношение в конкретной сделке может отличаться). По этой же причине значение [Count formula](params-description.md#s.count_formula) не зависит от направления выставляемой заявки.
+
+**Важно:** настоятельно рекомендуется для [Is first](params-description.md#s.is_first) финансового инструмента никогда не возвращать значение 0, если вы хотите не торговать, используйте `Ratio formula` и задавайте необходимые значения для раздвижки. Если вы все-таки получили [Count](params-description.md#s.count)
+ равный 0 для [Is first](params-description.md#s.is_first) финансового инструмента, то портфель не будет торговать ни одним финансовым инструментом и для подсчета позиции портфеля в том месте, где необходимо поделить на [Count](params-description.md#s.count)
+ [Is first](params-description.md#s.is_first) финансового инструмента (который в вашем случае равен 0) будет делиться на 1.
+
+### 7.3.9. On buy
+
+Определяет будем ли мы покупать или продавать инструмент при срабатывании сигнала на покупку по главному инструменту. Данный параметр настраивается только для второй ноги. Для первой ноги по умолчанию всегда `On Buy` = `Buy`. При срабатывании сигнала на продажу робот возьмет противоположное значение.
+
+**Пример:**
+Для `is_first` инструмента `On Buy` = `Buy`
+Для второй ноги `On Buy` = `Sell`
+При таких настройках при срабатывании сигнала на покупку робот будет стремиться купить первую ногу и затем продать вторую.
+При таких настройках при срабатывании сигнала на продажу робот будет стремиться продать первую ногу и затем купить вторую.
+
+Для  `is_first` инструмента `On Buy` = `Buy`
+Для второй ноги `On Buy` = `Buy`
+При таких настройках при срабатывании сигнала на покупку робот будет стремиться купить первую ногу и затем тоже купить вторую.
+При таких настройках при срабатывании сигнала на продажу робот будет стремиться продать первую ногу и затем тоже продать вторую.
+
+### 7.3.10. Is first
+
+Определяет, является ли финансовый инструмент главным инструментом портфеля. Позиция портфеля считается по главному финансовому инструменту. [On buy](params-description.md#s.on_buy) такого инструмента всегда указывается как [Buy](params-description.md#p.sell).
+
+### 7.3.11. k
+
+Задает размер искусственного проскальзывания, определяя, на какое количество пунктов допустимо отступить от заданной цены в худшую сторону. Применяется при:
+- выставлении заявок по алгоритму по первой и второй ноге;
+- а также при выставлении заявок с помощью кликеров [Sell/Buy](params-description.md#p.buy_portfolio).
+
+Параметр `k` применяется следующим образом:
+1. При выставлении первой ноги по алгоритму этот отступ уже учтен при расчёте цены [Price_s/Price_b](params-description.md#p.price_s). 
+1. При выставлении второй ноги по алгоритму это отступ от рыночной цены или от цены, найденной в стакане (в зависимости от настроек параметров [Type price](params-description.md#p.price_type) и [Trading price OB](params-description.md#s.ob_t_p_t)). 
+1. При выставлении по кликерам [Sell/Buy](params-description.md#p.buy_portfolio) этот отступ используется для инструментов обеих ног, отступ откладывается от рыночной цены, т.е. при покупке цена выставления `offer + k`, при продаже цена выставления `bid−k`, где `bid` и `offer` – лучшие цены на покупку и продажу, соответственно.
+
+**Важно!** Значение этого параметра не учитывается при расчёте раздвижки. Т.е. при положительном значении `k` раздвижка может получиться хуже расчётной даже без переставления по [стоп-лоссу](params-description.md#s.sle) или [таймеру](params-description.md#s.timer).
+
+**Важно!** Все выставления заявок в роботе используют отступ `k` или [k_sl](params-description.md#s.k_sl), кроме кликера [Place order](params-description.md#p.order_security) и режима `Pos leveling` виджета [Trade connections positions](interface.md#trade_connections_positions). В этих двух случаях никакие отступы от указанной пользователем цены не используются.
+
+### 7.3.12. k_sl
+
+Аналог параметра `k`, так же задаёт размер искусственного проскальзывания, определяя, на какое количество пунктов допустимо отступить от заданной цены в худшую сторону, но используется только:
+1. во время перестановок заявок по [SLE](params-description.md#s.sle) и [TE](params-description.md#s.te);
+2. а также в ситуациях, к ним приравненных: 
+
+   - при использовании кликера [To market](params-description.md#p.to_market),
+   - при использовании флагов `Close` и `To market` в [Timetable](params-description.md#p.use_tt).
+
+При переставлении заявки на покупку новая заявка будет выставлена по цене `offer + k_sl`, при переставлении заявки на покупку новая заявка будет выставлена по цене `bid−k_sl`, где `bid` и `offer` – лучшие цены на покупку и продажу, соответственно.
+
+
+**Важно!** Все выставления заявок в роботе используют отступ [k](params-description.md#s.k) или `k_sl`, кроме кликера [Place order](params-description.md#p.order_security) и режима `Pos leveling` виджета [Trade connections positions](interface.md#trade_connections_positions). В этих двух случаях никакие отступы от указанной пользователем цены не используются.
+
+### 7.3.13. SLE
+
+Включить/выключить функцию переставления по стоп-лоссу. Заявки, переставленные по [стоп-лоссу](params-description.md#s.sl), в дальнейшем переставляются по определенному [алгоритму](algorithm-comments.md#sl_timer).
+
+### 7.3.14. SL
+
+Значение [стоп-лосса](params-description.md#s.sle), при достижении которого необходимо снимать заявку, если она не прошла до этого момента и бросать снова по новой рыночной цене (стоп-лосс откладывается от первоначальной цены выставления заявки).
+
+### 7.3.15. TE
+
+Параметр отвечает за включение/выключение функции переставления по [таймеру](params-description.md#s.timer). Заявки, переставленные по таймеру, в дальнейшем переставляются по определенному [алгоритму](algorithm-comments.md#sl_timer).
+
+### 7.3.16. Timer
+
+Параметр, определяющий через сколько времени снимать заявку, если она не прошла до этого момента, и бросать снова по новой рыночной цене. У этого параметра невозможно выбрать отрицательное значение. При выборе значения 0 заявка будет переоценена по текущей рыночной цене и перевыставлена сразу после того, как ее отклонили. `Timer` включается параметром [TE](params-description.md#s.te).
+
+### 7.3.17. Percent of quantity
+
+Если на бирже в объеме лучшей цены на продажу или покупку (или в найденном объеме в стакане если [Type price](params-description.md#p.price_type) = `Orderbook` или [Type price](params-description.md#p.price_type) = `Orderbook + filter`), соответственно, есть нужное количество процентов (%) от объема заявки инструмента, не являющегося [Is first](params-description.md#s.is_first), и это условие выполняется для всех не [Is first](params-description.md#s.is_first) инструментов, то можно выставляться по [Is first](params-description.md#s.is_first) инструменту. Таким образом если во второй ноге не достаточно объема для хеджирования, то заявка по первой ноге не выставляется даже если есть сигнал на покупку или на продажу.
+
+### 7.3.18. Ratio sign
+
+Знак используемый перед коэффициентом [Ratio](params-description.md#s.ratio) при расчете цен [Sell](params-description.md#p.sell) и [Buy](params-description.md#p.buy), ”+” или ”×”.
+
+### 7.3.19. Ratio
+
+Коэффициент, используемый при расчете цен [Sell](params-description.md#p.sell) и [Buy](params-description.md#p.buy).
+
+### 7.3.20. Fin res multiplier
+
+`Fin res multiplier` - множитель, применяемый к цене инструмента при расчете финансового результата, обеспечивающий соответствие между ценой сделки и фактической стоимостью сделки, с учетом лотности и валюты котирования. Например, когда цены в стакане даны за одну акцию, но сделка с 1 лотом соответствует сделке с 10 акциями, тогда `Fin res multiplier` должен быть равен 10. Или другой случай, котировки даны в одной валюте, но финансовый результат ведется в другой, тогда Fin res multiplier должен соответствовать курсу конвертации этих валют.
+
+Поле `Fin res multiplier` не имеет обратной силы - если поменять его значение, то новое будет использовано только для новых сделок, старые сделки не будут пересчитаны.
+
+### 7.3.21. Commission type и Commission
+
+`Commission type` - параметр, определяющий тип расчёта комиссии. Позволяет задать фиксированную сумму списания или процент от объема сделки.
+
+`Commission` - комиссия по инструменту. Если `Commission type` указан как `%`, то комиссия указывается в процентах от цены сделки, а если как `pt`, то комиссия указывается в той же размерности, в которой считается финансовый результат по портфелю (например, для акции Сбербанка комиссия указывается в процентах и для большинства брокеров она равна 0.01 %, а для фьючерса на акцию Сбербанка комиссия указывается в пунктах и равна 0.25 пункта для скальперских сделок).
+
+### 7.3.22. Client code
+
+Код клиента с которого надо выставлять заявку по данному финансовому инструменту или пустая строка если необходимо выставлять с "кода по умолчанию", отображает все коды, которые доступны для торговли соответствующим инструментом. Код `virtual` означает виртуальную торговлю и может быть использован для тестирования стратегий. Код, начинающийся с [Round robin](params-description.md#s.client_code), означает использование режима выставления заявок [Round robin](params-description.md#s.client_code).
+
+**Важно!** Режим [Round robin](params-description.md#s.client_code) означает выставление и снятие заявок через все подключения к бирже с заданным клиентским кодом по некоторому алгоритму, при этом поведение этого алгоритма для Московской биржи и для криптобирж различается. Это связано с особенностями торгов и типом подключений на биржах. На криптобиржах при использовании режима [Round robin](params-description.md#s.client_code) происходит поочередное выставление и снятие заявок через подключения с одинаковым клиентским кодом. Все подключения из списка используются равномерно. Для криптобирж (не всех) это позволяет поднять общую пропускную способность клиентского счёта с помощью использования нескольких подключений с разными парами ключей. На рынках Московской биржи все подключения с одним кодом клиента держатся в очереди, порядок подключений в очереди зависит от скорости выставления заявок через эти подключения (кто в данный момент быстрее, тот первый в очереди, порядок подключений в очереди меняется не чаще раза в секунду, кроме того каждую секунду движение по очереди начинается заново, т.о. загрузка подключений НЕ равномерная). При измерении скорости (Round trip-а) выставления заявок учитывается только скорость некоторых заявок, назовём их важными. Важными заявками считаются заявки, выставленные по первой ноге по алгоритму (т.е не кликером, не стопом и прочими способами), причём только в случае если котирование отключено. Так же важными заявками являются заявки по второй ноге, выставленные по основному алгоритму, т.е. после сделки по первой ноге. Значения Round trip'a обнуляются раз в час, чтобы снова была возможность оценить скорость каждого из подключений и выбрать быстрейшее. Таким образом, для Московской биржи выбирается быстрейшее подключение и по возможности заявки выставляются с него.
+
+**Важно!** Код клиента не может быть пустым для финансовых инструментов с [Count](params-description.md#s.count) отличным от нуля.
+
+<a id="virt_tr_daily_limit"></a>
+**Важно!** Для одного боевого робота по умолчанию доступно не более 100 000 виртуальных сделок в день, для бесплатных роботов доступно не более 1 000 000 виртуальных сделок в день.
+При превышении лимита виртуальных сделок при попытке выставления заявки в `virtual` будет автоматически выключена торговля по портфелю, и в логе будет сообщение вида
+`Trading on "PORTFOLIO_NAME" was stopped. Daily limit of robot's virtual trades was exceeded`
+
+### 7.3.23. MM
+
+Флаг, если взведен, то все заявки по инструменту выставляются с признаком "заявка маркет-мейкера" (работает не для всех подключений). Требуется обязательное согласование использования этого признака с самой биржей.
+
+### 7.3.24. TP
+
+Величина тейк-профит, используется при [Type](params-description.md#p.portfolio_type) равном `TP algo` или `TP algo 2`, откладывается от цены сделки по заявке [Is first](params-description.md#s.is_first) инструмента.
+
+### 7.3.25. Ratio type
+
+Позволяет настроить использование константного значения `Ratio` или результат вычисления `Ratio formula` при расчёте значений [Sell](params-description.md#p.sell) и [Buy](params-description.md#p.buy). При выборе `Ratio formula` рекомендуется использовать также флаг [Custom trade](params-description.md#p.custom_trade) и задавать формулу для расчёта раздвижки [Trade formula](params-description.md#p.trade_formula), в противном случае раздвижка в виджетах [Finres for today](interface.md#finres_for_today) и [Finres history](interface.md#finres_history) будет посчитана не по ценам сделок, а по текущим рыночным ценам.
+
+### 7.3.26. Ratio buy formula
+
+Параметр, используемый при расчете цены [Buy](params-description.md#p.buy), задается как код на языке программирования [C++](c-api.md#cpp). Вы пишете только тело функции и должны вернуть значение типа `double`.
+
+### 7.3.27. Ratio sell formula
+
+Параметр, используемый при расчете цены [Sell](params-description.md#p.sell), задается как код на языке программирования [C++](c-api.md#cpp). Вы пишете только тело функции и должны вернуть значение типа `double`.
+
+### 7.3.28. FUT move limits
+
+Флаг, если взведен, то при каждой смене дня, будет осуществляться автоматическая подвижка лимитов. Подвижка происходит при соблюдении двух условий:
+
+1. текущий день отличается от дня, в который была произведена предыдущая подвижка, день определяется по времени сервера (время сервера можно посмотреть в виждете [Robots table](interface.md#robots_table)), т.е. несколько раз за один календарный день автоматическая подвижка лимитов не сработает
+2. оба финансовых инструмента (отмеченный как `FUT move limits` и отмеченный как [SPOT move limits](params-description.md#s.move_limits1)) торгуются, имеется ввиду соответствующий статус на бирже.
+
+Формулы по которым двигаются лимиты:
+
+$$Lim\_Sell_1=Lim\_Sell_0- \frac{\left(Lim\_Sell_0+Lim\_Buy_0 \right) \times days\_to\_expiry\_{SPOT}}
+                                {2\times days\_to\_expiry},$$
+ 
+$$Lim\_Buy_1=Lim\_Buy_0- \frac{\left(Lim\_Sell_0+Lim\_Buy_0 \right)\times days\_to\_expiry\_{SPOT}}
+	                      {2\times days\_to\_expiry},$$
+
+где days_to_expiry - целое количество дней до экспирации данного финансового инструмента;  
+days_to_expirySPOT - целое количество дней до экспирации финансового инструмента, отмеченного флагом [SPOT move limits](params-description.md#s.move_limits1) или 1, если такой финансовый инструмент не указан;  
+нижний индекс 0 означает текущее значение параметра;  
+нижний индекс 1 означает новое значение параметра.
+
+Отметим, что при взведенном флаге `FUT move limits` автосдвиг при каждой смене дня сработает в том числе при выключенных [re_sell](params-description.md#p.re_sell), [re_buy](params-description.md#p.re_buy).
+
+**Неочевидный момент!**  
+Если условия, описанные выше, начинают выполняться не одновременно, то подвижка будет выполнена сразу после того, как выполнится последнее из условий. Т.е. например, сначала сменился день, потом открылась торговая сессия по одному инструменту, остаётся невыполненным условие открытой сессии по второму финансовому инструменту, как только по нему придет статус "торгуется" и если статус первого финансового инструмента так и останется "торгуется", сразу будет выполнена подвижка лимитов.
+
+### 7.3.29. SPOT move limits
+
+Флаг, если взведен, то данный финансовый инструмент используется в формулах для [FUT move limits](params-description.md#s.move_limits).
+
+### 7.3.30. Depth OB
+
+Максимальный уровень глубины стакана до которого включительно вычислять цены и объемы (в штуках шагов цены, считая от бида/оффера), доступен только для не [Is first](params-description.md#s.is_first), используется только в режимах [Type price](params-description.md#p.price_type) = `Orderbook` и [Type price](params-description.md#p.price_type) = `Orderbook + filter`.  
+Если у Вас выбран режим [Type price](params-description.md#p.price_type) = `Orderbook` и [Type price](params-description.md#p.price_type) = `Orderbook + filter`, то необходимо следить за значением `Depth OB`, при слишком низких значениях параметра робот не сможет высчитывать цены и объемы, у вас будут нули в параметрах `Sell` и `Buy`.
+
+### 7.3.31. Calc price OB
+
+Тип цены, используемой для расчета [Sell](params-description.md#p.sell), [Buy](params-description.md#p.buy), [Price_s](params-description.md#p.price_s), [Price_b](params-description.md#p.price_b). Доступен только для не [Is first](params-description.md#s.is_first) финансовых инструментов, используется только в режимах [Type price](params-description.md#p.price_type) = `Orderbook` и [Type price](params-description.md#p.price_type) = `Orderbook + filter`:
+
+- **Deepest** – цена того уровня в стакане, на котором набрали искомый объем;
+- **Weighted avg.** – средневзвешенная цена до того уровня в стакане включительно, на котором набрали искомый объем.
+
+### 7.3.32. Trading price OB
+
+Тип цены, используемой при торговле, доступен только для не [Is first](params-description.md#s.is_first) финансовых инструментов, используется только в режимах [Type price](params-description.md#p.price_type) = `Orderbook` и [Type price](params-description.md#p.price_type) = `Orderbook + filter`:
+
+- **Deepest** – цена того уровня в стакане, на котором набрали искомый объем;
+- **Weighted avg.** – средневзвешенная цена до того уровня в стакане включительно, на котором набрали искомый объем.
+
+_Пример:_  
+`Trading price OB`- Deepest:  
+
+Допустим, вы ищете в стакане на покупку 1000 лотов, по цене 100 стоит 500 лотов, потом по цене 99 стоит 490 лотов и по цене 5 стоят оставшиеся 10 лотов. При таком раскладе искомая цена будет равна 5.  
+
+`Trading price OB` - Weighted avg:  
+
+Из примера выше (500 * 100 + 490 * 99 + 5 * 10)/1000 = 98.56 - искомая цена. Перед выставлением заявки робот округлит цену в соответствии с шагом цены данного инструмента. Для продажи выполняется округление вверх, для покупки - округление вниз. Т.е. если шаг цены в данном примере равен 1, то продавать будем по цене 99.
+
+### 7.3.33. Level to0
+
+Если хотя бы для одного финансового инструмента портфеля модуль разности [Mark price](params-description.md#mark-price) и [Liquidation price](params-description.md#liquidation-price) строго меньше данного значения, то взвести флаг [To0](params-description.md#p.to0) и НЕ давать его снять пока условие выполняется, когда условие перестанет выполняться - снять флаг [To0](params-description.md#p.to0) (имеет смысл только для финансовых инструментов с BitMEX, Deribit, некоторых других). Таким образом для заданного портфеля можно запретить увеличивать позицию пока текущая цена находится в опасной близости с ценой ликвидиации.
+
+### 7.3.34. Level close
+
+Если хотя бы для одного финансового инструмента портфеля модуль разности [Mark price](params-description.md#mark-price) и [Liquidation price](params-description.md#liquidation-price) строго меньше данного значения, то взвести флаг [To0](params-description.md#p.to0) и НЕ давать его снять пока условие выполняется (когда условие перестанет выполняться - снять флаг [To0](params-description.md#p.to0)), раз в 5 секунд выставлять заявку в направлении закрытия позиции в объеме [v_out_left](params-description.md#p.v_out_left) портфелей до тех пор пока описанное выше условие не перестанет выполняться или позиция по портфелю не станет равно 0 (имеет смысл только для финансовых инструментов с BitMEX, Deribit, некоторых других). Таким образом позиция для заданного портфеля уменьшается с соблюдением правил хеджирования до тех пор, пока цена ликвидации не примет безопасное значение.
+
+### 7.3.35. Leverage
+
+Параметр определяющий плечо для выставляемой заявки (имеет смысл только для финансовых инструментов с HBDM).
+
+### 7.3.36. Decimals
+
+Параметр, определяющий сколько знаков после десятичной точки отображается в параметрах, для которых значение является дробным числом.
+
+**Важно!** Данный параметр также отвечает за число знаков после десятичной точки в ценах сделок по данному финансовому инструменту в таблице раздвижек. При смене значения, число знаков у уже добавленных в таблицу сделок НЕ изменится.
+
+### 7.3.37. Max trans time
+
+Максимально допустимое время Round trip'a (т.е. разности между временем получения ответа на приказ и временем отправки самого приказа) в микросекундах по заданному инструменту при котором торговля по портфелю будет продолжена. Если это время будет превышено, то выставление заявок по первой ноге будет прекращено на [Ban_period](params-description.md#s.ban_period) секунд.
+
+### 7.3.38. Ban period
+
+Период в секундах, на протяжении которого робот не будет выставлять заявки по первой ноге портфеля. Используется в паре с [Max trans time](params-description.md#s.ban_period).
+
+<a id="notifications-params"></a>
+## 7.4. Параметры уведомлений
+
+Робот умеет уведомлять пользователя о наступлении определенных событий. Кроме чисто сигнальной функции все уведомления могут выключать торговлю по заданному портфелю.
+При наступлении соответствующего события уведомление появляется на сайте, а также в [Telegram-боте](getting-started.md#telegram-bot) (если он подключен и настроен).
+
+Для всех уведомлений, имеющих параметры `Time (sec)` и `Value`, логика работы данных параметров одинаковая:
+1. В текущий момент времени запоминается текущее значение выбранного параметра.
+2. - Если в течение периода времени `Time (sec)` секунд значение выбранного параметра изменится на величину строго большую, чем заданный лимит (т.е. если сохранено значение `X`, то для нового значения `Y` выполняется неравенство $\lvert X - Y \rvert > \mathit{Value}$), то сработает уведомление и алгоритм перейдет к пункту `1`.
+   - Если в течение периода времени `Time (sec)` секунд значение не изменится больше чем на заданный лимит, то по истечении времени `Time (sec)` алгоритм перейдет к пункту `1`.
+
+Таким образом пользователь получит уведомление, если за время не более чем `Time (sec)` секунд с момента сохранения некого значения, текущее значение заданного параметра отличается от этого сохраненного значения строго больше чем на `Value`.
+
+Также существуют уведомления, которые настраиваются для конкретного транзакционного подключения к бирже, они описаны в разделе [Параметры позиций](params-description.md#position-parameters).
+
+### 7.4.1. FinRes fall
+
+Уведомление о падении финансового результата:
+
+- `Fall (%)` - процентное изменение финансового результата о достижении которого необходимо уведомить пользователя;
+- `Time (sec)` - период времени в секундах за который считается падение;
+- `Min fall (pt)` - минимальное изменение на которое необходимо реагировать;
+- `Stop trading` - вместе с уведомлением выключить торговлю по портфелю (расписание также будет выключено).
+
+**Важно!**  Работает только при включенной торговле по портфелю
+
+### 7.4.2. Lim_Sell change и Lim_Buy change
+
+Уведомлять об изменении [Lim_Sell/Lim_Buy](params-description.md#p.lim_s) портфеля:
+
+- `Time (sec)` - период времени в секундах за который считается изменение;
+- `Value` - сигнальное значение изменения [Lim_Sell/Lim_Buy](params-description.md#p.lim_s);
+- `Stop trading` - вместе с уведомлением выключить торговлю по портфелю (расписание также будет выключено).
+
+**Важно!**  Работает только при включенной торговле по портфелю
+
+### 7.4.3. Severe sell change и Severe buy change
+
+Уведомлять о "резком" изменении [Sell/Buy](params-description.md#p.sell) портфеля:
+
+- `Time (sec)` - период времени в секундах за который считается изменение;
+- `Value` - сигнальное значение изменения [Sell/Buy](params-description.md#p.sell);
+- `Stop trading` - вместе с уведомлением выключить торговлю по портфелю (расписание также будет выключено).
+
+**Важно!**  Работает только при включенной торговле по портфелю
+
+**Важно!** Необходимо учитывать, что при отсутствии цен по финансовым инструментам портфеля и/или при невозможности посчитать [Sell/Buy](params-description.md#p.sell), значение параметров [Sell/Buy](params-description.md#p.sell) будет равно `0`.
+
+### 7.4.4. Severe pos change
+
+Уведомлять о "резком" изменении позиции [Pos](params-description.md#p.pos) портфеля:
+
+- `Time (sec)` - период времени в секундах за который считается изменение;
+- `Value` - сигнальное значение изменения позиции;
+- `Stop trading` - вместе с уведомлением выключить торговлю по портфелю (расписание также будет выключено).
+
+**Важно!**  Работает только при включенной торговле по портфелю
+
+### 7.4.5. Too much running orders
+
+Уведомлять о слишком большом количестве активных заявок по не [Is first](params-description.md#s.is_first) инструментам портфеля. Т.е. если для каждого из не [Is first](params-description.md#s.is_first) инструментов портфеля
+получить число активных заявок и выбрать из этих чисел максимум, то уведомление будет отправлено если этот максимум строго больше заданного числа процентов от [Max not hedged](params-description.md#p.max_not_hedged).
+
+- `Percent (%)` - сигнальный процент;
+- `Stop trading` - вместе с уведомлением выключить торговлю по портфелю (расписание также будет выключено).
+
+### 7.4.6. Too much not hedged
+
+Уведомлять о слишком большой не захеджированной позиции по [Is first](params-description.md#s.is_first) инструменту портфеля:
+
+- `Limit portfolios` - сигнальное значение не захеджированной позиции (вычисляется в штуках портфелей), в алгоритме робота при проверке используется знак "строго больше";
+- `Stop trading` - вместе с уведомлением выключить торговлю по портфелю (расписание также будет выключено).
+
+
+## 7.5. Пользовательские параметры
+
+В роботе существует группа из 20 пользовательских параметров `User fields` с идентификаторами от 0 до 19. Эти параметры никак не используются в основном алгоритме робота. Их можно использовать либо для отображения значений, посчитанных в [формулах на C++](c-api.md#cpp), либо наоборот как параметры для расчёта формул. Значения данных параметров сохраняются при перезапуске робота. В основной таблице виджета [Portfolios table](interface.md#portfolios_table) такие параметры отображаются как столбцы таблицы с именами `User field#0` ... `User field#19`. В форме настроек портфеля параметры группы `User fields` задаются на отдельной вкладке, там можно задать как значение, так и подпись параметра. Значения параметров имеют тип `double` (дробное число с плавающей точкой).
+
+**Неочевидный момент!**  
+Заголовки столбцов основной таблицы виджета [Portfolios table](interface.md#portfolios_table) жестко заданы, поэтому переименовать `User field#0` ... `User field#19` во что-то не получится (более того, пользовательское поле из одного столбца может использоваться в формулах разных портфелей по-разному), но на вкладке `USER FIELDS` настроек портфеля в виджете [Portfolios table](interface.md#portfolios_table) можно задавать подписи пользовательским полям. Вот так подпись задаётся в настройках:
+
+![Alt text](/bot-doc/docs/00-img/uf_form.png)
+
+А вот так может выглядеть в основной таблице виджета [Portfolios table](interface.md#portfolios_table) при разных подписях полей в разных портфелях:
+
+![Alt text](/bot-doc/docs/00-img/uf_table.png)
+
+## 7.6. Параметры позиций
+
+### 7.6.1. Параметры позиций по инструментам
+
+Параметры позиций по инструментам отображаются отдельно для каждого подключения во вкладке Positions/Balance данного подключения и представляют собой таблицу. Строчки таблицы - это инструменты данного подключения, используемые в портфелях робота. Если через данное транзакционное подключение доступны несколько клиентских кодов, то строчка будет соответствовать паре (код клиента, инструмент). Инструменты с нулевой позицией могут быть скрыты (для этого нужно снять флаг `Show_zero_poses`). Далее приведены описания столбцов таблицы, предполагается что параметры являются редактируемыми, если прямо не указано иное.
+
+#### 7.6.1.1. SecKey
+
+Уникальный идентификатор инструмента. Соответствует параметру инструментов портфеля [SecKey](params-description.md#s.sec_key). Нередактируемый параметр.
+
+#### 7.6.1.2. SecCode
+
+Код инструмента. Соответствует параметру инструментов портфеля [SecCode](params-description.md#s.sec_code). Нередактируемый параметр.
+
+#### 7.6.1.3. Pos
+
+Позиция на бирже по инструменту. Нередактируемый параметр.
+
+#### 7.6.1.4. Robot pos
+
+Суммарная позиция инструмента в роботе со всех портфелей, торгующих через данное подключение указанным финансовым инструментом с данным кодом клиента. Нередактируемый параметр.
+
+#### 7.6.1.5. Mark price
+
+"Сигнальная" цена инструмента. Нередактируемый параметр.
+Если `Mark price` достигнет `Liquidation price`, то позиция по инструменту будет принудительно закрыта биржей.
+
+#### 7.6.1.6. Liquidation price
+
+Цена ликвидации по инструменту. Нередактируемый параметр.
+Если `Mark price` достигнет `Liquidation price`, то позиция по инструменту будет принудительно закрыта биржей.
+
+#### 7.6.1.7. Pos lag
+
+Значение с которым будет сравниваться разница между `Pos` и `Robot pos`, само сравнение и дальнейшие действия определяются параметром [Check equality](params-description.md#check-equality).
+
+#### 7.6.1.8. Check equality
+
+Если флаг взведен, то в случае, если произойдет следующая ситуация:
+
+$pos-robot\_pos\neq pos\_lag$
+
+в логе вам будут приходить оповещения о том, что позиция на бирже и позиция в роботе не совпадают.
+(`pos` - позиция на бирже, а `robot_pos` - позиция в роботе по портфелям, торгующим данным финансовым инструментом на данном подключении)
+Если флаг не взведен, то оповещения будут приходить только в случае, если:
+
+$|pos-robot\_pos|>pos\_lag$$
+
+#### 7.6.1.9. Tgr notify
+
+Если флаг взведен, то отправлять уведомления о несовпадении позиции робота и биржи в Telegram.
+
+#### 7.6.1.10. Pos leveling
+
+Выставить заявку с заданными направлением, ценой и объёмом. Направление и объём по умолчанию задаются такими, чтобы выровнять позицию биржи относительно позиции робота (эта заявка не изменяет позиции по финансовым инструментам в портфелях робота).
+
+### 7.6.2. Параметры позиций по валютам
+
+Параметры позиций по валютам отображаются отдельно для каждого подключения во вкладке Positions/Balance данного подключения и представляют собой таблицу. Строчки таблицы это валюты/криптовалюты, входящие в состав инструментов, торгуемых с помощью данного подключения и используемых в портфелях робота. Если через данное транзакционное подключение доступны несколько клиентских кодов, то строчка будет соответствовать паре (код клиента, валюта). Валюты с нулевым балансом могут быть скрыты (для этого нужно снять флаг Show zero poses). Далее приведены описания столбцов таблицы, предполагается что параметры являются редактируемыми, если прямо не указано иное.
+
+#### 7.6.2.1. Currency
+
+Краткое наименование валюты/криптовалюты.
+
+#### 7.6.2.2. Limit
+
+Лимит по валюте.
+
+
+## 7.7. Список проверок параметров портфеля при создании/редактировании портфеля/финансового инструмента
+
+Если условие в списке ниже ИСТИННО, то такие настройки НЕ валидны:
+
+### 7.7.1. Для портфеля
+
+1) Параметр [Quote](params-description.md#p.quote) выключен, а [Simply first](params-description.md#p.simply_first) включен;
+
+2) Сборка робота без поддержки стаканов и включен параметр [Simply first](params-description.md#p.simply_first);
+
+3) Сборка робота без поддержки стаканов и значение параметра [Type price](params-description.md#p.price_type) = bid/offer;
+
+4) Выключен параметр [Quote](params-description.md#p.quote) и включен [Only maker](params-description.md#p.maker);
+
+5) Значение параметра [Max not hedged](params-description.md#p.max_not_hedged) > 1 и позиция по финансовому инструменту на бирже стоит отдельно на покупку и на продажу;
+
+6) Значения параметров [v_min/v_max](params-description.md#p.v_min) имеют разные знаки (или одно из них = 0) и позиция по финансовому инструменту на бирже стоит отдельно на покупку и на продажу;
+
+### 7.7.2. Для финансового инструмента
+
+1) Для финансовых инструментов OKEX-SPOT: Client code не оканчивается на "/cash", "/cross_base", "/cross_quote", "/isolated" и не должен быть “virtual”;
+
+2) Для финансовых инструментов OKEX-FUT: Client code не оканчивается на "/cross" или "/isolated" и не должен быть “virtual”;
+
+3) Для первой ноги  [Count type](params-description.md#s.count_type) = constant и  [Count](params-description.md#s.count) = 0;
+
+4) Для первой ноги [On_by](params-description.md#s.on_buy) = Sell;
+
+5) Выбрано пустое значение для [Client code](params-description.md#s.client_code) и [Count](params-description.md#s.count) не 0;
+
+### 7.7.3. Запрещается менять следующие параметры портфеля, когда он торгует или есть активные заявки
+
+1) [Is first](params-description.md#s.is_first)
+
+2) [Client code](params-description.md#s.client_code)
+
+3) [On_by](params-description.md#s.on_buy)
+
+4) [Leverage](params-description.md#s.leverage)
+
+5) [Curpos](params-description.md#s.pos)
+
+6) [Count](params-description.md#s.count)
+
+7)  [Count formula](params-description.md#s.count_formula)
+
+8) [TP](params-description.md#s.tp)
+
+9) [Ratio](params-description.md#s.ratio)
+
+10) [Ratio type](params-description.md#s.ratio_type)
+
+11) [Ratio sign](params-description.md#s.ratio_sign)
+
+12) [Ratio buy formula](params-description.md#s.ratio_b_formula)
+
+13) [Ratio sell formula](params-description.md#s.ratio_s_formula)
+
+14) [Custom trade](params-description.md#p.custom_trade')
+
+15) [Extra formulas](params-description.md#p.ext_formulas)
+
+16) [Trade formula](params-description.md#p.trade_formula)
+
+17) [Extra field#1](params-description.md#p.ext_field1_)
+
+18) [Extra field#2](params-description.md#p.ext_field2_)
+
+19) [Type trade](params-description.md#p.type_trade)
+
+20) [Type price](params-description.md#p.price_type)
+
+21) [Type](params-description.md#p.type)
