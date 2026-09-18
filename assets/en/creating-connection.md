@@ -1433,6 +1433,28 @@ The pass-phrase is set by the user.
 
 You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
+## FINAMGRPC <Anchor :ids="['tc.FINAMGRPC']" />
+
+### Name <Anchor :ids="['tc.FINAMGRPC.name']" />
+
+This is a field for setting the connection name. This value is set for convenience, so that it is easier to navigate the list of transaction connections later. The allowed characters are `_ a-z A-Z 0-9`.
+
+### Server <Anchor :ids="['tc.FINAMGRPC.server']" />
+
+Here you can select the server to which the connection will be made. Only one server is available at the moment.
+
+### App ID <Anchor :ids="['tc.FINAMGRPC.appid']" />
+
+It is the identifier of the source application of the request. This field should be left empty if no other information has been received from the broker.
+
+### Token <Anchor :ids="['tc.FINAMGRPC.token']" />
+
+A token can be generated in the Finam API personal account. The access type must be for trading. When creating a token, only one account should be specified. If you need to trade from multiple accounts, you must create several tokens, each with its own account, and, accordingly, add several trading connections to the robot.
+
+### Bind IP <Anchor :ids="['tc.FINAMGRPC.bind_ip']" />
+
+You should [contact support](help@fkviking.ru) to clarify the bind IP. The IP address specified in this field should not be provided to the exchange as the server IP address.
+
 ## LMAX
 
 Description is under development
