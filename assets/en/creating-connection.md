@@ -13,7 +13,7 @@ Please note that not all parameters specified during trade connection setup are 
 
 ### TWIME и FIFO TWIME
 
-The robot supports connections via the TWIME protocol in both standard TWIME and FIFO TWIME modes. However, using FIFO TWIME requires additional network infrastructure. If you plan to use FIFO TWIME, please [notify support](help@fkviking.ru) in advance. They will deploy the robot on a server where infrastructure-level access to FIFO TWIME is available.
+The robot supports connections via the TWIME protocol in both standard TWIME and FIFO TWIME modes. However, using FIFO TWIME requires additional network infrastructure. If you plan to use FIFO TWIME, please [notify support](mailto:help@fkviking.ru) in advance. They will deploy the robot on a server where infrastructure-level access to FIFO TWIME is available.
 
 When creating the connection, the choice between TWIME and FIFO TWIME is made by selecting the appropriate [TWIME server](creating-connection.md#tc.MOEX_FUT_OPT.twime_server) address.
 
@@ -162,7 +162,7 @@ The IP address from which the connection to the exchange will be established. Th
 
 ### TWIME and FIFO TWIME
 
-TWIME is a binary protocol, a faster alternative to the FIX protocol. Robot software supports connections via the TWIME protocol in both TWIME and FIFO TWIME variants. However, using FIFO TWIME requires additional network infrastructure, so if you plan to use FIFO TWIME, please [notify support staff](help@fkviking.ru) in advance—they will place the robot on a server where such connectivity is supported at the infrastructure level. When creating a connection, the choice between TWIME and FIFO TWIME is made by selecting the appropriate [TWIME server](creating-connection.md#tc.MOEX_FOND.TWIME.twime_server) address to connect to.
+TWIME is a binary protocol, a faster alternative to the FIX protocol. Robot software supports connections via the TWIME protocol in both TWIME and FIFO TWIME variants. However, using FIFO TWIME requires additional network infrastructure, so if you plan to use FIFO TWIME, please [notify support staff](mailto:help@fkviking.ru) in advance—they will place the robot on a server where such connectivity is supported at the infrastructure level. When creating a connection, the choice between TWIME and FIFO TWIME is made by selecting the appropriate [TWIME server](creating-connection.md#tc.MOEX_FOND.TWIME.twime_server) address to connect to.
 
 #### Name <Anchor :ids="['tc.MOEX_FOND.TWIME.name']" />
 
@@ -299,7 +299,7 @@ The IP address from which the connection to the exchange will be established. Th
 
 ### TWIME и FIFO TWIME
 
-TWIME is a binary protocol, a faster alternative to the FIX protocol. The robot supports connections via the TWIME protocol in both TWIME and FIFO TWIME variants. However, using FIFO TWIME requires additional network infrastructure, so if you plan to use FIFO TWIME, please [notify support staff](help@fkviking.ru) in advance—they will place the robot on a server where such connectivity is supported at the infrastructure level. When creating a connection, the choice between TWIME and FIFO TWIME is made by selecting the appropriate [TWIME server](creating-connection.md#tc.MOEX_CURR.TWIME.twime_server) address to conncet to.
+TWIME is a binary protocol, a faster alternative to the FIX protocol. The robot supports connections via the TWIME protocol in both TWIME and FIFO TWIME variants. However, using FIFO TWIME requires additional network infrastructure, so if you plan to use FIFO TWIME, please [notify support staff](mailto:help@fkviking.ru) in advance—they will place the robot on a server where such connectivity is supported at the infrastructure level. When creating a connection, the choice between TWIME and FIFO TWIME is made by selecting the appropriate [TWIME server](creating-connection.md#tc.MOEX_CURR.TWIME.twime_server) address to conncet to.
 
 #### Name <Anchor :ids="['tc.MOEX_CURR.TWIME.name']" />
 
@@ -521,7 +521,7 @@ List of exchanges (separated by commas) from which market data will be received.
 
 ### Bind IP <Anchor :ids="['tc.EXANTE.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## CQG
 
@@ -565,7 +565,7 @@ This parameter appears after checking the [Add market-data connection](creating-
 
 ### Bind IP <Anchor :ids="['tc.CQG.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## KRAKEN
 
@@ -589,7 +589,7 @@ A flag that controls automatic order cancellation by the exchange when the conne
 
 ### Bind IP <Anchor :ids="['tc.KRAKEN.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BITFINEX
 
@@ -621,7 +621,7 @@ Second secret API key for accessing the exchange API. Created in the user accoun
 
 ### Bind IP <Anchor :ids="['tc.BITFINEX.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BITMEX
 
@@ -649,7 +649,7 @@ Second secret API key for accessing the exchange API. Created in the user accoun
 
 ### Bind IP <Anchor :ids="['tc.BITMEX.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BINANCE
 
@@ -731,7 +731,7 @@ Use:
 
 ### Bind IP <Anchor :ids="['tc.BINANCE.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BINANCEFUT
 
@@ -747,7 +747,7 @@ Account type selection. Options are `CLASSIC` and `PORTOFLIO MARGIN`. Detailed d
 
 ### Conn type <Anchor :ids="['tc.BINANCEFUT.conn_type']" />
 
-Connection type selection. If there are no special arrangements with the exchange for direct connectivity, select REGULAR. If you have such an arrangement, you should [contact support](help@fkviking.ru) in advance to obtain the server IP address from which trading will occur; then, when creating the connection, choose one of the WHITELIST options.
+Connection type selection. If there are no special arrangements with the exchange for direct connectivity, select REGULAR. If you have such an arrangement, you should [contact support](mailto:help@fkviking.ru) in advance to obtain the server IP address from which trading will occur; then, when creating the connection, choose one of the WHITELIST options.
 
 ### API Key <Anchor :ids="['tc.BINANCEFUT.ws_id']" />
 
@@ -759,7 +759,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BINANCEFUT.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ### BINANCEFUT Connection Streams Description
 
@@ -789,7 +789,7 @@ Account type selection. Options are `CLASSIC` and `PORTOFLIO MARGIN`. Detailed d
 
 ### Conn type <Anchor :ids="['tc.BINANCECM.conn_type']" />
 
-Connection type selection. If there are no special arrangements with the exchange for direct connectivity, select REGULAR. If you have such an arrangement, you should [contact support](help@fkviking.ru) in advance to obtain the server IP address from which trading will occur; then, when creating the connection, choose one of the WHITELIST options.
+Connection type selection. If there are no special arrangements with the exchange for direct connectivity, select REGULAR. If you have such an arrangement, you should [contact support](mailto:help@fkviking.ru) in advance to obtain the server IP address from which trading will occur; then, when creating the connection, choose one of the WHITELIST options.
 
 ### API Key <Anchor :ids="['tc.BINANCECM.ws_id']" />
 
@@ -801,7 +801,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BINANCECM.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ### BINANCECM Connection Streams Description
 
@@ -846,7 +846,7 @@ Set this flag if you want to create a fast market data connection using the same
 
 ### Bind IP <Anchor :ids="['tc.DERIBIT.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## OKX
 
@@ -874,7 +874,7 @@ Password for accessing the exchange.
 
 ### Bind IP <Anchor :ids="['tc.OKEX.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BEQUANT
 
@@ -890,11 +890,11 @@ Connection type. Available options are FIX and WEBSOCKET. The WEBSOCKET connecti
 
 #### FIX Connection Parameters
 
-The FIX connection requires establishing a VPN connection; therefore, you should [contact support](help@fkviking.ru) before adding the connection and send us the required VPN parameters.
+The FIX connection requires establishing a VPN connection; therefore, you should [contact support](mailto:help@fkviking.ru) before adding the connection and send us the required VPN parameters.
 
 ##### Server <Anchor :ids="['tc.BEQUANT.ip']" />
 
-Select the server to connect to. If the required address is not in the list, [contact support](help@fkviking.ru).
+Select the server to connect to. If the required address is not in the list, [contact support](mailto:help@fkviking.ru).
 
 ##### Exchange account id <Anchor :ids="['tc.BEQUANT.exchange_account_id']" />
 
@@ -916,7 +916,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BEQUANT.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## KRAKENFUT
 
@@ -928,7 +928,7 @@ A field for specifying the connection name. This value is set for convenience, t
 
 ### Conn type <Anchor :ids="['tc.KRAKENFUT.conn_type']" />
 
-Select the connection type. If there are no special arrangements with the exchange for direct connectivity, choose REGULAR. If you have such an arrangement, [contact support](help@fkviking.ru) in advance to obtain the server IP address from which trading will occur, then select DIRECT when creating the connection.
+Select the connection type. If there are no special arrangements with the exchange for direct connectivity, choose REGULAR. If you have such an arrangement, [contact support](mailto:help@fkviking.ru) in advance to obtain the server IP address from which trading will occur, then select DIRECT when creating the connection.
 
 ### API Key <Anchor :ids="['tc.KRAKENFUT.ws_id']" />
 
@@ -944,7 +944,7 @@ Flag that controls automatic order cancellation by the exchange upon disconnecti
 
 ### Bind IP <Anchor :ids="['tc.KRAKENFUT.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## KUCOIN
 
@@ -968,7 +968,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.KUCOIN.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## HUOBI
 
@@ -992,7 +992,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.HUOBI.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## HUOBIFUT
 
@@ -1016,7 +1016,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.HUOBIFUT.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## HUOBIFUTCM
 
@@ -1040,7 +1040,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.HUOBIFUTCM.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## HUOBIFUTUM
 
@@ -1064,7 +1064,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.HUOBIFUTUM.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## VIKINGTRADE
 
@@ -1088,7 +1088,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.VIKINGTRADE.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BYBIT
 
@@ -1108,7 +1108,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BYBIT.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BYBITSPOT
 
@@ -1128,7 +1128,7 @@ Secret API key for accessing the exchange API. Created in the user account on th
 
 ### Bind IP <Anchor :ids="['tc.BYBITSPOT.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## CTRADER
 
@@ -1164,7 +1164,7 @@ A flag that, when enabled, prevents the robot from placing more than one order p
 
 ### Bind IP <Anchor :ids="['tc.CTRADER.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## IMEX
 
@@ -1351,7 +1351,7 @@ The IP address from which the connection to the exchange will be established: 0.
 
 The robot supports only FIX connectivity to the broker JUST2TRADE.
 
-Due to the specifics of this connection, full setup is only possible after you [contact technical support](help@fkviking.ru).
+Due to the specifics of this connection, full setup is only possible after you [contact technical support](mailto:help@fkviking.ru).
 
 ### Name <Anchor :ids="['tc.J2T.name']" />
 
@@ -1383,7 +1383,7 @@ A flag indicating whether SSL/TLS encryption should be used. Information about w
 
 ### Bind IP <Anchor :ids="['tc.J2T.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BITGETFUT
 
@@ -1405,7 +1405,7 @@ The pass-phrase is set by the user.
 
 ### Bind IP <Anchor :ids="['tc.BITGETFUT.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## BITGETSPOT
 
@@ -1431,7 +1431,7 @@ The pass-phrase is set by the user.
 
 ### Bind IP <Anchor :ids="['tc.BITGETSPOT.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
 ## FINAMGRPC <Anchor :ids="['tc.FINAMGRPC']" />
 
@@ -1453,7 +1453,7 @@ A token can be generated in the Finam API personal account. The access type must
 
 ### Bind IP <Anchor :ids="['tc.FINAMGRPC.bind_ip']" />
 
-You should [contact support](help@fkviking.ru) to clarify the bind IP. The IP address specified in this field should not be provided to the exchange as the server IP address.
+You should [contact support](mailto:help@fkviking.ru) to clarify the bind IP. The IP address specified in this field should not be provided to the exchange as the server IP address.
 
 ## LMAX
 
