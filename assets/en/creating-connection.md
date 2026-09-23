@@ -623,34 +623,6 @@ Second secret API key for accessing the exchange API. Created in the user accoun
 
 You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
-## BITMEX
-
-Connection to the BitMEX exchange's futures market. The robot supports only Websocket and REST API connections. The transactional connection uses two distinct API key pairs, which must be different. Market data connection is activated as described in the [Setting up connections](getting-started.md#connection-setup). Transactional connection parameters are described below.
-
-### Name <Anchor :ids="['tc.BITMEX.name']" />
-
-A field for specifying the connection name. This value is set for user convenience, to make it easier to identify the connection within the list of transactional connections. Allowed characters `_ a-z A-Z 0-9`
-
-### ID#0 <Anchor :ids="['tc.BITMEX.ws_id']" />
-
-First public API key for accessing the exchange API. Created in the user account on the exchange website together with the corresponding secret key. Located in settings under the API Keys section. The "Order" permission must be enabled for this key. The key must be new and not used anywhere else previously.
-
-### Secret#0 <Anchor :ids="['tc.BITMEX.ws_secret_part']" />
-
-First secret API key for accessing the exchange API. Created in the user account on the exchange website together with the corresponding public key. Located in settings under the API Keys section. The "Order" permission must be enabled for this key. The key must be new and not used anywhere else previously.
-
-### ID#1 <Anchor :ids="['tc.BITMEX.add_id']" />
-
-Second public API key for accessing the exchange API. Created in the user account on the exchange website together with the corresponding secret key. Located in settings under the API Keys section. The "Order" permission must be enabled for this key. The key must be new and not used anywhere else previously.
-
-### Secret#1 <Anchor :ids="['tc.BITMEX.add_secret_part']" />
-
-Second secret API key for accessing the exchange API. Created in the user account on the exchange website together with the corresponding public key. Located in settings under the API Keys section. The "Order" permission must be enabled for this key. The key must be new and not used anywhere else previously.
-
-### Bind IP <Anchor :ids="['tc.BITMEX.bind_ip']" />
-
-You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
-
 ## BINANCE
 
 Connection to Binance exchange's Spot market in either Spot or Margin mode. The robot supports only Websocket and REST API connections. Market data connection is activated as described in the [Setting up connection](getting-started.md#connection-setup). Transactional connection parameters are described below.
