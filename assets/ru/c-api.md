@@ -427,7 +427,6 @@ static const sUF set_uf[] = {&portfolio::set_uf0, &portfolio::set_uf1, &portfoli
 | user_value(double value)                            | создать пользовательское значение, указав только значение                  |
 | user_value(const std::string& caption)              | создать пользовательское значение, указав только подпись                  |
 
-
 Методы `user_value`:
 
 | Метод                                        | Описание                                                                  |
@@ -1624,6 +1623,8 @@ for (auto& ii: vii)
 ```C
 log_show(indicators::get_indicator("okex", "SMA", "qwe").second.to_str());
 ```
+
+---
 
 Удалить заданный индикатор, размещенный в `shared memory`:
 ```C

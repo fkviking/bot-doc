@@ -691,9 +691,7 @@ Arguments for the functions above:
 
 #### Specifics of Objects Used for Indicator Calculation
 
-Indicators are calculated using objects of the same-named classes. Since objects are created inside functions, to avoid recreating and reinitializing them each time, they should always be created as `static`.  
-
-If indicator calculation requires historical data and the current history is shorter than the specified `length`), the actual number of available historical values will be used instead.
+Indicators are calculated using objects of the same-named classes. Since objects are created inside functions, to avoid recreating and reinitializing them each time, they should always be created as `static`.   If indicator calculation requires historical data and the current history is shorter than the specified `length`), the actual number of available historical values will be used instead.
 
 All "formulas" in the robot are recalculated on any update to the order book of any portfolio instrument, and once per second. You can attempt to add values for indicator recalculation quite frequently. A new value will be considered and trigger a recalculation only if:  
 
@@ -1175,10 +1173,9 @@ $L_{t} = \begin{cases}
      0, &\text{if}\enspace p_t > p_{t-1} 
    \end{cases}$;
 
-- $p_t$ — source value (e.g., price) at time $t$,  
-- $n + 1$ — number of source values used for calculation (`RSI`).  
+$p_t$ — source value (e.g., price) at time $t$;
 
----
+$n + 1$ — number of source values used for calculation (`RSI`).  
 
 **Constructors of `RSI`:**
 
@@ -1188,7 +1185,6 @@ $L_{t} = \begin{cases}
 | RSI(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
 | RSI(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
 
----
 
 **Methods of `RSI`:**
 
@@ -1205,6 +1201,7 @@ $L_{t} = \begin{cases}
 | void clear()                         | Clears the list of elements used for calculation.                           |
 | bool empty()                         | Checks whether the list of elements is empty.                               |
 | size_t size()                        | Returns the number of elements currently stored.                            |
+| bool loaded() | Returns `true` if the data was loaded from `shared memory`, otherwise `false` |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
 ### Collections
@@ -1489,6 +1486,12 @@ Suppose there is a portfolio named "si" containing one instrument — the dollar
 
 If [Ratio sign](params-description.md#s.ratio_sign) = "×", then the formula can only define a multiplier (used for both buy and sell). You can then enter a custom multiplier value for each side of the trade (for buy [Ratio buy formula](params-description.md#s.ratio_b_formula) and sell [Ratio sell formula](params-description.md#s.ratio_s_formula) scenarios separately), for example:
 
+```C
+security s = get_security("SiH6");
+return sqrt(s.bid());
+```
+
+In this case, the same multiplier will be used to calculate [Buy](params-description.md#p.buy) and [Sell](params-description.md#p.sell), but if you want to use different multipliers, you need to enter different values ​​in [Ratio buy formula](params-description.md#s.ratio_b_formula) and [Ratio sell formula](params-description.md#s.ratio_s_formula), for example, like this:
 
 ```C
 security s = get_security("SiH6");
@@ -1581,54 +1584,8 @@ There are two equivalent solutions, both implemented via `Ratio formula` and pro
 
     Now the value of the "price" variable will serve as the new values (so to speak, from the RTS index side) used to calculate [Buy](params-description.md#p.buy) and [Sell](params-description.md#p.sell), respectively.
 
-## Examples of Working with Indicators and Collections Placed in `shared memory`<Anchor hide :ids="['__ExampleInd__']"/>
-
-Create an indicator in `shared memory`, loading data from `shared memory`:
-```C
-static indicators::SMA sma("sma_key", true, true);
-sma.update(s.mid_price());// try to update SMA value, by adding new price
-return sma.value();// get current SMA value
-```
-
----
-
-Output the list of current robot indicators placed in `shared memory` to the log:
-```C
-std::vector<indicators::indicator_info> vii = indicators::get_indicators();
-for (auto& ii: vii)
-    log_info(ii.to_str());
-```
-
----
-
-Delete a specific indicator placed in `shared memory`:
-```C
-return indicators::del_indicator("okex", "SMA", "qwe");
-```
-
----
-
-Create a deque ([`ring_deque`](c-api.html#ring-deque)) in `shared memory`, loading data from `shared memory`, using a given struct as the deque element:
-```C
-struct point
-{
-  int x = 0;
-  int y = 0;
-};
-
-static indicators::ring_deque<point> v("vec", true, true);
-v.push_back(point());
-
-return v[0].x;
-
-```
-
-Delete a specific collection placed in `shared memory`:
-```C
-return indicators::del_indicator("okex", "rq8", "vec");
-```
-
-## Examples of Using Indicators<Anchor hide :ids="['__Example5__']"/>
+<Anchor hide :ids="['__Example5__']"/>
+## Examples of Using Indicators
 
 The simplest example of calculating `SMA` without any additional settings (i.e., a 1-second timeframe and 10 values for averaging):
 ```C
@@ -1677,6 +1634,147 @@ Examples of Setting `TradingDays` for an Indicator:
 sma.set_trading_days(WD_MONDAY | WD_TUESDAY);// compute indicator value on Monday and Tuesday only
 sma.set_trading_days(WORK_WEEK);// compute indicator value from Monday till Friday
 sma.set_trading_days(WHOLE_WEEK & (~ WD_MONDAY));// compute indicator value from Tuesday till Sunday
+```
+
+<Anchor hide :ids="['__ExampleInd__']"/>
+## Examples of Working with Indicators and Collections Placed in `shared memory`
+
+Create an indicator in `shared memory`, loading data from `shared memory`:
+```C
+security s = get_security();// get main security
+static indicators::SMA sma("qwe", true, true);// initialize SMA object as static variable
+sma.set_length(1000);
+sma.update(s.mid_price());// try to update SMA value, by adding new price
+return sma.value();// get current SMA value
+```
+
+Output the list of current robot indicators placed in `shared memory` to the log:
+```C
+std::vector<indicators::indicator_info> vii = indicators::get_indicators();
+for (auto& ii: vii)
+{
+    log_show(ii.to_str());
+}
+```
+
+Output information about a given indicator stored in `shared memory` to the log:
+```C
+log_show(indicators::get_indicator("okex", "SMA", "qwe").second.to_str());
+```
+
+---
+
+Delete a specific indicator placed in `shared memory`:
+```C
+return indicators::del_indicator("okex", "SMA", "qwe");
+```
+
+---
+Create a deque ([`ring_deque`](c-api.html#ring-deque)) in `shared memory`, loading data from `shared memory`, using a given struct as the deque element:
+```C
+struct point
+{
+  int x = 0;
+  int y = 0;
+};
+
+static indicators::ring_deque<point> v("vec", true, true);
+v.push_back(point());
+
+return v[0].x;
+
+```
+
+Delete a specific collection placed in `shared memory`:
+```C
+return indicators::del_indicator("okex", "rq8", "vec");
+```
+
+<Anchor hide :ids="['__shift_formula__']"/>
+## [Shift formula](params-description.md#p.shift_formula) examples
+
+[Shift mode](params-description.md#p.shift_mode) equal to `Standard`
+
+```cpp
+portfolio p = get_portfolio();
+security_fields sf1 = get_security_fields();
+
+deal_item d = p.deal();
+if (!d.amount) return 0;
+
+long long sf1_pos = sf1.pos();
+
+long long q0_buy = (sf1_pos >= 0) ? (p.v_side() == 0 ? p.v_in_l(): p.v_in_r()) : (p.v_side() == 0 ? p.v_out_l(): p.v_out_r());
+long long q0_sell = (sf1_pos <= 0) ? (p.v_side() == 0 ? p.v_in_l(): p.v_in_r()) : (p.v_side() == 0 ? p.v_out_l(): p.v_out_r());
+
+double v = ((d.dir == BUY) ? q0_buy : q0_sell) * sf1.count();
+if (!v) return 0;
+
+double mult = d.amount / v;
+
+if (d.dir == SELL)
+{
+    if (p.pos())
+    {
+        double k3 = (std::abs(p.lim_s() - p.lim_b()) - p.tp() - p.k()) * v / static_cast<double>(sf1_pos);
+        double k4 = (p.lim_s() - p.lim_b() >= 0) ? (k3 + p.k2()) : (-k3 + p.k2());
+        
+        p.set_lim_b(p.lim_b() + mult * ((sf1_pos > 0) ? k4 : p.k1()));
+        p.set_lim_s(p.lim_s() + mult * ((sf1_pos > 0) ? p.k2() : p.k()));
+    }
+    else
+    {
+        p.set_lim_b(p.lim_s() - p.tp());
+        p.set_lim_s(p.lim_s() + mult * p.k());
+    }
+}
+else
+{
+    if (p.pos())
+    {   
+        double k3 = (std::abs(p.lim_s() - p.lim_b()) - p.tp() - p.k()) * v / static_cast<double>(sf1_pos);
+        double k4 = (p.lim_s() - p.lim_b() >= 0) ? (-k3 + p.k2()) : (k3 + p.k2());
+        
+        p.set_lim_s(p.lim_s() - mult * ((sf1_pos < 0) ? k4 : p.k1()));
+        p.set_lim_b(p.lim_b() - mult * ((sf1_pos < 0) ? p.k2() : p.k()));
+    }
+    else
+    {
+        p.set_lim_s(p.lim_b() + p.tp());
+        p.set_lim_b(p.lim_b() - mult * p.k());
+    }
+}
+```
+
+[Shift mode](params-description.md#p.shift_mode) equal to `Standard + X`
+
+```cpp
+portfolio p = get_portfolio();
+security_fields sf1 = get_security_fields();
+
+deal_item d = p.deal();
+if (!d.amount) return 0;
+
+long long sf1_pos = sf1.pos();
+
+long long q0_buy = (sf1_pos >= 0) ? (p.v_side() == 0 ? p.v_in_l(): p.v_in_r()) : (p.v_side() == 0 ? p.v_out_l(): p.v_out_r());
+long long q0_sell = (sf1_pos <= 0) ? (p.v_side() == 0 ? p.v_in_l(): p.v_in_r()) : (p.v_side() == 0 ? p.v_out_l(): p.v_out_r());
+
+double v = ((d.dir == BUY) ? q0_buy : q0_sell) * sf1.count();
+if (!v) return 0;
+
+double mult = d.amount / v;
+
+if (d.dir == SELL)
+{
+    p.set_lim_b(p.lim_b() + mult * ((sf1_pos > 0) ? p.x() : p.k1()));
+    p.set_lim_s(p.lim_s() + mult * ((sf1_pos > 0) ? p.k2() : p.k()));
+}
+else
+{
+    p.set_lim_s(p.lim_s() - mult * ((sf1_pos < 0) ? p.x() : p.k1()));
+    p.set_lim_b(p.lim_b() - mult * ((sf1_pos < 0) ? p.k2() : p.k()));
+}
 ```
 
 ## Most Common Errors in Formulas Leading to Robot Crash <Anchor :ids="['errors']"/>
