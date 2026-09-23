@@ -12,6 +12,11 @@ summary: 'What changed in the robot and the documentation from version to versio
 - Added [`ring_deque`](c-api.html#ring-deque) object to the C++ interface, which can save and load its values on robot restart;
 - Due to the addition of collections placed in `shared_memory` to the C++ interface, the section `Indicators and Mathematical Statistics` has been renamed to [`Indicators, Mathematical Statistics, and Collections`](c-api.md#indicators-docs).
 
+## 2026-09-14
+
+- Added a limit of 8 identical subscriptions to one WebSocket session in the [WebSocket API](api.md);
+- Added portfolio parameter [Calculation method](params-description.md#p.calc_method), responsible for the new spread calculation method, which resulted in updated calculation formulas for [Sell/Buy](params-description.md#p.sell), [Price_s/Price_b](params-description.md#p.price_s), [Equal prices](params-description.md#p.equal_prices).
+
 ## 2026-08-21
 
 - Added portfolio parameters [Shift mode](params-description.md#p.shift_mode), [Shift formula](params-description.md#p.shift_formula), [X](params-description.md#p.x), [v_side](params-description.md#p.v_side),
@@ -112,7 +117,7 @@ summary: 'What changed in the robot and the documentation from version to versio
 ## 2024-11-21
 
 - Added notes for parameters affected by `lot_size`: [Curpos](params-description.md#s.pos), [Count](params-description.md#s.count), [Market volume](params-description.md#p.mkt_volume), [Return first](params-description.md#p.return_first).
-- Updated formulas for [Opened](params-description.md#p.opened), [Commission sum](params-description.md#p.opened_comission), [Fin res](params-description.md#p.fin_res), [Fin res wo C](params-description.md#p.fin_res_wo_c) to include the instrument’s `lot_size`.
+- Updated formulas for [Opened](params-description.md#p.opened), [Commission sum](params-description.md#p.opened_comission), [Fin res](params-description.md#p.fin_res), [Fin res wo C](params-description.md#p.fin_res_wo_c) to include the instrument's `lot_size`.
 
 ## 2024-11-01
 
