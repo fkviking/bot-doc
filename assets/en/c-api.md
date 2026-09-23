@@ -685,13 +685,13 @@ Arguments for the functions above:
 | call/put | Option price.                               |
 | rate     | Refinancing rate, in percent.               |
 
-## Indicators and Mathematical Statistics <Anchor :ids="['indicators-docs']"/>
+## Indicators, Mathematical Statistics, and Collections <Anchor :ids="['indicators-docs']"/>
 
 ### General Provisions
 
 #### Specifics of Objects Used for Indicator Calculation
 
-Indicators are calculated using objects of corresponding classes. Since objects are created inside functions, to avoid recreating and reinitializing them each time, they should always be created as `static`.  
+Indicators are calculated using objects of the same-named classes. Since objects are created inside functions, to avoid recreating and reinitializing them each time, they should always be created as `static`.  
 
 If indicator calculation requires historical data and the current history is shorter than the specified `length`), the actual number of available historical values will be used instead.
 
@@ -711,6 +711,82 @@ Effectively, the indicator is built using the "opening price" of values on the s
 **Important:** All classes described below belong to the `indicators` namespace.  
 
 [_Examples of using indicators in user code._](#__Example5__)
+
+---
+
+#### Saving Indicator Values and Collections Between Robot Restarts
+
+Indicators are calculated based on certain prices that are stored in queues. Queues reside in RAM, which means that all queues are lost when the robot is shut down.
+
+To prevent queues from being lost on robot restart, the ability to create queues directly in `shared memory` has been added. This solution remains the fastest in terms of performance, as there are no additional overheads for separate data saving.
+
+Collections described in this section, just like indicators, are created directly in `shared memory`.
+
+This solution allows the robot to survive restarts seamlessly, since all data for indicator queues and collections are stored in `shared memory`. When the robot is shut down, nothing will happen to this data: when you start the robot and it calls the constructor of an indicator or collection upon formula invocation, the data will be loaded back from the corresponding memory region.
+
+##### Implementation Details
+
+<Anchor hide :ids="['shared-memory']"/>
+1. To place indicator queues and collections in `shared memory`, the constructors of all indicators and collections have the following optional parameters:
+    |Type|Name|Description|
+    |---|---|---|---|
+    |`const std::string&`|`key`| Unique name of the indicator/collection. If not specified or left empty, queues will be placed in RAM, not in `shared memory`. For collections, it is not allowed to omit or leave empty. The length cannot exceed `32` characters, can only consist of Latin alphabet letters (lowercase and uppercase), digits, and the underscore character; otherwise, a `std::invalid_argument` exception will be thrown |
+    |`bool`|`load`| Load data from `shared memory`. Default is `true` for both "production" mode and formula testing (`#ifdef DEBUG`) |
+    |`bool`|`save`| Save data to `shared memory`. Default is `true` for "production" mode and `false` for formula testing (`#ifdef DEBUG`). If `true` and `key` is not empty, the queue/collection will be placed in `shared memory` |
+   
+   By default: in "production" mode, the robot loads indicator queues and collections from the specified `shared memory` region and uses this data; additionally, new data is saved to `shared memory`. In formula testing mode (`#ifdef DEBUG`), data is loaded from `shared memory`, meaning that when modifying a formula, it can be tested on already accumulated data rather than on an empty queue/collection. By default, new data obtained during testing is not saved back to `shared memory` to avoid corrupting the "production" queue/collection via concurrent writes.
+   
+   **Important!** This is only the default behavior; you can change it by setting the `save` and `load` parameter values.
+   
+2. Automatic removal of old unused indicators/collections placed in `shared memory` has been implemented. Data is removed from `shared memory`:
+   - When a portfolio or robot is deleted;
+   - For indicators NOT currently used in portfolios — after `72` hours without updates to that indicator;
+   - For collections NOT currently used in portfolios — after `72` hours without updates or access to these collections.
+3. The ability to view the current list of indicators whose queues are placed in `shared memory`, as well as collections, has been implemented, along with the ability to remove unused indicators/collections from `shared memory`.
+
+
+##### Limitations
+
+1. Only data from indicator queues and collections in `shared memory` will survive restarts. If any data was stored in any data structures in RAM (e.g., `std::vector` or `std::map`, or anything else), those data will NOT be preserved!
+   For this reason, it is strongly recommended to use ready-made indicators (rather than writing your own) and, if it is important not to lose data on robot restart, to save all important data in "user fields" and collections in `shared memory`.
+2. This implementation will NOT survive moving the robot from server to server and server reboots, but these operations are very rare and always coordinated with the user.
+3. Within one robot, one portfolio, and one saveable-to-`shared memory` indicator/collection type, the indicator/collection name cannot be used twice (to prevent multiple indicators/collections from concurrently writing to the same memory region).
+4. Each robot has a limit on the number of indicators/collections created in `shared memory` (by default, it is `400`; exceeding the limit will throw a `std::invalid_argument` exception). 
+5. **For collections, the string type name is `rq` + `<TEMPLATE_TYPE_SIZE>`, i.e., for example, for the `double` data type, whose size is `8` bytes, the type will be `rq8`. Since different data types can have the same size, it is possible that data was saved for one type, and then the user attempts to load this data for a different type (keeping the old `key` value but changing the template type itself), which will most likely result in reading "garbage" data. It is the user's responsibility to track what was saved and what was subsequently loaded!**
+
+
+##### Viewing and Deleting Indicator and Collection Values Placed in `shared memory`
+
+| Function                                                                                            | Description                                      |
+|----------------------------------------------------------------------------------------------------|--------------------------------------------------|
+| std::vector<indicator_info> get_indicators()                                                       | Get the list of saved indicators/collections of the robot in `shared memory` |
+| std::pair<bool, indicator_info> get_indicator(const std::string& pname, const std::string& type, const std::string& iname) | Get a saved indicator/collection of the robot in `shared memory` by portfolio name `pname`, indicator/collection type `type`, and indicator/collection name `iname`; if the indicator/collection is not found, the first element of the pair will be `false`, and the second will contain "garbage" |
+| bool del_indicator(const std::string& pname, const std::string& type, const std::string& iname)    | Delete an unused saved indicator/collection of the robot in `shared memory` by portfolio name `pname`, indicator/collection type `type`, and indicator/collection name `iname`; returns `true` if such an indicator/collection no longer exists |
+| bool del_indicator(const indicator_info& ii)                                                       | Delete an unused saved indicator/collection of the robot in `shared memory`; returns `true` if such an indicator/collection no longer exists |
+
+Fields of `indicator_info`:
+
+| Name       | Type       | Description    |
+|------------|------------|----------------|
+| name       | std::string    | name of the indicator/collection        |
+| type       | std::string    | type of the indicator/collection       |
+| portf      | std::string    | portfolio name to which the indicator/collection belongs        |
+| long_name  | std::string    | full name of the indicator/collection |
+| bool       | used    | whether the indicator/collection is currently used |
+| length     | size_t    | length of the indicator or capacity of the collection        |
+| timeframe  | size_t    | timeframe of the indicator, not applicable for collections       |
+| size       | size_t    | current size of the list of elements used to calculate the indicator, or capacity of the collection       |
+| long long  | min_dt    | minimum date/time of the element used to calculate the indicator, in `epoch` format, not applicable for collections|
+| long long  | max_dt    | maximum date/time of the element used to calculate the indicator, in `epoch` format, not applicable for collections|
+| long long  | last_updated    | date/time of the last update of the indicator or update/access to the collection, in `epoch` format|
+
+Methods of `indicator_info`:
+
+| Method                       | Description                                                                 |
+|------------------------------|-----------------------------------------------------------------------------|
+| std::string to_str()         | Get a string representation in the format `{type}(name={name}, length={length}, timeframe={timeframe}, size={size}, min_dt={min_dt}, max_dt={max_dt}, last_updated={last_updated}, portf={portf}, used={used})` |
+
+[_Examples of working with indicators and collections placed in `shared memory`._](#__ExampleInd__)
 
 ---
 
@@ -773,7 +849,9 @@ If `schedule` is set, it represents a list of non-overlapping time intervals. Ea
 | WHOLE_WEEK | int | `WD_SUNDAY | WD_MONDAY | WD_TUESDAY | WD_WEDNESDAY | WD_THURSDAY | WD_FRIDAY | WD_SATURDAY`, trade all week |
 | WORK_WEEK | int | `WD_MONDAY | WD_TUESDAY | WD_WEDNESDAY | WD_THURSDAY | WD_FRIDAY`, trade Monday through Friday |
 
-### Simple Moving Average (`SMA`)
+### Indicators
+
+#### Simple Moving Average (`SMA`)
 
 The formula is:
 
@@ -813,7 +891,7 @@ where:
 | size_t size()                        | Returns the number of elements currently stored.                            |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
-### Exponential Moving Average (`EMA`)
+#### Exponential Moving Average (`EMA`)
 
 The formula is:
 
@@ -854,7 +932,7 @@ where:
 | size_t size()                        | Returns the number of elements currently stored.                            |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
-### Maximum over Interval (`Max`)
+#### Maximum over Interval (`Max`)
 
 The formula is:
 
@@ -895,7 +973,7 @@ where:
 | size_t size()                        | Returns the number of elements currently stored.                            |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
-### Minimum over Interval (`Min`)
+#### Minimum over Interval (`Min`)
 
 The formula is:
 
@@ -935,7 +1013,7 @@ where:
 | size_t size()                        | Returns the number of elements currently stored.                            |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
-### Variance (`Var`)
+#### Variance (`Var`)
 
 The formula is:
 
@@ -976,7 +1054,7 @@ where:
 | size_t size()                        | Returns the number of elements currently stored.                            |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
-### Standard Deviation (`StdDev`)
+#### Standard Deviation (`StdDev`)
 
 The formula is:
 
@@ -1017,7 +1095,7 @@ where:
 | size_t size()                        | Returns the number of elements currently stored.                            |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
-### Bollinger Bands (`BB`)
+#### Bollinger Bands (`BB`)
 
 Bollinger Bands consist of three values, calculated as follows:
 
@@ -1069,7 +1147,7 @@ where:
 | size_t size()                        | Returns the number of elements currently stored.                            |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
-### Relative Strength Index (`RSI`) <Anchor :ids="['indicators-rsi']"/>
+#### Relative Strength Index (`RSI`) <Anchor :ids="['indicators-rsi']"/>
 
 The formula is:
 
@@ -1129,6 +1207,42 @@ $L_{t} = \begin{cases}
 | size_t size()                        | Returns the number of elements currently stored.                            |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
+### Collections
+
+#### Ring Buffer-Based Deque (`ring_deque`) <Anchor :ids="['ring-deque']"/>
+
+A deque (double-ended queue) that stores data in a ring buffer, which in turn is placed in `shared memory`. Since the data is stored in `shared memory`, the following restrictions apply to the data type:
+1. The type must be trivially copyable;
+2. The type must be standard-layout;
+3. The type cannot be a pointer or smart pointer; if it is a struct, its fields also cannot be pointers or smart pointers.
+
+A buffer of size `161 600` bytes is always allocated for the data, so the maximum number of elements that can be placed in the deque depends on the element size.
+
+**Constructors of `ring_deque`:**
+
+| Constructor                                         | Description                                                                  |
+|-----------------------------------------------------|------------------------------------------------------------------------------|
+| ring_deque&lt;T&gt;(const std::string& key, bool load = true, bool save = ...) | Create an object storing objects of type `T`, [the principle of `key`, `load`, `save` is described here](#shared-memory) |
+
+
+**Methods of `ring_deque`:**
+
+| Method                                        | Description                                                                  |
+|----------------------------------------------|------------------------------------------------------------------------------|
+| bool empty() const | Check whether the collection is empty |
+| size_t size() const | Get the current number of elements in the collection |
+| size_t max_capacity() const | Get the maximum number of elements that can be placed in the collection |
+| void clear() | Clear the collection |
+| void push_back(const T& v) | Add an element to the end of the collection, after the current last element. If there is no space to add, throws `std::overflow_error` |
+| void push_front(const T& v) | Add an element to the beginning of the collection, before the current first element. If there is no space to add, throws `std::overflow_error` |
+| void pop_back() | Remove the current last element of the collection. If the collection is empty, throws `std::underflow_error` |
+| void pop_front() | Remove the current first element of the collection. If the collection is empty, throws `std::underflow_error` |
+| const T& back() const | Get a const reference to the current last element of the collection. If the collection is empty, throws `std::underflow_error` |
+| T& back() | Get a reference to the current last element of the collection. If the collection is empty, throws `std::underflow_error` |
+| const T& front() const | Get a const reference to the current first element of the collection. If the collection is empty, throws `std::underflow_error` |
+| T& front() | Get a reference to the current first element of the collection. If the collection is empty, throws `std::underflow_error` |
+| const T& operator[](size_t i) const | Get a const reference to the `i`-th element of the collection. If `i` is less than zero or greater than `size()`, throws `std::out_of_range` |
+| T& operator[](size_t i) | Get a reference to the `i`-th element of the collection. If `i` is less than zero or greater than `size()`, throws `std::out_of_range` |
 
 ## Examples of Accessing Portfolio, Instrument, Trade, and Position Parameters
 
@@ -1466,6 +1580,53 @@ There are two equivalent solutions, both implemented via `Ratio formula` and pro
     ```
 
     Now the value of the "price" variable will serve as the new values (so to speak, from the RTS index side) used to calculate [Buy](params-description.md#p.buy) and [Sell](params-description.md#p.sell), respectively.
+
+## Examples of Working with Indicators and Collections Placed in `shared memory`<Anchor hide :ids="['__ExampleInd__']"/>
+
+Create an indicator in `shared memory`, loading data from `shared memory`:
+```C
+static indicators::SMA sma("sma_key", true, true);
+sma.update(s.mid_price());// try to update SMA value, by adding new price
+return sma.value();// get current SMA value
+```
+
+---
+
+Output the list of current robot indicators placed in `shared memory` to the log:
+```C
+std::vector<indicators::indicator_info> vii = indicators::get_indicators();
+for (auto& ii: vii)
+    log_info(ii.to_str());
+```
+
+---
+
+Delete a specific indicator placed in `shared memory`:
+```C
+return indicators::del_indicator("okex", "SMA", "qwe");
+```
+
+---
+
+Create a deque ([`ring_deque`](c-api.html#ring-deque)) in `shared memory`, loading data from `shared memory`, using a given struct as the deque element:
+```C
+struct point
+{
+  int x = 0;
+  int y = 0;
+};
+
+static indicators::ring_deque<point> v("vec", true, true);
+v.push_back(point());
+
+return v[0].x;
+
+```
+
+Delete a specific collection placed in `shared memory`:
+```C
+return indicators::del_indicator("okex", "rq8", "vec");
+```
 
 ## Examples of Using Indicators<Anchor hide :ids="['__Example5__']"/>
 

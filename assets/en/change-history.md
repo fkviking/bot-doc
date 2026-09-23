@@ -7,6 +7,11 @@ summary: 'What changed in the robot and the documentation from version to versio
 
 # Change Log
 
+## 2026-09-29
+
+- Added [`ring_deque`](c-api.html#ring-deque) object to the C++ interface, which can save and load its values on robot restart;
+- Due to the addition of collections placed in `shared_memory` to the C++ interface, the section `Indicators and Mathematical Statistics` has been renamed to [`Indicators, Mathematical Statistics, and Collections`](c-api.md#indicators-docs).
+
 ## 2026-08-21
 
 - Added portfolio parameters [Shift mode](params-description.md#p.shift_mode), [Shift formula](params-description.md#p.shift_formula), [X](params-description.md#p.x), [v_side](params-description.md#p.v_side),
@@ -17,7 +22,7 @@ summary: 'What changed in the robot and the documentation from version to versio
 ## 2026-08-04
 
 - Added [`void log_show(const std::string&)`](c-api.md#cpp-log-show) function to C++ interface
-- Added [ability to save and load indicator values on robot restart](c-api.html#sokhranenie-znachenii-indikatorov-mezhdu-perezapuskami-robota) to C++ interface
+- Added [ability to save and load indicator values on robot restart](c-api.html#saving-indicator-values-and-collections-between-robot-restarts) to C++ interface
 
 ## 2026-03-05
 
