@@ -19,7 +19,7 @@ The order book in the bot may be reinitialized in the following cases:
 - Clearing the `Disabled` flag on a portfolio;
 - Message sequence gaps in the incremental order book update stream over UDP connections to exchanges (the more portfolios and instruments you have, the higher the likelihood of such gaps).
 
-This results in a temporary suspension of trading across all portfolios using instruments from the affected exchange. This behavior is not a malfunction—it is an expected part of the system's operation
+This results in a temporary suspension of trading across all portfolios using instruments from the affected exchange. This behavior is not a malfunction — it is an expected part of the system's operation.
 
 ## Move Order Support
 
@@ -35,26 +35,30 @@ Signal prices are also moved when an order cannot be placed due to [v_min](param
 
 ## Behavior of Orders Re-Posted Based on SL or Timer <Anchor :ids="['sl_timer']" />
 
-When the parameter [k_sl](params-description.md#s.k_sl) is zero or positive,  orders placed due to the following events: re-posting due to triggering of the [SL](params-description.md#s.sl) condition, re-posting due to triggering of the [Timer](params-description.md#s.timer) condition, or position closing or leveling according to schedule settings or by clicking the [To market](params-description.md#p.to_market) button, will be re-posted once per second until the order is filled,  trading is disabled via [Hard stop](getting-started.md#portfolio_actions.hard_stop) or a submission error is received. Re-posting will occur at a price of `bid` - [k_sl](params-description.md#s.k_sl) for sell orders and `offer` + [k_sl](params-description.md#s.k_sl) for buy orders.
+When the parameter [k_sl](params-description.md#s.k_sl) is zero or positive, orders placed due to the following events: re-posting due to triggering of the [SL](params-description.md#s.sl) condition, re-posting due to triggering of the [Timer](params-description.md#s.timer) condition, or position closing or leveling according to schedule settings or by clicking the [To market](params-description.md#p.to_market) button, will be re-posted once per second until the order is filled, trading is disabled via [Hard stop](getting-started.md#portfolio_actions.hard_stop) or a submission error is received. Re-posting will occur at a price of `bid` - [k_sl](params-description.md#s.k_sl) for sell orders and `offer` + [k_sl](params-description.md#s.k_sl) for buy orders.
 
 This is an additional re-posting mechanism; it does not alter or depend on the existing settings of the [Timer](params-description.md#s.timer) or [TE](params-description.md#s.te) parameters. That is, it will be executed even if the [TE](params-description.md#s.te) flag is disabled.
 
 ## Financial Result Calculation
 
-[Financial result](params-description.md#pp.fin_res) as a portfolio parameter is calculated based on deals and there are no “exotic” cases associated with its calculation. However, there are cases where spreads will not appear in the financial result widgets ([Finres for today](interface.md#finres_for_today) and [Finres history](interface.md#finres_history)). 
-The key rule to remember is: a spread is displayed only if there is a trade in the [Is first](params-description.md#s.is_first) instrument. If there is no such trade, no spread will be shown. 
-For example, if your position becomes skewed for any reason and you rebalance it by clicking the [To market](params-description.md#p.to_market)button, you will not get a proper spread in these widgets. You will only see a single "skewed" spread entry that includes only the [Is first](params-description.md#s.is_first) instrument.
-As an example: during flood control, trades may be executed on the first leg while the second leg cannot be submitted. This leads to one-sided skewed spreads on the first leg. After clicking [To market](params-description.md#p.to_market)button, trades on the second leg are executed (and correctly reflected in the financial result). However, since no matching trade occurs in the primary instrument, no spread is displayed in the table—although the financial result itself remains accurate.
+[Financial result](params-description.md#pp.fin_res) as a portfolio parameter is calculated based on deals and there are no "exotic" cases associated with its calculation. However, there are cases where spreads will not appear in the financial result widgets ([Finres for today](interface.md#finres_for_today) and [Finres history](interface.md#finres_history)). 
 
-Another scenario occurs when the [Count](params-description.md#s.count) value of the first leg exceeds the [Count](params-description.md#s.count) value of the second leg. For example, suppose you are trading a currency (e.g., USD/RUB) against futures on the derivatives market, with the currency as the first leg. In this case, the currency has a [Count](params-description.md#s.count) of 100, while the futures contract has a [Count](params-description.md#s.count) of 1, meaning you hedge every 100 currency units with one futures contract.
+The key rule to remember is: a spread is displayed only if there is a trade in the [Is first](params-description.md#s.is_first) instrument. If there is no such trade, no spread will be shown. 
+
+For example, if your position becomes skewed for any reason and you rebalance it by clicking the [To market](params-description.md#p.to_market) button, you will not get a proper spread in these widgets. You will only see a single "skewed" spread entry that includes only the [Is first](params-description.md#s.is_first) instrument. 
+
+As an example: during flood control, trades may be executed on the first leg while the second leg cannot be submitted. This leads to one-sided skewed spreads on the first leg. After clicking [To market](params-description.md#p.to_market) button, trades on the second leg are executed (and correctly reflected in the financial result). However, since no matching trade occurs in the primary instrument, no spread is displayed in the table — although the financial result itself remains accurate.
+
+Another scenario occurs when the [Count](params-description.md#s.count) value of the first leg exceeds the [Count](params-description.md#s.count) value of the second leg. For example, suppose you are trading a currency (e.g., USD/RUB) against futures on the derivatives market, with the currency as the first leg. In this case, the currency has a [Count](params-description.md#s.count) of 100, while the futures contract has a [Count](params-description.md#s.count) of 1, meaning you hedge every 100 currency units with one futures contract. 
+
 You place an order for 100 currency contracts. Suppose 60 are filled. No spread will appear in the table, as it would be inherently skewed — the second leg has not been traded yet. Then another 50 are filled, and again, no spread will be displayed. You then place one futures contract, which gets executed (and is correctly reflected in the financial result). However, it remains unclear which trades this execution should be linked to. If linked to the most recent trade (i.e., the 50-lot fill), the resulting spread would be clearly skewed. Attempting to associate it with earlier trades is not feasible, as real-world scenarios may be more complex than this simplified example.
 
 ## On Pricing of Second-Leg Orders
 
 Orders for second-leg instruments are priced as follows:
 - A buy order is placed at the best ask price plus the offset [k](params-description.md#s.k) or plus [k_sl](params-description.md#s.k_sl) if the order is re-posted due to a stop-loss trigger or similar event.
-- A sell order is placed at the best bid price minus the offset [k](params-description.md#s.k) or minus [k_sl](params-description.md#s.k_sl)if the order is re-posted due to a stop-loss trigger or similar event.
-The best bid and ask prices for second-leg instruments are frozen at the moment the order for the [Is first](params-description.md#s.is_first) instrument is submitted. As a result, when a trade is executed on the [Is first](params-description.md#s.is_first) instrument , all other instruments in the portfolio are quoted with offsets based not on the current market prices, but on the best prices at the time the first-leg order was placed.
+- A sell order is placed at the best bid price minus the offset [k](params-description.md#s.k) or minus [k_sl](params-description.md#s.k_sl) if the order is re-posted due to a stop-loss trigger or similar event.
+The best bid and ask prices for second-leg instruments are frozen at the moment the order for the [Is first](params-description.md#s.is_first) instrument is submitted. As a result, when a trade is executed on the [Is first](params-description.md#s.is_first) instrument, all other instruments in the portfolio are quoted with offsets based not on the current market prices, but on the best prices at the time the first-leg order was placed.
 The only exception is when the [Equal price](params-description.md#p.equal_prices) parameter is enabled.
 
 No alternative methods for pricing second-leg orders are supported beyond those described above.
