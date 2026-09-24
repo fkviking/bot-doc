@@ -227,6 +227,13 @@ In robot, to obtain market data for futures market of the Moscow Exchange, only 
     </details>
 ---    
 - <details>
+    <summary><i>What are the system requirements for the computer that will run the website with robots?<Anchor :ids="['faq.requirements']" /></i></summary>
+
+    System requirements are described [here](introduction.md#requirements).
+    
+    </details>
+---   
+- <details>
     <summary><i>Is it possible to participate in testing conducted by Moscow Exchange on production environment on non-trading day? <Anchor :ids="['faq.moex_testing']" /></i></summary>
     
     Participation of our robots in such testing is not provided. Connections to markets of Moscow Exchange are automatically disabled on non-trading days to avoid test data entering production systems, as recommended by exchange itself.
@@ -243,7 +250,6 @@ In robot, to obtain market data for futures market of the Moscow Exchange, only 
     On one hand, the `Cancel on Disconnect` mechanism is designed to mitigate risks during connection loss. For example, with CoD enabled, if a connection drops, the first-leg instrument order will be automatically canceled, eliminating the risk of an unhedged position. On the other hand, enabling this mechanism on trading connections used for second-leg instruments may lead to undesired behavior: if the connection is lost, the second-leg order will be canceled and will not be automatically re-submitted after reconnection. Hedging will only occur again if the [Hedge (sec)](params-description.md#p.hedge_after) parameter is properly configured..
     
     </details>
-
 ---
 - <details>
     <summary><i>The exchange has suspended trading. What actions should I take in the robot? <Anchor :ids="['faq.exchange_stopped']" /></i></summary>
@@ -253,7 +259,6 @@ In robot, to obtain market data for futures market of the Moscow Exchange, only 
     Since trading halts on any exchange can happen for multiple reasons, there is no universal action algorithm for such situations. Our platform employs a comprehensive monitoring system that tracks numerous robot parameters: availability of trading and market data connections, orders stuck in intermediate statuses, order submission/cancellation errors not covered by standard categories, etc. Thanks to this system, we are often aware of trading halts on the Moscow Exchange before receiving notifications from brokers. This information is analyzed promptly, and in case of an exchange failure, we send out user notifications detailing the necessary steps.
 
   </details>
-  
 ---
 - <details>
     <summary><i>My portfolio trades and logs have disappeared. What's the cause? <Anchor :ids="['faq.lost_deals']" /></i></summary>
@@ -289,19 +294,18 @@ In robot, to obtain market data for futures market of the Moscow Exchange, only 
     In other words, you're buying at a price that's clearly higher than the price you used in your calculations.
 
     </details>
-
 ---
 - <details>
     <summary><i>How do I replace an instrument in the portfolio and in formulas?<Anchor :ids="['faq.replace']" /></i></summary>
 
     You should open the portfolio settings, select the instrument you want to replace, and click the "Replace" button.
 
-    ![how_replace_button_looks](@images/replace_01.png)
+  ![how_replace_button_looks](@images/replace_01.png)
 
-    In the window that opens, you should select the new instrument from the top table. There are two tabs below: you should use the first one to select the portfolios where the instrument should be replaced, and the second one to select the formulas.
+  In the window that opens, you should select the new instrument from the top table. There are two tabs below: you should use the first one to select the portfolios where the instrument should be replaced, and the second one to select the formulas.
 
-    ![where_to_change_the_instrument_in_all_portfolios_and_formulas](@images/replace_02.png)
+  ![where_to_change_the_instrument_in_all_portfolios_and_formulas](@images/replace_02.png)
 
     You should click the "Apply" button to save the changes.
 
-    </details>
+  </details>

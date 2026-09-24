@@ -391,7 +391,6 @@ If an instrument's name starts with SPB_MM_, it represents SPB liquidity only (o
 
 Instrument definition stream. To ensure proper operation of the connection, this stream must be set to Enable status. In addition to instrument definitions, trading statuses and price limits are also transmitted through this stream.
 
-
 #### Commons
 
 Stream of statistical market parameters. Not used within the robot's algorithm, but available via the [C++ interface](c-api.md#market-data-access).
@@ -1183,6 +1182,10 @@ Trading account, taken from the exchange agreement. Multiple accounts can be add
 
 Participant identifier; defaults to 0. If this value does not work, clarify with the exchange.
 
+#### Comment <Anchor :ids="['tc.IMEX.comment']" />
+
+Client comment for orders.
+
 #### Client ID <Anchor :ids="['tc.IMEX.client_id']" />
 
 Client code identifier, taken from the exchange agreement.
@@ -1194,10 +1197,6 @@ Used for routing orders to the appropriate liquidity pool; the correct value sho
 #### Prime exchange  <Anchor :ids="['tc.IMEX.prime_exchange']" />
 
 Used for routing orders to the appropriate liquidity pool; the correct value should be clarified with the exchange.
-
-#### Comment <Anchor :ids="['tc.IMEX.comment']" />
-
-Client comment for orders.
 
 #### Bind IP <Anchor :ids="['tc.IMEX.bind_ip']" />
 

@@ -64,8 +64,8 @@ summary: Справочник параметров портфеля, инстр�
 
 $$Count \times Percent\enspace of\enspace quantity \times 0.01 \times 
 \begin{cases} 
-v\_in\_left, &\text{if } \enspace open\enspace pose\\
-v\_out\_left, &\text{if } \enspace close\enspace pose 
+v\_in\_left, &\text{if } \enspace open\enspace pos\\
+v\_out\_left, &\text{if } \enspace close\enspace pos 
 \end{cases},$$
 
 - `Orderbook+filter` - аналогично Orderbook, но вычитать из набираемого объема цены своих заявок (если на соответствующих ценах присутствуют свои заявки).
@@ -133,9 +133,10 @@ $Price\_b_1=\min\left(Price\_b_0,bid+step\right),$
 
 ### Equal prices <Anchor :ids="['p.equal_prices']" />
 
-Если галка не стоит, то цена не [Is first](params-description.md#s.is_first) инструмента (второй ноги) определяется исходя из цен, которые были на момент сигнала на выставление заявки по `is first` инструменту. Если галка стоит, то заявка по второй ноге будет выставлена по такой цене,
+Если галка не стоит, то цена не [Is first](params-description.md#s.is_first) инструмента (второй ноги) определяется исходя из цен, которые были на момент сигнала на выставление заявки по [Is first](params-description.md#s.is_first) инструменту. Если галка стоит, то заявка по второй ноге будет выставлена по такой цене,
 чтобы [Sell](params-description.md#p.sell) = [Lim_sell](params-description.md#p.lim_s) и [Buy](params-description.md#p.buy) = [Lim_buy](params-description.md#p.lim_b) (работает только для портфелей с двумя финансовыми инструментами).  
 Таким образом цены в заявках будут строго соответствовать [Lim_sell](params-description.md#p.lim_s), даже если в моменте были лучшие цены.
+
 Включение параметра способствует меньшему числу проскальзываний по второй ноге, но и уменьшает количество положительных проскальзываний (когда купили по цене лучшей, чем хотели).
 
 Формулы для цены второй ноги:
@@ -243,7 +244,7 @@ Delta = 10, выставлена котирующая заявка на прод
 
 
 _Пример_:  
-First delta = 20. Вы котируете на продажу объёмом 100 и вашу заявку начинают выкупать по частям. Заявка висит до тех пор, пока её неисполненный объём больше или равен 20. Как только он становится меньше 20, заявка снимается и, если может, выставляется новая по цене `Price_s` в полном объёме.
+First delta = 20. Вы котируете на продажу объёмом 100 и вашу заявку начинают выкупать по частям. Заявка висит до тех пор, пока её неисполненный объём больше или равен 20. Как только он становится меньше 20, заявка снимается и, если может, выставляется новая по цене [Price_s](params-description.md#p.price_s) в полном объёме.
 
 ### Market volume <Anchor :ids="['p.mkt_volume']" />
 
@@ -394,7 +395,7 @@ First delta = 20. Вы котируете на продажу объёмом 100
           K, &\text{if}\enspace curpos<0 
        \end{cases},$
 
-1. Если прошла покупка в количестве diffpos:
+1. Если прошла покупка в количестве `diffpos`:
 
     $Lim\_Sell_1=Lim\_Sell_0-\frac{|{diffpos}|}{V}\times 
        \begin{cases} 
@@ -493,8 +494,7 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 Время таймера (задается в секундах), по истечении которого происходит сдвиг обоих параметров [Lim_sell](params-description.md#p.lim_s) и [Lim_buy](params-description.md#p.lim_b) на значение [K](params-description.md#p.k). Таймер включается если торговля включена и проходит сигнал на покупку или продажу, но торговля запрещена из-за того, что робот уже набрал максимальную позицию (по [v_min/v_max](params-description.md#p.v_min)). Сдвиг по таймеру можно отключить, задав значение [Percent](params-description.md#p.percent) > 100%.
 
-Пример: значения `Limits timer` = 10 сек, `Percent` = 60. Возьмем временное окно 10 сек: допустим, сигнал был 2 сек, потом на 3 сек пропал, потом 4 сек был и снова на 1 сек пропал. За 10 сек сигнал был суммарно 6 сек, что больше или равно 60% от 10 сек, следовательно условие выполнено, сдвиг выполняется.
-
+Пример: значения `Limits timer` = 10 сек, [Percent](params-description.md#p.percent) = 60. Возьмем временное окно 10 сек: допустим, сигнал был 2 сек, потом на 3 сек пропал, потом 4 сек был и снова на 1 сек пропал. За 10 сек сигнал был суммарно 6 сек, что больше или равно 60% от 10 сек, следовательно условие выполнено, сдвиг выполняется.
 
 ### Percent <Anchor :ids="['p.percent']" />
 
@@ -611,7 +611,7 @@ Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) и
 
 Позволяет выставить заявку по одному из инструментов портфеля, не дожидаясь срабатывания настроенных условий портфеля, в т.ч. при выключенной торговле портфеля. Для того, чтобы воспользоваться этой опцией необходимо сделать клик по голубой ячейке в столбце `Place order` в таблице `Portfolios table` и выбрать необходимые параметры заявки, далее нажать на кнопку `Place order`.  
 При включенной торговле выставленная таким образом заявка может привести к срабатыванию параметров:  
-`Hedge (sec)`, `SLE`, `TE`.  
+[Hedge (sec)](params-description.md#p.hedge_after), [SLE](params-description.md#s.sle), [TE](params-description.md#s.te).  
 Удалить выставленную таким способом заявку можно либо вручную с помощью биржевого терминала, либо с помощью кнопки [Hard stop](getting-started.md#portfolio_actions.hard_stop).
 
 ### Sell/Buy <Anchor :ids="['p.sell', 'p.buy']" />
@@ -668,7 +668,6 @@ Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) и
     $$Sell=\left(\frac{\prod\limits_{i, On\enspace buy_i=Buy} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i, On\enspace buy_i=Sell} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} - 1 \right) \times 100$$
     
     $$Buy=\left(\frac{\prod\limits_{i, On\enspace buy_i=Buy} offer_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i, On\enspace buy_i=Sell} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} - 1 \right) \times 100$$
-
 
 ### Price_s/Price_b <Anchor :ids="['p.price_s', 'p.price_b']" />
 
@@ -805,7 +804,7 @@ secs - список инструментов портфеля.
 
 ### Fin res wo C <Anchor :ids="['p.fin_res_wo_c']" />
 
-`Fin res` без учета комиссии. Вычисляется по формуле:
+[Fin res](params-description.md#p.fin_res) без учета комиссии. Вычисляется по формуле:
 
 $$Fin\enspace res=Opened+\sum_{i\in secs}Curpos_i \times lotSize_i \times Mult_i \times 
    \begin{cases} 
@@ -892,12 +891,12 @@ secs - список инструментов портфеля.
 Определяет будем ли мы покупать или продавать инструмент при срабатывании сигнала на покупку по главному инструменту. Данный параметр настраивается только для второй ноги. Для первой ноги по умолчанию всегда `On Buy` = `Buy`. При срабатывании сигнала на продажу робот возьмет противоположное значение.
 
 **Пример:**
-Для `is_first` инструмента `On Buy` = `Buy`
+Для [Is first](params-description.md#s.is_first) инструмента `On Buy` = `Buy`
 Для второй ноги `On Buy` = `Sell`
 При таких настройках при срабатывании сигнала на покупку робот будет стремиться купить первую ногу и затем продать вторую.
 При таких настройках при срабатывании сигнала на продажу робот будет стремиться продать первую ногу и затем купить вторую.
 
-Для  `is_first` инструмента `On Buy` = `Buy`
+Для [Is first](params-description.md#s.is_first) инструмента `On Buy` = `Buy`
 Для второй ноги `On Buy` = `Buy`
 При таких настройках при срабатывании сигнала на покупку робот будет стремиться купить первую ногу и затем тоже купить вторую.
 При таких настройках при срабатывании сигнала на продажу робот будет стремиться продать первую ногу и затем тоже продать вторую.
@@ -931,7 +930,6 @@ secs - список инструментов портфеля.
    - при использовании флагов `Close` и `To market` в [Timetable](params-description.md#p.use_tt).
 
 При переставлении заявки на покупку новая заявка будет выставлена по цене `offer + k_sl`, при переставлении заявки на покупку новая заявка будет выставлена по цене `bid−k_sl`, где `bid` и `offer` – лучшие цены на покупку и продажу, соответственно.
-
 
 **Важно!** Все выставления заявок в роботе используют отступ [k](params-description.md#s.k) или `k_sl`, кроме кликера [Place order](params-description.md#p.order_security) и режима `Pos leveling` виджета [Trade connections positions](interface.md#trade_connections_positions). В этих двух случаях никакие отступы от указанной пользователем цены не используются.
 
@@ -973,7 +971,7 @@ secs - список инструментов портфеля.
 
 `Commission type` - параметр, определяющий тип расчёта комиссии. Позволяет задать фиксированную сумму списания или процент от объема сделки.
 
-`Commission` - комиссия по инструменту. Если `Commission type` указан как `%`, то комиссия указывается в процентах от цены сделки, а если как `pt`, то комиссия указывается в той же размерности, в которой считается финансовый результат по портфелю (например, для акции Сбербанка комиссия указывается в процентах и для большинства брокеров она равна 0.01 %, а для фьючерса на акцию Сбербанка комиссия указывается в пунктах и равна 0.25 пункта для скальперских сделок).
+`Commission` - комиссия по инструменту. Если [Commission type](params-description.md#s.comission_sign) указан как `%`, то комиссия указывается в процентах от цены сделки, а если как `pt`, то комиссия указывается в той же размерности, в которой считается финансовый результат по портфелю (например, для акции Сбербанка комиссия указывается в процентах и для большинства брокеров она равна 0.01 %, а для фьючерса на акцию Сбербанка комиссия указывается в пунктах и равна 0.25 пункта для скальперских сделок).
 
 ### Client code <Anchor :ids="['s.client_code']" />
 
@@ -998,7 +996,7 @@ secs - список инструментов портфеля.
 
 ### Ratio type <Anchor :ids="['s.ratio_type']" />
 
-Позволяет настроить использование константного значения `Ratio` или результат вычисления `Ratio formula` при расчёте значений [Sell](params-description.md#p.sell) и [Buy](params-description.md#p.buy). При выборе `Ratio formula` рекомендуется использовать также флаг [Custom trade](params-description.md#p.custom_trade) и задавать формулу для расчёта раздвижки [Trade formula](params-description.md#p.trade_formula), в противном случае раздвижка в виджетах [Finres for today](interface.md#finres_for_today) и [Finres history](interface.md#finres_history) будет посчитана не по ценам сделок, а по текущим рыночным ценам.
+Позволяет настроить использование константного значения [Ratio](params-description.md#s.ratio) или результат вычисления `Ratio formula` при расчёте значений [Sell](params-description.md#p.sell) и [Buy](params-description.md#p.buy). При выборе `Ratio formula` рекомендуется использовать также флаг [Custom trade](params-description.md#p.custom_trade) и задавать формулу для расчёта раздвижки [Trade formula](params-description.md#p.trade_formula), в противном случае раздвижка в виджетах [Finres for today](interface.md#finres_for_today) и [Finres history](interface.md#finres_history) будет посчитана не по ценам сделок, а по текущим рыночным ценам.
 
 ### Ratio buy formula <Anchor :ids="['s.ratio_b_formula']" />
 
@@ -1040,7 +1038,7 @@ days_to_expirySPOT - целое количество дней до экспир�
 ### Depth OB <Anchor :ids="['s.depth_ob']" />
 
 Максимальный уровень глубины стакана до которого включительно вычислять цены и объемы (в штуках шагов цены, считая от бида/оффера), доступен только для не [Is first](params-description.md#s.is_first), используется только в режимах [Type price](params-description.md#p.price_type) = `Orderbook` и [Type price](params-description.md#p.price_type) = `Orderbook + filter`.  
-Если у Вас выбран режим [Type price](params-description.md#p.price_type) = `Orderbook` и [Type price](params-description.md#p.price_type) = `Orderbook + filter`, то необходимо следить за значением `Depth OB`, при слишком низких значениях параметра робот не сможет высчитывать цены и объемы, у вас будут нули в параметрах `Sell` и `Buy`.
+Если у Вас выбран режим [Type price](params-description.md#p.price_type) = `Orderbook` и [Type price](params-description.md#p.price_type) = `Orderbook + filter`, то необходимо следить за значением `Depth OB`, при слишком низких значениях параметра робот не сможет высчитывать цены и объемы, у вас будут нули в параметрах [Sell/Buy](params-description.md#p.sell).
 
 ### Calc price OB <Anchor :ids="['s.ob_c_p_t']" />
 
@@ -1224,7 +1222,7 @@ $pos-robot\_pos\neq pos\_lag$
 (`pos` - позиция на бирже, а `robot_pos` - позиция в роботе по портфелям, торгующим данным финансовым инструментом на данном подключении)
 Если флаг не взведен, то оповещения будут приходить только в случае, если:
 
-$|pos-robot\_pos|>pos\_lag$$
+$|pos-robot\_pos|>pos\_lag$
 
 #### Tgr notify
 

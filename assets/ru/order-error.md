@@ -1182,10 +1182,10 @@ summary: Категории ошибок выставления, снятия и
 (831) Invalid price resulted  
 (832) Buy order #%ld accepted (discrete auction)  
 (833) Sell order #%ld accepted (discrete auction)  
-(834) Начался дискретный аукцион по финансовому инструменту %16.16s."  
-(835) Закончился дискретный аукцион по финансовому инструменту %16.16s. Торги будут продолжены в режиме Normal Trading.  
-(836) Закончился дискретный аукцион по финансовому инструменту %16.16s  
-(837) Закончился дискретный аукцион по финансовому инструменту %16.16s.  
+(834) Discrete auction has started for security %16.16s."
+(835) Discrete auction has ended for security %16.16s. Trading will resume in Normal Trading mode.
+(836) Discrete auction has ended for security %16.16s
+(837) Discrete auction has ended for security %16.16s.  
 (839) Either quantity or volume must be specified in the order  
 (840) Collateral position has been breached: %.2f  
 (841) Transfer #%ld accepted  
@@ -1315,7 +1315,7 @@ summary: Категории ошибок выставления, снятия и
 (996) Entering  
 (997) Sell orders cannot be addressed to this counterparty.  
 (998) Orders with this settlement code cannot be addressed to this counterparty.  
-(999) Время для ввода заявок окончилось.  
+(999) Time for order entry has ended.  
 (1000) The withdraw orders is prohibited in that stage.  
 (1007) The maximum amount of funds available is %f  
 (1008) The maximum quantity of securities available is %ld  

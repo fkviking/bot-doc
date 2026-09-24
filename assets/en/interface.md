@@ -112,8 +112,9 @@ The main table of the widget contains the following columns:
  
  * `Disconnected` —  displayed only when all market data connections are offline;
  * `Connecting` — displayed when some market data connections are online and others are offline;
- hovering over this status shows a tooltip with detailed information about the state of each market data connection;
-  
+
+hovering over this status shows a tooltip with detailed information about the state of each market data connection;
+ 
 - **Trade connection** — status of the robot’s trading connections. Possible statuses:
  * `Connected` — displayed only when all trading connections are online or disabled by schedule;
  * `Disconnected` — displayed only when all trading connections are offline;
@@ -270,7 +271,6 @@ The currency positions/limits table includes the following columns:
 
 - **Currency** — currency name;
 - **Pos/Limit** — exchange position or exchange limit for the currency.
-
 
 
 The pair of widgets [Trade connections orders](interface.md#trade_connections_orders) and [Trade connections positions](interface.md#trade_connections_positions) is designed to partially replace a traditional trading terminal. Therefore, from the instrument positions table in this widget, it is possible to place orders outside the robot’s algorithm (similar to placing an order via a terminal) to align the difference between the exchange position and the robot’s position when they do not match.

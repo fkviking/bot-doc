@@ -88,15 +88,21 @@ Defines how the instrument price is determined:
 
 $$Count \times Percent\enspace of\enspace quantity \times 0.01 \times 
 \begin{cases} 
-v\_in\_left, &\text{if } \enspace open\enspace pose\\
-v\_out\_left, &\text{if } \enspace close\enspace pose 
+v\_in\_left, &\text{if } \enspace open\enspace pos\\
+v\_out\_left, &\text{if } \enspace close\enspace pos 
 \end{cases},$$
 
 - **`Orderbook+filter`** — same as `Orderbook`, but excludes the robot’s own orders if they are present at the corresponding prices.
 
 Order book depth is determined by the portfolio instrument parameter [Depth OB](params-description.md#s.depth_ob).
 
----
+### Calculation method <Anchor :ids="['p.calc_method']" />
+
+Spread calculation method:
+
+- `Absolute spread` - price difference, i.e. $P_1 - P_2$
+
+- `Relative spread (%)` - price ratio, i.e. $\left(\frac{P_1}{P_2} - 1 \right) \times 100$
 
 ### Quote <Anchor :ids="['p.quote']" />
 
@@ -164,13 +170,13 @@ $Price\_b_1=\min\left(Price\_b_0,bid+step\right),$
 Here, `bid`, `ask`, and `step` represent the bid, ask, and price step of the [Is first](params-description.md#s.is_first) instrument.  
 The subscript `0` denotes the current value of a parameter, while subscript `1` denotes the new value.  
 
-If the [Is first](params-description.md#s.is_first) instrument has the `Only Maker` flag enabled and the current spread equals one price step, then:  
+If the [Is first](params-description.md#s.is_first) instrument has the [Only maker](params-description.md#p.maker) flag enabled and the current spread equals one price step, then:  
 - The sell order will be placed at `ask`.  
 - The buy order will be placed at `bid`.  
 
 Otherwise, the order could not be placed and would generate unnecessary transaction attempts (“spam”) on the exchange.
 
-**Important!** If our order is the bid or offer and is the only order at that price level, then in the previous formula, the bid and offer used are taken excluding our order from the order book.
+**Important!** If our order is the bid or ask and is the only order at that price level, then in the previous formula, the bid and ask used are taken excluding our order from the order book.
 
 **Important!**  If the calculated order price falls outside the instrument's allowed price range, the price will be adjusted to the nearest boundary (i.e., if the calculated price is below the minimum allowed price, the minimum allowed price is used; if it exceeds the maximum allowed price, the maximum allowed price is used).
 
@@ -184,36 +190,66 @@ Moreover, if the condition specified by the [Threshold](params-description.md#p.
 
 ### Equal prices <Anchor :ids="['p.equal_prices']" />
 
-If the checkbox is not set, the price of the second leg is determined based on the prices that were present at the moment the signal was generated to place an order for the `is first` instrument. If the checkbox is set, the order for the second leg will be placed at such a price that [Sell](params-description.md#p.sell) = [Lim_sell](params-description.md#p.lim_s) and [Buy](params-description.md#p.buy) = [Lim_buy](params-description.md#p.lim_b) (works only for portfolios with two financial instruments).  
+If the checkbox is not set, the price of the second leg is determined based on the prices that were present at the moment the signal was generated to place an order for the [Is first](params-description.md#s.is_first) instrument. If the checkbox is set, the order for the second leg will be placed at such a price that [Sell](params-description.md#p.sell) = [Lim_sell](params-description.md#p.lim_s) and [Buy](params-description.md#p.buy) = [Lim_buy](params-description.md#p.lim_b) (works only for portfolios with two financial instruments).  
 Thus, the prices in the orders will strictly match [Lim_sell](params-description.md#p.lim_s), even if better prices were available at the moment.
 
 Enabling this parameter reduces the number of negative slippages on the second leg but also decreases the number of positive slippages (when you buy at a better price than intended).
 
-Example: the first leg's price is 100, the second leg's price is 95. We want to buy the first leg at 100, provided the second leg is also at 100, i.e., the spread is zero. At the moment, the market in the second leg suddenly spikes up to 110.
-If the checkbox is enabled, we will buy the first leg at 100 and attempt to sell the second leg at 100 (since a zero spread was acceptable).
-If the checkbox is not enabled, we will use the price that triggered the trade signal, i.e., buy the first leg at 100 and attempt to sell the second leg at 110.
+Formulas for the price of the second leg:
 
-Formula for the second leg's buy price:
+* [Calculation method](params-description.md#p.calc_method) equals `Absolute spread`
 
-$$Price=\pm\left(Lim\_sell-Price\_s
-\begin{cases}+,& Ratio\_sign_1=+\\
-        \times,& Ratio\_sign_1=\times\end{cases}
-ratio_1\right)
-\begin{cases}-,& Ratio\_sign_2=+\\
-        /,& Ratio\_sign_2=\times\end{cases}
-ratio_2$$
+    When selling a portfolio:
 
-for sell:
+    $$Price=\pm\left(Lim\_sell-\left(Price\_s
+    \begin{cases}+,& Ratio\_sign_1=+\\
+            \times,& Ratio\_sign_1=\times\end{cases}
+    ratio_1\right)\right)
+    \begin{cases}-,& Ratio\_sign_2=+\\
+            /,& Ratio\_sign_2=\times\end{cases}
+    ratio_2$$
 
-$$Price=\pm\left(Lim\_buy-Price\_b
-\begin{cases}+,& Ratio\_sign_1=+\\
-        \times,& Ratio\_sign_1=\times\end{cases}
-ratio_1\right)
-\begin{cases}-,& Ratio\_sign_2=+\\
-        /,& Ratio\_sign_2=\times\end{cases}
-ratio_2$$
+    when purchasing a portfolio:
+
+    $$Price=\pm\left(Lim\_buy-\left(Price\_b
+    \begin{cases}+,& Ratio\_sign_1=+\\
+            \times,& Ratio\_sign_1=\times\end{cases}
+    ratio_1\right)\right)
+    \begin{cases}-,& Ratio\_sign_2=+\\
+            /,& Ratio\_sign_2=\times\end{cases}
+    ratio_2$$
 
 The ± sign depends on the value set for the [On_buy](params-description.md#s.on_buy) parameter on the second leg (if set to Buy, then "+", if set to Sell, then "-").
+
+* [Calculation method](params-description.md#p.calc_method) is equal to `Relative spread (%)`
+
+    When selling a portfolio:
+    
+    - if [On_buy](params-description.md#s.on_buy) on the second leg is equal to `Sell`
+    
+        $$Price=\frac{Price\_s\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1}{Lim\_sell \times 0.01 + 1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+    
+    - if [On_buy](params-description.md#s.on_buy) on the second leg is equal to `Buy` 
+    
+        $$Price=\frac{Lim\_sell \times 0.01 + 1}{Price\_s\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$ 
+    
+    when purchasing a portfolio: 
+    
+    - if [On_buy](params-description.md#s.on_buy) on the second leg is equal to `Sell` 
+    
+        $$Price=\frac{Price\_b\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1}{Lim\_buy \times 0.01 + 1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$ 
+    
+    - if [On_buy](params-description.md#s.on_buy) on the second leg is equal to `Buy` 
+    
+        $$Price=\frac{Lim\_buy \times 0.01 + 1}{Price\_b\begin{cases}+,& Ratio\_sign_1=+\\ \times,& Ratio\_sign_1=\times\end{cases} ratio_1} \begin{cases}-,& Ratio\_sign_2=+\\ /,& Ratio\_sign_2=\times\end{cases} ratio_2$$
+
+**Important!** This parameter only makes sense if [Price_s](params-description.md#p.price_s) and [Price_b](params-description.md#p.price_b) are NOT calculated solely from [Lim_sell](params-description.md#p.lim_s), [Lim_buy](params-description.md#p.lim_b), and the prices of NON
+[Is first](params-description.md#s.is_first)instrument, but are somehow modified later, for example, through [Simply first](params-description.md#p.simply_first) or through some tricky calculations in formulas. Otherwise, the order price for non [Is first](params-description.md#s.is_first) instrument
+will not change in any way, since We'll simply express this price using the inverse formula.
+
+_Example_: [Price_b](params-description.md#p.price_b) is `100`, while [Lim_buy](params-description.md#p.lim_b) is `0`, and the sell price of not is [Is first](params-description.md#s.is_first) instrument is `100`. But `100` for the [Is first](params-description.md#s.is_first) instrument
+falls into the opposite side of the order book and will be executed immediately. We enable [Simply first](params-description.md#p.simply_first), which moves [Price_b](params-description.md#p.price_b) to a lower price, say `90`, making it cheaper and leaving it in the buy order book. Now, if we recalculate
+the order price for a non-[Is first](params-description.md#s.is_first) instrument, we get `90`, meaning we're willing to sell lower and thereby increase the order's chance of execution, but we compensate for this by wanting to buy the [Is first](params-description.md#s.is_first) instrument lower.
 
 ### Volumes <Anchor :ids="['p._volumes']" />
 
@@ -231,7 +267,7 @@ If the price determination type [Type price](params-description.md#p.price_type)
 #### v_out_left/v_out_right <Anchor :ids="['p.v_out_l', 'p.v_out_r']" />
 
 Responsible for the minimum/maximum allowed volume for a single exit from a position (in number of portfolios);
-If the price determination type [Type price](params-description.md#p.price_type) is set to `Orderbook` or `Orderbook+filter` then the volume `v_in_right` for a single entry is not used.
+If the price determination type [Type price](params-description.md#p.price_type) is set to `Orderbook` or `Orderbook+filter` then the volume `v_out_right` for a single entry is not used.
 
 #### Virt 0 pos <Anchor :ids="['p.virtual_0_pos']" />
 
@@ -264,7 +300,7 @@ Specified in percent (%), this is one of the parameters that triggers re-quoting
 
 
 _Example_:  
-First delta = 20. You are quoting a sell order with volume 100, and your order starts being filled partially. The order remains active as long as its unexecuted volume is greater than or equal to 20. Once it drops below 20, the order is canceled and, if possible, a new order is placed at price `Price_s` with the full volume.
+First delta = 20. You are quoting a sell order with volume 100, and your order starts being filled partially. The order remains active as long as its unexecuted volume is greater than or equal to 20. Once it drops below 20, the order is canceled and, if possible, a new order is placed at price [Price_s](params-description.md#p.price_s) with the full volume.
 
 ### Market volume <Anchor :ids="['p.mkt_volume']" />
 
@@ -303,6 +339,10 @@ When `Threshold > 0`, during strong spread movement by the amount `Threshold`—
 when `Threshold = 0` , this parameter has no effect on the algorithm — effectively disabling this functionality.
 
 **Important!** It is not possible to modify an already placed order on an exchange by changing its [Only maker](params-description.md#p.maker) flag. Therefore, when the `Threshold`conditions are met, re-quoting is always implemented as a separate cancel-and-replace sequence.
+
+### Trading signal shift <Anchor :ids="['p._limits_shift']" />
+
+A group of parameters responsible for creating an arbitrage channel.
 
 #### Shift mode <Anchor :ids="['p.shift_mode']" />
 
@@ -392,8 +432,6 @@ Let us introduce following notation:
 
 With this notation algorithm for moving signal prices takes following form:
 
-With this notation algorithm for moving signal prices takes following form:
-
 1. If sale occurred in quantity `diffpos`:
         
     $Lim\_Buy_1= Lim\_Buy_0+\frac{|{diffpos}|}{V}\times 
@@ -424,7 +462,7 @@ With this notation algorithm for moving signal prices takes following form:
 
 ##### C++ formula shift mode <Anchor :ids="['p.c_formula_shift_mode']" />
 
-    This shift mode uses [Shift formula](params-description.md#p.shift_formula)
+This shift mode uses [Shift formula](params-description.md#p.shift_formula)
 
 #### v_side <Anchor :ids="['p.v_side']" />
 
@@ -439,21 +477,33 @@ Suffix `formula` does not create new parameter and does not change its value - o
 Price shift coefficient that improves the order price for each subsequent entry.  
 The [Lim_sell](params-description.md#p.lim_s) level (in case of selling) or [Lim_buy](params-description.md#p.lim_b)level (in case of buying) is shifted by the value of `K` when building a position. In other words, this defines how much the order price improves after a fill (a "fill" is defined as a trade with volume no less than [v_in_left](params-description.md#p.v_in_l)).
 
+**Important!** When [Shift mode](params-description.md#p.shift_mode) is set to `C++ formula`, the prefix `formula` will be appended to the parameter name. This means that the parameter is not used in the limit shifting algorithm (except for shifting by [Limits timer](params-description.md#p.timer),
+[Percent](params-description.md#p.percent)), but can be used in formula code. The `formula` prefix does not create a new parameter or change its value — only the display name and role in the algorithm change.
+
 #### ТР <Anchor :ids="['p.tp']" />
 
 Opposite-side order level after a fill. Using the `ТР` parameter, you specify where the opposite-side order will be placed after a fill (applies only after the first fill).
 For example, if we were filled at [Lim_sell](params-description.md#p.lim_s) = 150, then with `ТР` = 50, [Lim_buy](params-description.md#p.lim_b) will be placed at 150 – 50 = 100.
+
+**Important!** When [Shift mode](params-description.md#p.shift_mode) is set to `C++ formula`, the prefix `formula` will be appended to the parameter name. This means that the parameter is not used in the limit shifting algorithm (except for shifting by [Limits timer](params-description.md#p.timer),
+[Percent](params-description.md#p.percent)), but can be used in formula code. The `formula` prefix does not create a new parameter or change its value — only the display name and role in the algorithm change.
 
 #### K1 <Anchor :ids="['p.k1']" />
 
 The coefficient specifies the shift of the opposite-side order after the second fill that increases the position.
 For example, if [Lim_buy](params-description.md#p.lim_b) = 100 from the previous example, with `K1` = 5, it will be set to 100 + 5 = 105, after the second fill on [Lim_sell](params-description.md#p.lim_s). After another trade, [Lim_buy](params-description.md#p.lim_b) will increase by another 5 to 110; after the next trade on [Lim_sell](params-description.md#p.lim_s),  it will become 115, and so on.
 
+**Important!** When [Shift mode](params-description.md#p.shift_mode) is set to `C++ formula`, the prefix `formula` will be appended to the parameter name. This means that the parameter is not used in the limit shifting algorithm (except for shifting by [Limits timer](params-description.md#p.timer),
+[Percent](params-description.md#p.percent)), but can be used in formula code. The `formula` prefix does not create a new parameter or change its value — only the display name and role in the algorithm change.
+
 #### K2 <Anchor :ids="['p.k2']" />
 
 The coefficient that shifts the order price to improve it for each subsequent exit.
 [Lim_sell](params-description.md#p.lim_s) (in case of selling) or [Lim_buy](params-description.md#p.lim_b)(in case of buying) is shifted by the value of `K2` when exiting a position. In other words, this defines how much the next exit order improves after a prior fill (a "fill" is defined as a trade with volume no less than [v_out_left](params-description.md#p.v_out_l)).
 From the earlier example, where [Lim_buy](params-description.md#p.lim_b) = 105, with `K2` = 3, after a fill at [Lim_buy](params-description.md#p.lim_b), its value becomes 105 - 3 = 102.
+
+**Important!** When [Shift mode](params-description.md#p.shift_mode) is set to `C++ formula`, the prefix `formula` will be appended to the parameter name. This means that the parameter is not used in the limit shifting algorithm (except for shifting by [Limits timer](params-description.md#p.timer),
+[Percent](params-description.md#p.percent)), but can be used in formula code. The `formula` prefix does not create a new parameter or change its value — only the display name and role in the algorithm change.
 
 #### X <Anchor :ids="['p.x']" />
 
@@ -462,8 +512,8 @@ After each trade reducing position, current exit level shifts by [K2](params-des
 When closing short position by buying, [Lim_sell](params-description.md#p.lim_s) decreases by `X`, and when closing long position by selling, [Lim_buy](params-description.md#p.lim_b) increases by `X`.
 Thus, `X` determines how much potential re-entry level shifts following exit level during position unloading.
 
-**Important!** In [Shift mode](params-description.md#p.shift_mode) equal to `C++ formula`, suffix `formula` will be added to parameter name, this means that parameter is not used in limit moving algorithm, but can be used in formula code.
-Suffix `formula` does not create new parameter and does not change its value - only displayed name and role in algorithm are changed.
+**Important!** When [Shift mode](params-description.md#p.shift_mode) is set to `C++ formula`, the prefix `formula` will be appended to the parameter name. This means that the parameter is not used in the limit shifting algorithm (except for shifting by [Limits timer](params-description.md#p.timer),
+[Percent](params-description.md#p.percent)), but can be used in formula code. The `formula` prefix does not create a new parameter or change its value — only the display name and role in the algorithm change.
 
 ### Shift formula <Anchor :ids="['p.shift_formula']" />
 
@@ -477,7 +527,7 @@ Formula in [C++](c-api.md#cpp) programming language, which is called upon each t
 
 Timer duration (set in seconds) after which both [Lim_sell](params-description.md#p.lim_s) and [Lim_buy](params-description.md#p.lim_b) are shifted by the value of [K](params-description.md#p.k). The timer starts when trading is enabled and a buy or sell signal occurs, but trading is blocked because the robot has already reached the maximum position (according to [v_min/v_max](params-description.md#p.v_min)). The shift by timer can be disabled by setting the [Percent](params-description.md#p.percent) value to > 100%. 
 
-Example: `Limits timer` = 10 sec, `Percent` = 60. Consider a 10-second time window: suppose the signal was present for 2 sec, then absent for 3 sec, present again for 4 sec, and absent for 1 sec. Over 10 seconds, the signal was active for a total of 6 seconds, which is ≥ 60% of 10 seconds — thus, the condition is met and the shift is applied.
+Example: `Limits timer` = 10 sec, [Percent](params-description.md#p.percent) = 60. Consider a 10-second time window: suppose the signal was present for 2 sec, then absent for 3 sec, present again for 4 sec, and absent for 1 sec. Over 10 seconds, the signal was active for a total of 6 seconds, which is ≥ 60% of 10 seconds — thus, the condition is met and the shift is applied.
 
 ### Percent <Anchor :ids="['p.percent']" />
 
@@ -491,8 +541,6 @@ When `Always timer` ia enabled, the [Limits timer](params-description.md#p.timer
 ### Pos <Anchor :ids="['p.pos']" />
 
 Current portfolio position (in number of portfolios), calculated using the formula:
-
-
 
 $Pos=[\frac{Curpos_{first}}{Count_{first}}],$
 
@@ -594,39 +642,59 @@ The "clicker" allows forcibly flattening the portfolio position. When clicked, t
 
 Allows placing an order on one of the portfolio instruments without waiting for the portfolio's configured conditions to trigger, including when portfolio trading is disabled. To use this option, click the blue cell in the `Place order` column of the `Portfolios table` ,  set the desired order parameters, and then click the `Place order` button.  
 When trading is enabled, an order placed this way may trigger the following mechanisms:  
-`Hedge (sec)`, `SLE`, `TE`.  
+[Hedge (sec)](params-description.md#p.hedge_after), [SLE](params-description.md#s.sle), [TE](params-description.md#s.te).  
 An order placed in this manner can be canceled either manually via the exchange terminal or using the [Hard stop](getting-started.md#portfolio_actions.hard_stop) button.
 
 ### Sell/Buy <Anchor :ids="['p.sell', 'p.buy']" />
 
 `Sell` – calculated sell price. Non-editable parameter.
 `Buy` – calculated buy price. Non-editable parameter.  
-Simplified formula for two financial instruments:
 
-${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$
+* [Calculation method](params-description.md#p.calc_method) equals `Absolute spread`
 
-${Buy=ask_1Ratio\_sign_1ratio_1-bid_2Ratio\_sign_2ratio_2}$
+    Simplified formula for two financial instruments:
 
-${Sell=bid_1Ratio\_sign_1ratio_1-ask_2Ratio\_sign_2ratio_2}$
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+    
+    $${Sell=(bid_1Ratio\_sign_1ratio_1)-(ask_2Ratio\_sign_2ratio_2)}$$
 
-${Ratio\_sign =+\enspace or\enspace \times}$
+    $${Buy=(ask_1Ratio\_sign_1ratio_1)-(bid_2Ratio\_sign_2ratio_2)}$$
 
-Formulas for calculating `Sell` and `Buy` for any number of legs:
+    $${Ratio\_sign =+\enspace or\enspace \times}$$
 
-$$Buy=\sum_{i} 
-        \begin{cases}-bid_i,& On\enspace buy_i=Sell\\
-                     ask_i,& On\enspace buy_i=Buy\end{cases} 
-        \begin{cases}+,& Ratio\_sign_i=+\\
+    Formulas for calculating `Sell` and `Buy` for any number of legs:
+
+    $$Sell=\sum_{i} 
+            \begin{cases}bid_i,& On\enspace buy_i=Buy\\
+                      -ask_i,& On\enspace buy_i=Sell\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
                 \times,& Ratio\_sign_i=\times\end{cases} 
         ratio_i$$
+    
+    $$Buy=\sum_{i} 
+            \begin{cases}-bid_i,& On\enspace buy_i=Sell\\
+                         ask_i,& On\enspace buy_i=Buy\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
+            ratio_i$$
 
-$$Sell=\sum_{i} 
-        \begin{cases}bid_i,& On\enspace buy_i=Buy\\
-                  -ask_i,& On\enspace buy_i=Sell\end{cases} 
-        \begin{cases}+,& Ratio\_sign_i=+\\
-                \times,& Ratio\_sign_i=\times\end{cases} 
-	ratio_i$$
+* [Calculation method](params-description.md#p.calc_method) equals `Relative spread (%)`
 
+    Simplified formula for two financial instruments:
+
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+    
+    $${Sell=\left(\frac{bid_1 Ratio\_sign_1 ratio_1}{ask_2 Ratio\_sign_2 ratio_2} - 1 \right) \times 100}$$
+
+    $${Buy=\left(\frac{ask_1 Ratio\_sign_1 ratio_1}{bid_2 Ratio\_sign_2 ratio_2} - 1 \right) \times 100}$$
+
+    $${Ratio\_sign =+\enspace or\enspace \times}$$
+
+    Formulas for calculating `Sell` and `Buy` for any number of legs:
+    
+    $$Sell=\left(\frac{\prod\limits_{i, On\enspace buy_i=Buy} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i, On\enspace buy_i=Sell} ask_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} - 1 \right) \times 100$$
+    
+    $$Buy=\left(\frac{\prod\limits_{i, On\enspace buy_i=Buy} ask_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i, On\enspace buy_i=Sell} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} - 1 \right) \times 100$$
 
 ### Price_s/Price_b <Anchor :ids="['p.price_s', 'p.price_b']" />
 
@@ -634,52 +702,87 @@ $$Sell=\sum_{i}
 `Price_b` – the price at which a buy order is placed for the [Is first](params-description.md#s.is_first) financial instrument, calculated as the inverse function of [Buy](params-description.md#p.buy), where the [Buy](params-description.md#p.buy) price is replaced with [Lim_Buy](params-description.md#p.lim_b). In general, this is the price at which the robot "wants" to buy or sell the [Is first](params-description.md#s.is_first) instrument. 
 Non-editable parameter.
 
-Formulas for calculating `Price_s` and `Price_b` for two financial instruments:
+* [Calculation method](params-description.md#p.calc_method) equals `Absolute spread`
 
-$$Price\_s=\left(Lim\_sell+ask_2
-\begin{cases}+,& Ratio\_sign_2=+\\
-        \times,& Ratio\_sign_2=\times\end{cases}
-ratio_2\right)
-\begin{cases}-,& Ratio\_sign_1=+\\
-        /,& Ratio\_sign_1=\times\end{cases}
-ratio_1 - k_1$$
+    Simplified formula for two financial instruments:
+    
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
 
-$$Price\_b=\left(Lim\_buy+bid_2
-\begin{cases}+,& Ratio\_sign_2=+\\
-        \times,& Ratio\_sign_2=\times\end{cases}
-ratio_2\right)
-\begin{cases}-,& Ratio\_sign_1=+\\
-        /,& Ratio\_sign_1=\times\end{cases}
-ratio_1 + k_1$$
+    $$Price\_s=\left(Lim\_sell+ask_2
+    \begin{cases}+,& Ratio\_sign_2=+\\
+            \times,& Ratio\_sign_2=\times\end{cases}
+    ratio_2\right)
+    \begin{cases}-,& Ratio\_sign_1=+\\
+            /,& Ratio\_sign_1=\times\end{cases}
+    ratio_1 - k_1$$
 
-Formulas for calculating `Price_s` and `Price_b` for any number of legs:
-   
-$$Price\_s=\left(Lim\_sell_i-\sum_{i \neq isfirst}
-\begin{cases}bid_i,& On\enspace buy_i=Buy\\
-                  -ask_i,& On\enspace buy_i=Sell\end{cases} 
-        \begin{cases}+,& Ratio\_sign_i=+\\
-                \times,& Ratio\_sign_i=\times\end{cases} 
-	ratio_i
-\right) 
-               \begin{cases}
-	          -,& Ratio\_sign=+\\
-                  /,& Ratio\_sign=\times 
-	       \end{cases} 
-                 ratio\_s_{isfirst} - k_{isfirst}$$
+    $$Price\_b=\left(Lim\_buy+bid_2
+    \begin{cases}+,& Ratio\_sign_2=+\\
+            \times,& Ratio\_sign_2=\times\end{cases}
+    ratio_2\right)
+    \begin{cases}-,& Ratio\_sign_1=+\\
+            /,& Ratio\_sign_1=\times\end{cases}
+    ratio_1 + k_1$$
 
-$$Price\_b=\left(Lim\_buy_i-\sum_{i \neq isfirst}
-\begin{cases}-bid_i,& On\enspace buy_i=Sell\\
-                     ask_i,& On\enspace buy_i=Buy\end{cases} 
-        \begin{cases}+,& Ratio\_sign_i=+\\
-                \times,& Ratio\_sign_i=\times\end{cases} 
+    Formulas for calculating `Price_s` and `Price_b` for any number of legs:
+       
+    $$Price\_s=\left(Lim\_sell-\sum_{i \neq isfirst}
+    \begin{cases}bid_i,& On\enspace buy_i=Buy\\
+                      -ask_i,& On\enspace buy_i=Sell\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
         ratio_i
-\right) 
-             \begin{cases}
-	       -,& Ratio\_sign=+\\
-               /,& Ratio\_sign=\times 
-	     \end{cases} 
-                ratio\_b_{isfirst} + k_{isfirst}$$
+    \right) 
+                   \begin{cases}
+                  -,& Ratio\_sign_{isfirst}=+\\
+                      /,& Ratio\_sign_{isfirst}=\times 
+               \end{cases} 
+                     ratio\_s_{isfirst} - k_{isfirst}$$
 
+    $$Price\_b=\left(Lim\_buy-\sum_{i \neq isfirst}
+    \begin{cases}-bid_i,& On\enspace buy_i=Sell\\
+                         ask_i,& On\enspace buy_i=Buy\end{cases} 
+            \begin{cases}+,& Ratio\_sign_i=+\\
+                    \times,& Ratio\_sign_i=\times\end{cases} 
+            ratio_i
+    \right) 
+                 \begin{cases}
+               -,& Ratio\_sign_{isfirst}=+\\
+                   /,& Ratio\_sign_{isfirst}=\times 
+             \end{cases} 
+                    ratio\_b_{isfirst} + k_{isfirst}$$
+
+* [Calculation method](params-description.md#p.calc_method) equals `Relative spread (%)`
+
+    Simplified formula for two financial instruments:
+
+    $${Is\enspace first: On\enspace buy=Buy, Second\enspace leg: On\enspace buy=Sell}$$
+    
+    $$Price\_s = \left( \frac{Lim\_sell}{100} +1 \right) \times \left( ask_2 \begin{cases}+,& Ratio\_sign_2=+\\ \times,& Ratio\_sign_2=\times\end{cases} ratio_2 \right) \begin{cases}
+                  -,& Ratio\_sign_{1}=+\\
+                      /,& Ratio\_sign_{1}=\times 
+               \end{cases} 
+                     ratio_{1} - k_{1}$$
+    
+    $$Price\_b = \left( \frac{Lim\_buy}{100} +1 \right) \times \left( bid_2 \begin{cases}+,& Ratio\_sign_2=+\\ \times,& Ratio\_sign_2=\times\end{cases} ratio_2 \right) \begin{cases}
+                  -,& Ratio\_sign_{1}=+\\
+                      /,& Ratio\_sign_{1}=\times 
+               \end{cases} 
+                     ratio_{1} - k_{1}$$
+    
+    Formulas for calculating `Price_s` and `Price_b` for any number of legs:
+    
+    $$Price\_s = \left( \frac{Lim\_sell}{100} +1 \right) \times \frac{\prod\limits_{i \neq isfirst, On\enspace buy_i=Sell} ask_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i \neq isfirst, On\enspace buy_i=Buy} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} \begin{cases}
+                  -,& Ratio\_sign_{isfirst}=+\\
+                      /,& Ratio\_sign_{isfirst}=\times 
+               \end{cases} 
+                     ratio\_s_{isfirst} - k_{isfirst}$$
+    
+    $$Price\_b = \left( \frac{Lim\_buy}{100} +1 \right) \times \frac{\prod\limits_{i \neq isfirst, On\enspace buy_i=Sell} bid_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i}{\prod\limits_{i \neq isfirst, On\enspace buy_i=Buy} ask_i \begin{cases}+,& Ratio\_sign_i=+\\ \times,& Ratio\_sign_i=\times\end{cases} ratio_i} \begin{cases}
+               -,& Ratio\_sign_{isfirst}=+\\
+                   /,& Ratio\_sign_{isfirst}=\times 
+             \end{cases} 
+                    ratio\_b_{isfirst} + k_{isfirst}$$
 
 ### Sell/Buy status <Anchor :ids="['p.sell_status', 'p.buy_status']" />
 
@@ -722,16 +825,16 @@ secs - list of portfolio instruments.
 
 ### Fin res wo C <Anchor :ids="['p.fin_res_wo_c']" />
 
-`Fin res` without commission. Calculated using the formula:
+[Fin res](params-description.md#p.fin_res) without commission. Calculated using the formula:
 
 $$Fin\enspace res=Opened+\sum_{i\in secs}Curpos_i \times lotSize_i \times Mult_i \times 
    \begin{cases} 
      secBid_i, &\text{if } Curpos_i> 0\\ 
-   secask_i, &\text{if } Curpos_i< 0 
+   secAsk_i, &\text{if } Curpos_i< 0 
    \end{cases},$$
 
 where secBid<sub>i</sub> - best buy price of the portfolio instrument;  
-secask<sub>i</sub> - best sell price of the portfolio instrument;  
+secAsk<sub>i</sub> - best sell price of the portfolio instrument;  
 lotSize<sub>i</sub> - multiplier to convert integer volumes into fractional ones;  
 Curpos<sub>i</sub> - current position of the portfolio instrument;  
 Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) of the portfolio instrument;
@@ -753,7 +856,7 @@ A comment can be added to each portfolio if needed. Maximum allowed number of ch
 
 ### Color <Anchor :ids="['p.color']" />
 
-The portfolio can be highlighted with a color in the `color` field, if necessary..
+The portfolio can be highlighted with a color in the `color` field, if necessary.
 
 ## Portfolio Instrument Parameters <Anchor :ids="['portfolio-instrument-parameters']" /> 
 
@@ -809,12 +912,12 @@ equal to 0 for the [Is first](params-description.md#s.is_first) financial instru
 Determines whether we will buy or sell the instrument when a buy signal is triggered on the main instrument. This parameter is configurable only for the second leg. For the first leg, it is always `On Buy` = `Buy`. by default. When a sell signal is triggered, the robot will take the opposite action.
 
 **Example:**
-For the`is_first` instrument `On Buy` = `Buy`
+For the [Is first](params-description.md#s.is_first) instrument `On Buy` = `Buy`
 For the second leg `On Buy` = `Sell`
 With these settings, when a buy signal is triggered, the robot will attempt to buy the first leg and then sell the second leg.
 When a sell signal is triggered, the robot will attempt to sell the first leg and then buy the second leg.
 
-For the  `is_first` instrument `On Buy` = `Buy`
+For the [Is first](params-description.md#s.is_first) instrument `On Buy` = `Buy`
 For the second leg `On Buy` = `Buy`
 With these settings, when a buy signal is triggered, the robot will attempt to buy both legs.
 When a sell signal is triggered, the robot will attempt to sell both legs.
@@ -832,7 +935,7 @@ Sets the artificial slippage size, determining the maximum number of points by w
 Parameter `k` is applied as follows:
 1. When placing the first leg order via the algorithm, this deviation is already factored into [Price_s/Price_b](params-description.md#p.price_s) calculation. 
 1. When placing the second leg order via the algorithm, this is a deviation from the market price or from the price found in the order book (depending on [Type price](params-description.md#p.price_type) and [Trading price OB](params-description.md#s.ob_t_p_t) parameter settings). 
-1. When placing orders via [Sell/Buy](params-description.md#p.buy_portfolio) clickers, this deviation is used for the instruments of both legs; the deviation is applied from the market price, i.e., when buying, the order price is `offer + k`, when selling, the order price is `bid−k`, where `bid` and `offer` are the best buy and sell prices, respectively.
+1. When placing orders via [Sell/Buy](params-description.md#p.buy_portfolio) clickers, this deviation is used for the instruments of both legs; the deviation is applied from the market price, i.e., when buying, the order price is `ask + k`, when selling, the order price is `bid−k`, where `bid` and `ask` are the best buy and sell prices, respectively.
 
 **Important!** Value of this parameter is not considered when calculating slippage. This means that with a positive `k` value, the actual slippage may be worse than calculated even without re-placing orders via [stop-loss](params-description.md#s.sle) or [timer](params-description.md#s.timer).
 
@@ -847,7 +950,7 @@ An analog of `k` parameter, it also sets the artificial slippage size, defining 
    - when using [To market](params-description.md#p.to_market) clicker,
    - when using `Close` and `To market` flags in [Timetable](params-description.md#p.use_tt).
 
-When re-placing a buy order, the new order will be placed at the price `offer + k_sl`; when re-placing a sell order, the new order will be placed at the price `bid−k_sl`, where `bid` and `offer` are the best buy and sell prices, respectively.
+When re-placing a buy order, the new order will be placed at the price `ask + k_sl`; when re-placing a sell order, the new order will be placed at the price `bid−k_sl`, where `bid` and `ask` are the best buy and sell prices, respectively.
 
 **Important!** All order placements in the robot use [k](params-description.md#s.k) or `k_sl` deviation, except for [Place order](params-description.md#p.order_security) clicker and `Pos leveling` mode of [Trade connections positions](interface.md#trade_connections_positions) widget. In these two cases, no deviations from the user-specified price are used.
 
@@ -887,9 +990,9 @@ The `Fin res multiplier` field is not retroactive - if you change its value, the
 
 ### Commission type and Commission <Anchor :ids="['s.comission_sign', 's.comission']" />
 
-`Comission type` - parameter defining the commission calculation method. Allows setting either a fixed fee or a percentage of the trade volume.
+`Commission type` - parameter defining the commission calculation method. Allows setting either a fixed fee or a percentage of the trade volume.
 
-`Commission` - instrument-specific commission. If `Commission type` is set to `%`, the commission is specified as a percentage of the trade price; if set to `pt`, the commission is specified in the same unit used for the portfolio's financial result (e.g., for Sberbank stock, commission is typically 0.01% of the trade value; for a futures contract on Sberbank stock, it is often 0.25 points for scalping trades).
+`Commission` - instrument-specific commission. If [Commission type](params-description.md#s.comission_sign) is set to `%`, the commission is specified as a percentage of the trade price; if set to `pt`, the commission is specified in the same unit used for the portfolio's financial result (e.g., for Sberbank stock, commission is typically 0.01% of the trade value; for a futures contract on Sberbank stock, it is often 0.25 points for scalping trades).
 
 ### Client code <Anchor :ids="['s.client_code']" />
 
@@ -914,7 +1017,7 @@ Take-profit level. Used when [Type](params-description.md#p.portfolio_type) is s
 
 ### Ratio type <Anchor :ids="['s.ratio_type']" />
 
-Allows configuring whether a constant `Ratio` value or the result of the `Ratio formula` is used in calculating [Sell](params-description.md#p.sell) and [Buy](params-description.md#p.buy) prices. When selecting the `Ratio formula`, it is also recommended to use the [Custom trade](params-description.md#p.custom_trade) flag and set the formula for calculating the spread using the [Trade formula](params-description.md#p.trade_formula). Otherwise, the spread in the [Finres for today](interface.md#finres_for_today) and [Finres history](interface.md#finres_history) widgets will be calculated based on current market prices rather than actual trade prices.
+Allows configuring whether a constant [Ratio](params-description.md#s.ratio) value or the result of the `Ratio formula` is used in calculating [Sell](params-description.md#p.sell) and [Buy](params-description.md#p.buy) prices. When selecting the `Ratio formula`, it is also recommended to use the [Custom trade](params-description.md#p.custom_trade) flag and set the formula for calculating the spread using the [Trade formula](params-description.md#p.trade_formula). Otherwise, the spread in the [Finres for today](interface.md#finres_for_today) and [Finres history](interface.md#finres_history) widgets will be calculated based on current market prices rather than actual trade prices.
 
 ### Ratio buy formula <Anchor :ids="['s.ratio_b_formula']" />
 
@@ -924,39 +1027,10 @@ Parameter used in calculating the [Buy](params-description.md#p.buy) price, defi
 
 Parameter used in calculating the [Sell](params-description.md#p.sell) price, defined as code in [C++](c-api.md#cpp) programming language. You write only the function body and must return a value of type `double`.
 
-### FUT move limits <Anchor :ids="['s.move_limits']" />
-
-Flag, if set, triggers automatic limit moving at each day change. Moving occurs when two conditions are met:
-
-1. current day differs from day when previous moving was performed, day is determined by server time (server time can be viewed in [Robots table](interface.md#robots_table) widget), i.e., automatic limit moving will not trigger multiple times within one calendar day
-2. both financial instruments (marked with `FUT move limits` and marked with [SPOT move limits](params-description.md#s.move_limits1)) are tradable, meaning corresponding status on exchange.
-
-Formulas for limit moving:
-
-$$Lim\_Sell_1=Lim\_Sell_0- \frac{\left(Lim\_Sell_0+Lim\_Buy_0 \right) \times days\_to\_expiry\_{SPOT}}
-                                {2\times days\_to\_expiry},$$
- 
-$$Lim\_Buy_1=Lim\_Buy_0- \frac{\left(Lim\_Sell_0+Lim\_Buy_0 \right)\times days\_to\_expiry\_{SPOT}}
-	                      {2\times days\_to\_expiry},$$
-
-where days_to_expiry - integer number of days to expiration of this financial instrument;  
-days_to_expirySPOT - integer number of days to expiration of financial instrument marked with [SPOT move limits](params-description.md#s.move_limits1) flag, or 1 if such financial instrument is not specified;  
-subscript 0 means current value of parameter;  
-subscript 1 means new value of parameter.
-
-Note that with `FUT move limits` flag set, auto-shift at each day change will trigger even when [re_sell](params-description.md#p.re_sell), [re_buy](params-description.md#p.re_buy) are disabled.
-
-**Non-obvious point!**  
-If conditions described above start to be met not simultaneously, then moving will be performed immediately after last condition is met. I.e., for example, first day changed, then trading session opened for one instrument, condition of open session for second financial instrument remains unmet, as soon as "tradable" status arrives for it, and if status of first financial instrument remains "tradable", limit moving will be performed immediately.
-
-### SPOT move limits <Anchor :ids="['s.move_limits1']" />
-
-Flag, if set, then this financial instrument is used in formulas for [FUT move limits](params-description.md#s.move_limits).
-
 ### Depth OB <Anchor :ids="['s.depth_ob']" />
 
 Maximum depth level of the order book up to which prices and volumes are calculated (measured in number of price steps, counting from bid/ask). Available only for non-[Is first](params-description.md#s.is_first) instruments, and used only in [Type price](params-description.md#p.price_type) = `Orderbook` and [Type price](params-description.md#p.price_type) = `Orderbook + filter` modes.  
-if you have selected [Type price](params-description.md#p.price_type) = `Orderbook` and [Type price](params-description.md#p.price_type) = `Orderbook + filter`, you must monitor the `Depth OB` value  if it is set too low, the robot will not be able to calculate prices and volumes, resulting in zero values for the `Sell` and `Buy` parameters.
+if you have selected [Type price](params-description.md#p.price_type) = `Orderbook` and [Type price](params-description.md#p.price_type) = `Orderbook + filter`, you must monitor the `Depth OB` value  if it is set too low, the robot will not be able to calculate prices and volumes, resulting in zero values for the [Sell/Buy](params-description.md#p.sell) parameters.
 
 ### Calc price OB <Anchor :ids="['s.ob_c_p_t']" />
 
@@ -1139,7 +1213,7 @@ you will receive log notifications indicating that the exchange position and rob
 (`pos` - position on the exchange, `robot_pos` - position in the robot across portfolios trading this financial instrument via this connection)
 If the flag is not set, notifications will be sent only if:
 
-$|pos-robot\_pos|>pos\_lag$$
+$|pos-robot\_pos|>pos\_lag$
 
 #### Tgr notify
 

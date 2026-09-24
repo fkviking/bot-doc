@@ -10,7 +10,6 @@ The configuration of servers used to host trading robots depends on many factors
 
 **Important!** The number and configuration of network interfaces should be clarified with the hoster of where the equipment is planned to be placed.
 
-
 ### Minimal hardware requirements
 
 *   **Processor:** At least 8 cores with hyperthreading disabled.
@@ -53,4 +52,3 @@ If the configuration is performed by us, the following access rights are require
 *   **Configuration access:** Root access via SSH from specific IP addresses. We define a list of IP addresses and forward it to the client.
 *   **Infrastructure:** All connected links and network interface settings must be provided.
 
----
