@@ -43,7 +43,7 @@ Alternatively, instead of the `7` string, the client may send a WebSocket ping f
 
 The maximum size of a message sent by the client must be less than 1048576 bytes.
 
-The size of server-sent messages before compression typically does not exceed 200 КБ  If a single message exceeds this size, it will remain unsplit (i.e., sent as one large message). When messages are grouped, the total size of the group never exceeds this limit.
+The size of server-sent messages before compression typically does not exceed 200 KB If a single message exceeds this size, it will remain unsplit (i.e., sent as one large message). When messages are grouped, the total size of the group never exceeds this limit.
 If a server-sent message exceeds 100 bytes before compression, it will be compressed and sent as a binary message rather than a text message. Compression is performed using the `zlib` library with the parameter `wbits = 15`.
 
 The client may also compress its outgoing messages using the same method as the server.
@@ -98,6 +98,10 @@ Up to 16 simultaneous connections are allowed per API key.
 Response examples in this API documentation are for illustration only. Required fields will always match the documentation, but optional fields in examples may differ from those in actual responses.
 
 In addition to fields described in documentation, API may contain service fields, which values must not be used by the client, as such fields and their contents may be changed without any prior notice.
+
+A single connection (i.e., a single websocket session) can subscribe to the same subscription object no more than 8 times.
+
+The API request response examples are just examples. Required fields will always match the documentation, but optional fields in the examples may differ from the actual fields.
 
 ## Authorization <Anchor :ids="['api.authorization']" />
 
@@ -154,7 +158,7 @@ Payload:
 | > active_role | y | string | user_role | current user role |
 | > roles | y | array | user_role | Array of available user roles |
 | >> [] | y | string | user_role | Available user role |
-| > can_hide_notifs | y | boolean |  | User can hide notifications "gnerated" by another user |
+| > can_hide_notifs | y | boolean |  | User can hide notifications "generated" by another user |
 | > ip | y | string |  | Connection source IP |
 | > just_registered | n | boolean |  | User was just registered |
 
@@ -14932,10 +14936,10 @@ Example:
 | portfolio_id | [string, string] | Pair of strings, first element is a robot ID, second element is a portfolio name |
 | sec_type | number | Integer value, security exchange/connection type. Value should be received in template |
 | stream_status | number | Integer value, enum: 0 — disconnected, 1 — connecting, 2 — connected, 3 — unknown, 4 — closed by time |
-| trading_status | number | Integer value, enum: 0 — not trading, 2 —trading, 3 — unknown |
-| process_status | number | Integer value, enum: 0 — not running, 2 —running, 3 — unknown |
+| trading_status | number | Integer value, enum: 0 — not trading, 2 — trading, 3 — unknown |
+| process_status | number | Integer value, enum: 0 — not running, 2 — running, 3 — unknown |
 | direction | number | Integer value, enum: 1 — buy, 2 — sell |
 | symbol_find_state | number | Integer value, enum: 0 — unknown, 1 — searching, 2 — found, 3 — expired, 4 — error |
 | tgr_notification | number | 1 — TGR_ORDER (Order rejection errors leading to trading suspension),<br> 2 — TGR_ERROR (Errors from logging in formulas), <br> 4 — TGR_NOTIFICATION (Notifications from the algorithm) |
 | log_level | number | 0 — LEVEL_DEBUG, Green (typically indicates user-initiated edits or modifications to the robot) <br> 1 — LEVEL_INFO, Blue <br> 2 — LEVEL_WARNING, Yellow <br> 3 — LEVEL_ERROR, Red (Indicates an order add or cancel error; always logged by the algorithm) <br> 4 — LEVEL_CRITICAL, Red (the robot received incorrect JSON data, the operation is unavailable, or the API key has expired) <br> 5 — LEVEL_ORDER, Red (indicates an order add error that results in trading suspension; this message is sent to Telegram) <br> 7 — LEVEL_NOTIFICATION, Light green (notifications from the algorithm; sent to Telegram) <br> 10 — LEVEL_SHOW_OK, Green (message always appears as a popup notification) <br> 11 — LEVEL_SHOW_ERR, Red (message always appears as a popup notification) <br> 12 — LEVEL_SHOW_WARN, Yellow (message always appears as a popup notification) |
-| err_code | number | Integer value, enum: <br> 1 — Already authorized, <br> 2 — Authorization error or email not verified, <br> 3 — Not authorized, <br> 4 — Wrong message parameters, <br> 5 — There is no "{role}" in user roles, <br> 6 — Unexpected message type or bad message format, <br> 7 — Duplicate subscription eid, <br> 8 — User not found, <br> 9 — Robot "{r_id}" was not found, <br> 10 — Portfolio "{p_id}" was not found in robot "{r_id}", <br> 11 — Can not connect to robot "{r_id}", <br> 12 — Can not add portfolio, "{p_id}" already exists in robot "{r_id}", <br> 13 — Can not perform operation on disabled portfolio "{p_id}”, <br> 14 — Quantity should be positive, <br> 15 — Wrong command, <br> 16 — Not provided, <br> 17 — Service is overloaded, <br> 18 — Internal error, <br> 19 — Can not restart robot while it is disconnected or if it is trading <br> 20 — Robot "{r_id}" is not exist, <br> 21 — Wrong connection parameters, <br> 22 — Robot "{r_id}" already exists, <br> 23 — Robot "{r_id}" is locked, try again later, <br> 24 — Company "{c_id}" was not found, <br> 26 — Can not perform operation on connected robot "{r_id}”, <br> 27 — 2FA is already enabled, <br> 28 — 2FA is already disabled, <br> 29 — Too many 2FA attempts, try again in {timeout} seconds, <br> 30 — Wrong 2FA key, <br> 31 — Too many active 2FA fingerprints. Please use one of your active sessions to manage and remove old sessions. You can find these settings in Settings->Security, <br> 32 — 2FA secret was not generated or already expired, <br> 33 — API key sessions limit exceeded, <br> 36 — There is no "{ip}" in user white list IPs, <br> 37 — Bad IP "{ip}" format, <br> 555 — Permission denied, <br> 666 — Operation timeout, <br> 777 — Other error from robot |
+| err_code | number | Integer value, enum: <br> 1 — Already authorized, <br> 2 — Authorization error or email not verified, <br> 3 — Not authorized, <br> 4 — Wrong message parameters, <br> 5 — There is no "{role}" in user roles, <br> 6 — Unexpected message type or bad message format, <br> 7 — Duplicate subscription eid, <br> 8 — User not found, <br> 9 — Robot "{r_id}" was not found, <br> 10 — Portfolio "{p_id}" was not found in robot "{r_id}", <br> 11 — Can not connect to robot "{r_id}", <br> 12 — Can not add portfolio, "{p_id}" already exists in robot "{r_id}", <br> 13 — Can not perform operation on disabled portfolio "{p_id}”, <br> 14 — Quantity should be positive, <br> 15 — Wrong command, <br> 16 — Not provided, <br> 17 — Service is overloaded, <br> 18 — Internal error, <br> 19 — Can not restart robot while it is disconnected or if it is trading <br> 20 — Robot "{r_id}" is not exist, <br> 21 — Wrong connection parameters, <br> 22 — Robot "{r_id}" already exists, <br> 23 — Robot "{r_id}" is locked, try again later, <br> 24 — Company "{c_id}" was not found, <br> 26 — Can not perform operation on connected robot "{r_id}”, <br> 27 — 2FA is already enabled, <br> 28 — 2FA is already disabled, <br> 29 — Too many 2FA attempts, try again in {timeout} seconds, <br> 30 — Wrong 2FA key, <br> 31 — Too many active 2FA fingerprints. Please use one of your active sessions to manage and remove old sessions. You can find these settings in Settings->Security, <br> 32 — 2FA secret was not generated or already expired, <br> 33 — API key sessions limit exceeded, <br> 36 — There is no "{ip}" in user white list IPs, <br> 37 — Bad IP "{ip}" format, <br> 38 — Too many equal subscriptions, <br> 39 — Unknown subscription error, <br> 555 — Permission denied, <br> 666 — Operation timeout, <br> 777 — Other error from robot |
