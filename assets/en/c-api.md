@@ -321,6 +321,7 @@ Methods of `portfolio`:
 | int portfolio_type()                | Returns the portfolio’s "Type".                                                                              |
 | int shift_mode()                                            | get "Shift mode" of the portfolio                                                                                |
 | int v_side()                                                | get "v_side" of the portfolio                                                                                 |
+| int calc_method()                                            | get "Calculation method" of the portfolio                                                                                 |
 | long long v_in_l()                  | Returns the portfolio’s "v_in_left".                                                                         |
 | long long v_in_r()                  | Returns the portfolio’s "v_in_right".                                                                        |
 | long long v_out_l()                 | Returns the portfolio’s "v_out_left".                                                                        |
@@ -365,7 +366,6 @@ Methods of `portfolio`:
 | double price_s()                    | Returns the portfolio’s "Price_s".                                                                           |
 | double price_b()                    | Returns the portfolio’s "Price_b".                                                                           |
 | bool is_sell_ok()                   | Checks validity of the portfolio’s "Sell".                                                                   |
-                                                                                 |
 | bool is_buy_ok()                   | Checks validity of the portfolio’s "Buy".                                                     |
 | bool is_price_s_ok                  | Checks validity of the portfolio’s "Price_s".                                                 |
 | bool is_price_b_ok                  | Checks validity of the portfolio’s "Price_b".                                                 |
@@ -379,7 +379,6 @@ Methods of `portfolio`:
 | void set_re_buy(bool v)             | Sets  "re_buy" of the portfolio to `v`.                                                         |
 | void set_use_tt(bool v)             | Sets  "Use timetable" of the portfolio to `v`.                                                  |
 | void set_portfolio_type(int v)      | Sets  "Type" of the portfolio to `v`.                                                           |
-| void set_x(double v)                                        | change "X" of the portfolio of the portfolio to `v`                                                                     |
 | void set_v_side(int v)                                      | change "v_side" of the portfolio of the portfolio to `v`                                                                   |
 | void set_v_in_l(long long v)        | Sets  "v_in_left" of the portfolio to `v`.                                                      |
 | void set_v_in_r(long long v)        | Sets  "v_in_right" of the portfolio to `v`.                                                     |
@@ -391,6 +390,7 @@ Methods of `portfolio`:
 | void set_k1(double v)               | Sets  "K1" of the portfolio to `v`.                                                             |
 | void set_k2(double v)               | Sets  "K2" of the portfolio to `v`.                                                             |
 | void set_tp(double v)               | Sets  "TP" of the portfolio to `v`.                                                             |
+| void set_x(double v)                                        | change "X" of the portfolio of the portfolio to `v`                                                                     |
 | void set_equal_prices(bool v)       | Sets  "Equal prices" of the portfolio to `v`.                                                   |
 | void set_always_limits_timer(bool v)| Sets  "Always timer" of the portfolio to `v`.                                                   |
 | void set_lim_s(double v)            | Sets  "Lim_Sell" of the portfolio to `v`.                                                       |
@@ -439,6 +439,9 @@ Fields of `deal_item`:
 | price  | double     | Weighted average price of the trade.                       |
 | amount | long long  | Total trade volume in lots.                                |
 | dir    | int        | Trade direction: `1` – buy, `2` – sell.                    |
+| is_first      | bool       | [Is first](params-description.md#s.is_first) of financial instrument |
+| sec_key      | std::string       | [SecKey](params-description.md#s.sec_key) of financial instrument |
+| did      | long long       | internal unique identifier of the deal, different from `0` only for the [deal()](c-api.md#__last_deal__) method |
 
 Constructors of `user_value`:
 
@@ -473,8 +476,8 @@ Methods of `connection`:
 
 | Method                              | Description                                                                                                                    |
 |-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| sec_item sec(const std::string& s)  | Returns position information for a security on the exchange (use `SecBoard` from **5.5.1. Instrument position parameters**).    |
-| coin_item sec(const std::string& s) | Returns balance information for a currency on the exchange (use `Currency` from **5.5.2. Currency position parameters**).      |
+| sec_item sec(const std::string& s)  | Returns position information for a security on the exchange (use [SecCode](params-description.md#pos-sec-code)).    |
+| coin_item sec(const std::string& s) | Returns balance information for a currency on the exchange (use [Currency](params-description.md#pos-currency)).      |
 | bool is_active()                    | Returns whether the connection to the exchange is active.                                                                      |
 
 Methods of `sec_item`:
@@ -540,6 +543,7 @@ Methods of `coin_item`:
 | void log_info(const std::string& msg) <Anchor hide :ids="['cpp-debug-functions']" />            | Sends a log message with level INFO.                                        |
 | void log_warn(const std::string& msg)                                                           | Sends a log message with level WARNING.                                     |
 | void log_error(const std::string& msg)                                                          | Sends a log message with level ERROR.                                       |
+| void log_show(const std::string& msg) <Anchor hide :ids="['cpp-log-show']" />                      | Send a message with the INFO level to the log; this message will be displayed in the [`Robot logs`] widget (interface.md#robot_logs)      |
 | <Anchor :ids="['__tgr_notify__']"/> bool tgr_notify(int slot, const std::string& msg, int timeout) | Sends a log message with level NOTIFICATION and a Telegram alert. Messages must not be sent more frequently than once per `timeout` seconds (`[10, 2000000000]`). The `slot` parameter is the notification slot ID (`[0, 4]`) for which the timeout will be applied. |
 
 ### Structures
@@ -583,8 +587,6 @@ Class `timer` (measures time intervals not shorter than the specified nanosecond
 | Function/Method | Description                                                                 |
 |-----------------|-----------------------------------------------------------------------------|
 | bool tick()     | If at least `timeout` nanoseconds have passed since the last call, returns true and updates the last call time. |
-
----
 
 Class `day_timer` (measures daily intervals and triggers no earlier than at the specified time):
 
@@ -710,8 +712,6 @@ Effectively, the indicator is built using the "opening price" of values on the s
 
 [_Examples of using indicators in user code._](#__Example5__)
 
----
-
 #### Saving Indicator Values and Collections Between Robot Restarts
 
 Indicators are calculated based on certain prices that are stored in queues. Queues reside in RAM, which means that all queues are lost when the robot is shut down.
@@ -786,8 +786,6 @@ Methods of `indicator_info`:
 
 [_Examples of working with indicators and collections placed in `shared memory`._](#__ExampleInd__)
 
----
-
 #### `TradingDays` and `schedule` for Indicators
 
 Indicator calculations typically use prices received from the exchange. If a financial instrument trades 24/7, there are usually no issues with price data. However, for instruments with limited trading hours, it is essential to filter incoming data to avoid recalculating indicators on "zero" or "invalid" prices (e.g., during non-trading periods, auctions, or when the order book is empty).
@@ -812,8 +810,6 @@ If `schedule` is set, it represents a list of non-overlapping time intervals. Ea
 | Constructor                                | Description                                                                 |
 |--------------------------------------------|-----------------------------------------------------------------------------|
 | interval(day_time b, day_time e)           | Creates a time interval with start at `b` and end at `e`. The condition `b < e` must hold; otherwise, a `std::invalid_argument` exception is thrown. |
-
----
 
 #### Object `indicators::schedule`
 
@@ -860,8 +856,6 @@ where:
 - $p_{t-i}$ — source value (e.g., price) at time $t-i$,  
 - $n$ — number of source values used for calculation (`SMA`).  
 
----
-
 **Constructors of `SMA`:**
 
 | Constructor                        | Description                                                                 |
@@ -869,8 +863,10 @@ where:
 | SMA()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
 | SMA(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
 | SMA(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
+| SMA(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| SMA(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| SMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
----
 
 **Methods of `SMA`:**
 
@@ -887,12 +883,12 @@ where:
 | void clear()                         | Clears the list of elements used for calculation.                           |
 | bool empty()                         | Checks whether the list of elements is empty.                               |
 | size_t size()                        | Returns the number of elements currently stored.                            |
+| bool loaded() | Returns `true` if the data was loaded from `shared memory`, otherwise `false` |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
 #### Exponential Moving Average (`EMA`)
 
 The formula is:
-
 $$\mathit{EMA}_t = \frac{2}{n + 1} (p_t - \mathit{EMA}_{t-1}) + \mathit{EMA}_{t-1}$$
 
 where:  
@@ -901,8 +897,6 @@ where:
 - $p_t$ — source value (e.g., price) at time $t$,  
 - $n$ — number of source values used for calculation (`EMA`).  
 
----
-
 **Constructors of `EMA`:**
 
 | Constructor                        | Description                                                                 |
@@ -910,8 +904,10 @@ where:
 | EMA()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
 | EMA(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
 | EMA(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
+| EMA(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| EMA(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| EMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
----
 
 **Methods of `EMA`:**
 
@@ -928,6 +924,7 @@ where:
 | void clear()                         | Clears the list of elements used for calculation.                           |
 | bool empty()                         | Checks whether the list of elements is empty.                               |
 | size_t size()                        | Returns the number of elements currently stored.                            |
+| bool loaded() | Returns `true` if the data was loaded from `shared memory`, otherwise `false` |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
 #### Maximum over Interval (`Max`)
@@ -942,8 +939,6 @@ where:
 - $p_i$ — source value at time $i$,  
 - $n$ — number of source values used for calculation (`Max`).  
 
----
-
 **Constructors of `Max`:**
 
 | Constructor                        | Description                                                                 |
@@ -951,8 +946,10 @@ where:
 | Max()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
 | Max(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
 | Max(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
+| Max(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Max(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Max(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
----
 
 **Methods of `Max`:**
 
@@ -969,6 +966,7 @@ where:
 | void clear()                         | Clears the list of elements used for calculation.                           |
 | bool empty()                         | Checks whether the list of elements is empty.                               |
 | size_t size()                        | Returns the number of elements currently stored.                            |
+| bool loaded() | Returns `true` if the data was loaded from `shared memory`, otherwise `false` |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
 #### Minimum over Interval (`Min`)
@@ -982,7 +980,6 @@ where:
 - $p_t$ — source value (e.g., price) at time $t$,  
 - $n$ — number of source values used for calculation (`Min`).  
 
----
 
 **Constructors of `Min`:**
 
@@ -991,8 +988,9 @@ where:
 | Min()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
 | Min(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
 | Min(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
-
----
+| Min(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Min(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Min(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 **Methods of `Min`:**
 
@@ -1009,6 +1007,7 @@ where:
 | void clear()                         | Clears the list of elements used for calculation.                           |
 | bool empty()                         | Checks whether the list of elements is empty.                               |
 | size_t size()                        | Returns the number of elements currently stored.                            |
+| bool loaded() | Returns `true` if the data was loaded from `shared memory`, otherwise `false` |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
 #### Variance (`Var`)
@@ -1023,8 +1022,6 @@ where:
 - $p_{t-i}$ — source value (e.g., price) at time $t-i$,  
 - $n$ — number of source values used for calculation (`Var`).  
 
----
-
 **Constructors of `Var`:**
 
 | Constructor                        | Description                                                                 |
@@ -1032,8 +1029,10 @@ where:
 | Var()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
 | Var(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
 | Var(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
+| Var(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Var(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Var(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
----
 
 **Methods of `Var`:**
 
@@ -1050,6 +1049,7 @@ where:
 | void clear()                         | Clears the list of elements used for calculation.                           |
 | bool empty()                         | Checks whether the list of elements is empty.                               |
 | size_t size()                        | Returns the number of elements currently stored.                            |
+| bool loaded() | Returns `true` if the data was loaded from `shared memory`, otherwise `false` |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
 #### Standard Deviation (`StdDev`)
@@ -1064,8 +1064,6 @@ where:
 - $p_{t-i}$ — source value (e.g., price) at time $t-i$,  
 - $n$ — number of source values used for calculation (`StdDev` ).  
 
----
-
 **Constructors of `StdDev`:**
 
 | Constructor                        | Description                                                                 |
@@ -1073,8 +1071,10 @@ where:
 | StdDev()                           | Creates an object with an empty schedule and portfolio `TradingDays`.        |
 | StdDev(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
 | StdDev(const schedule& sch)               | Creates an object with a schedule and portfolio `TradingDays`.               |
+| StdDev(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| StdDev(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| StdDev(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
----
 
 **Methods of `StdDev`:**
 
@@ -1091,6 +1091,7 @@ where:
 | void clear()                         | Clears the list of elements used for calculation.                           |
 | bool empty()                         | Checks whether the list of elements is empty.                               |
 | size_t size()                        | Returns the number of elements currently stored.                            |
+| bool loaded() | Returns `true` if the data was loaded from `shared memory`, otherwise `false` |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
 #### Bollinger Bands (`BB`)
@@ -1120,8 +1121,10 @@ where:
 | BB()                               | Creates an object with an empty schedule and portfolio `TradingDays`.        |
 | BB(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
 | BB(const schedule& sch)                   | Creates an object with a schedule and portfolio `TradingDays`.               |
+| BB(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| BB(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| BB(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
----
 
 **Methods of `BB`:**
 
@@ -1143,6 +1146,7 @@ where:
 | void clear()                         | Clears the list of elements used for calculation.                           |
 | bool empty()                         | Checks whether the list of elements is empty.                               |
 | size_t size()                        | Returns the number of elements currently stored.                            |
+| bool loaded() | Returns `true` if the data was loaded from `shared memory`, otherwise `false` |
 | void shift(double p)                 | Adds the given value to all stored elements and recalculates the indicator. |
 
 #### Relative Strength Index (`RSI`) <Anchor :ids="['indicators-rsi']"/>
@@ -1184,6 +1188,9 @@ $n + 1$ — number of source values used for calculation (`RSI`).
 | RSI()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
 | RSI(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
 | RSI(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
+| RSI(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| RSI(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| RSI(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 
 **Methods of `RSI`:**
@@ -1392,7 +1399,7 @@ ___
 
 ## Examples of Using Functions and Classes
 
-Suppose there is a portfolio named "test" containing two financial instruments: the RTS index futures "RIH6" and its call option with a strike price of 70000 "RI70000BB6". The position in both instruments is 1, and the trading direction for both is [On_buy](params-description.md#s.on_buy) = [Buy](params-description.md#p.buy).
+Suppose there is a portfolio named "test" containing two financial instruments: the RTS index futures "RIH6" and its call option with a strike price of 70000 "RI70000BB6". The position in both instruments is 1, and the trading direction for both is [On buy](params-description.md#s.on_buy) = `Buy`.
 
 Let's calculate the delta of one of the portfolio instruments, for example, "RIH6". To do this, we will use the delta function from the options module. The delta of a futures contract is always 1. To verify this, write the following code:
 
@@ -1414,7 +1421,7 @@ $$\Delta_{portfolio}=\sum_{i\in portfolio}\Delta_i \times pos_i \times
      -1, &\text{if}\enspace On\enspace buy_i=Sell 
     \end{cases}$$  
 
-where `i` is the `i` -th instrument in the portfolio, Δ`i` is the delta of the `i`-th portfolio instrument, pos`i` is the position of the `i`-th portfolio instrument, and Onbuy`i` is the "On buy" setting of the `i`-th portfolio instrument. The portfolio values for gamma, vega, theta, and implied volatility are calculated similarly. Functions for their calculation are called in the same way as the delta example. The price function is also called similarly to delta, but it cannot be called for a portfolio — it is available only for individual financial instruments.
+where $i$ is the `i`-th instrument in the portfolio, $\Delta_i$ is the delta of the `i`-th portfolio instrument, $pos_i$ is the position of the `i`-th portfolio instrument, and $On\enspace buy_i$ is the [On buy](params-description.md#s.on_buy) setting of the `i`-th portfolio instrument. The portfolio values for gamma, vega, theta, and implied volatility are calculated similarly. Functions for their calculation are called in the same way as the delta example. The price function is also called similarly to delta, but it cannot be called for a portfolio — it is available only for individual financial instruments.
 
 ___
 
@@ -1482,7 +1489,7 @@ When writing formulas, you can use any financial instruments that are part of an
 
 To use the [Ratio sell/buy formula](params-description.md#s.ratio_b_formula) field, you must first set the [Ratio type](params-description.md#s.ratio_type) parameter for the selected portfolio instrument to `Ratio formula`. After that, press Enter, apply the changes by clicking the Apply button, and go to the Formulas tab to write the necessary code.
 
-Suppose there is a portfolio named "si" containing one instrument — the dollar futures "SiH6", and the trading direction for this instrument is [On by](params-description.md#s.on_buy) = `Buy`.
+Suppose there is a portfolio named "si" containing one instrument — the dollar futures "SiH6", and the trading direction for this instrument is [On buy](params-description.md#s.on_buy) = `Buy`.
 
 If [Ratio sign](params-description.md#s.ratio_sign) = "×", then the formula can only define a multiplier (used for both buy and sell). You can then enter a custom multiplier value for each side of the trade (for buy [Ratio buy formula](params-description.md#s.ratio_b_formula) and sell [Ratio sell formula](params-description.md#s.ratio_s_formula) scenarios separately), for example:
 
@@ -1539,8 +1546,8 @@ Now the value of the `price` variable will serve as the new values for [Buy](par
 ___
 
 Let's consider another example. Suppose there is a portfolio named "test" containing two instruments:
-- USD futures "SiH6" with [On_buy](params-description.md#s.on_buy) = `Buy`, and it is marked as [Is first](params-description.md#s.is_first);
-- RTS index futures "RIH6" with [On_buy](params-description.md#s.on_buy) = `Buy` (for this example, the [Is first](params-description.md#s.is_first) flag of the non-primary instrument is irrelevant).
+- USD futures "SiH6" with [On buy](params-description.md#s.on_buy) = `Buy`, and it is marked as [Is first](params-description.md#s.is_first);
+- RTS index futures "RIH6" with [On buy](params-description.md#s.on_buy) = `Buy` (for this example, the [Is first](params-description.md#s.is_first) flag of the non-primary instrument is irrelevant).
 
 To use these two instruments in one portfolio, their prices in points must be expressed in the same unit. USD trades in RUB (`1 pt = 1 rub`), while the RTS index does not. For the index, `1 pt = 0.02 * $price rub` (where `$price` is the USD/RUB rate; it is dynamic, not a constant).
 

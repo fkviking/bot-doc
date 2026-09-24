@@ -1177,7 +1177,7 @@ Instrument position parameters are displayed separately for each connection on t
 
 Unique instrument identifier. Corresponds to the portfolio instrument parameter [SecKey](params-description.md#s.sec_key). Non-editable parameter.
 
-#### SecCode
+#### SecCode <Anchor :ids="['pos-sec-code']" />
 
 Instrument code. Corresponds to the portfolio instrument parameter [SecCode](params-description.md#s.sec_code). Non-editable parameter.
 
@@ -1227,7 +1227,7 @@ Place an order with specified direction, price, and volume. By default, directio
 
 Currency position parameters are displayed separately for each connection on the "Positions/Balance" tab of that connection and presented as a table. The rows correspond to currencies/cryptocurrencies included in the instruments traded through this connection and used in the robot’s portfolios. If multiple client accounts are accessible via this trading connection, each row represents a pair (client account, currency). Currencies with zero balance may be hidden (to do this, uncheck the `Show zero` poses flag). Below are descriptions of the table columns; parameters are assumed to be editable unless otherwise specified.
 
-#### Currency
+#### Currency <Anchor :ids="['pos-currency']" />
 
 Short name of the currency/cryptocurrency.
 
