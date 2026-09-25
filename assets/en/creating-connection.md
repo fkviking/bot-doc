@@ -445,6 +445,10 @@ Liquidity pool identifier. Valid values: 0 (liquidity is automatically determine
 
 Client comment for orders.
 
+#### Ignore dynamic limits.
+
+Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from this connection. You should check with the exchange whether this flag is available to you and in which cases it should be set.
+
 #### Bind IP <Anchor :ids="['tc.SPB.bind_ip']" />
 
 The IP address from which the connection to the exchange will be established: 0.0.0.0.
@@ -917,29 +921,9 @@ Flag that controls automatic order cancellation by the exchange upon disconnecti
 
 You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
-## KUCOIN
+## KUCOINUTA
 
-The robot supports only Websocket and REST API connections. Market data connection is activated as described in the [Setting up connections](getting-started.md#connection-setup) chapter. Transactional connection parameters are described below.
-
-### Name <Anchor :ids="['tc.KUCOIN.name']" />
-
-A field for specifying the connection name. This value is set for convenience, to make it easier to identify the connection within the list of transactional connections. Allowed characters: `_ a-z A-Z 0-9`
-
-### Passphrase <Anchor :ids="['tc.KUCOIN.passphrase']" />
-
-Password phrase for accessing the exchange.
-
-### Key <Anchor :ids="['tc.KUCOIN.api_key']" />
-
-Public API key for accessing the exchange API. Created in the user account on the exchange website together with the corresponding secret key. Usually located under Settings → Security → API.
-
-### Secret <Anchor :ids="['tc.KUCOIN.secret_key_part']" />
-
-Secret API key for accessing the exchange API. Created in the user account on the exchange website together with the corresponding public key. Usually located under Settings → Security → API.
-
-### Bind IP <Anchor :ids="['tc.KUCOIN.bind_ip']" />
-
-You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
+The connection is under development.
 
 ## HUOBI
 
@@ -1198,6 +1182,10 @@ Used for routing orders to the appropriate liquidity pool; the correct value sho
 
 Used for routing orders to the appropriate liquidity pool; the correct value should be clarified with the exchange.
 
+#### Ignore dynamic limits.
+
+Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from this connection. You should check with the exchange whether this flag is available to you and in which cases it should be set.
+
 #### Bind IP <Anchor :ids="['tc.IMEX.bind_ip']" />
 
 The IP address from which the connection to the exchange will be established: 0.0.0.0.
@@ -1256,6 +1244,10 @@ Client code identifier, taken from the agreement with the exchange.
 
 Used to route orders to the desired liquidity pool; the required value should be verified with the exchange.
 
+#### Ignore dynamic limits.
+
+Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from this connection. You should check with the exchange whether this flag is available to you and in which cases it should be set.
+
 #### Bind IP <Anchor :ids="['tc.ITS.bind_ip']" />
 
 The IP address from which the connection to the exchange will be established: 0.0.0.0.
@@ -1313,6 +1305,10 @@ Client code identifier, taken from the agreement with the exchange.
 #### Market ID <Anchor :ids="['tc.OREX.market_id']" />
 
 Used to route orders to the desired liquidity pool; the required value should be verified with the exchange.
+
+#### Ignore dynamic limits.
+
+Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from this connection. You should check with the exchange whether this flag is available to you and in which cases it should be set.
 
 #### Bind IP <Anchor :ids="['tc.OREX.bind_ip']" />
 
