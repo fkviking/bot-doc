@@ -596,12 +596,7 @@ Total commission across all portfolio trades, used in calculating the financial 
 
 ### Decimals <Anchor :ids="['p.decimals']" />
 
-The parameter is responsible for displaying all parameters in the table of `Portfolios table` widget if the parameter value can be a fractional number. It determines how many digits after the decimal point are displayed in such parameters.
-It is worth noting that the robot uses the real prices received from the exchange, while in the interface, when using the `Decimals` parameter, a rounded value may be displayed.
-
-### Decimals <Anchor :ids="['p.decimals']" />
-
-Portfolio instrument parameter. It is responsible for displaying all parameters in the table of the `Portfolios table` widget which values can be fractional numbers. It determines how many digits after the decimal point are displayed in such parameters.
+Portfolio parameter. It is responsible for displaying all parameters in the table of the `Portfolios table` widget which values can be fractional numbers. It determines how many digits after the decimal point are displayed in such parameters.
 It is worth noting that the robot uses the real prices received from the exchange, while in the interface, when using the `Decimals` parameter, a rounded value may be displayed.
 
 **Important!** The display in the portfolio instrument settings and in the [Finres for today](interface.md#finres_for_today) and [Finres history](interface.md#finres_history) widgets is affected by another [Decimals](params-description.md#s.decimals), the value of which can be set in the portfolio instrument settings.
