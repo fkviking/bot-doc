@@ -445,9 +445,9 @@ Liquidity pool identifier. Valid values: 0 (liquidity is automatically determine
 
 Client comment for orders.
 
-#### Ignore dynamic limits.
+#### Ignore dynamic limits <Anchor :ids="['tc.SPB.eIgnoreDynamicLimits']" />
 
-Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from this connection. You should check with the exchange whether this flag is available to you and in which cases it should be set.
+Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from the editable connection. You should check with the exchange/broker whether this flag is available to you and in which cases it should be set.
 
 #### Bind IP <Anchor :ids="['tc.SPB.bind_ip']" />
 
@@ -1182,9 +1182,9 @@ Used for routing orders to the appropriate liquidity pool; the correct value sho
 
 Used for routing orders to the appropriate liquidity pool; the correct value should be clarified with the exchange.
 
-#### Ignore dynamic limits.
+#### Ignore dynamic limits <Anchor :ids="['tc.IMEX.eIgnoreDynamicLimits']" />
 
-Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from this connection. You should check with the exchange whether this flag is available to you and in which cases it should be set.
+Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from the editable connection. You should check with the exchange/broker whether this flag is available to you and in which cases it should be set.
 
 #### Bind IP <Anchor :ids="['tc.IMEX.bind_ip']" />
 
@@ -1244,9 +1244,9 @@ Client code identifier, taken from the agreement with the exchange.
 
 Used to route orders to the desired liquidity pool; the required value should be verified with the exchange.
 
-#### Ignore dynamic limits.
+#### Ignore dynamic limits <Anchor :ids="['tc.ITS.eIgnoreDynamicLimits']" />
 
-Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from this connection. You should check with the exchange whether this flag is available to you and in which cases it should be set.
+Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from the editable connection. You should check with the exchange/broker whether this flag is available to you and in which cases it should be set.
 
 #### Bind IP <Anchor :ids="['tc.ITS.bind_ip']" />
 
@@ -1306,9 +1306,9 @@ Client code identifier, taken from the agreement with the exchange.
 
 Used to route orders to the desired liquidity pool; the required value should be verified with the exchange.
 
-#### Ignore dynamic limits.
+#### Ignore dynamic limits <Anchor :ids="['tc.OREX.eIgnoreDynamicLimits']" />
 
-Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from this connection. You should check with the exchange whether this flag is available to you and in which cases it should be set.
+Flag indicating that dynamic limits are ignored for an order. If this flag is selected, it will be set on all orders placed from the editable connection. You should check with the exchange/broker whether this flag is available to you and in which cases it should be set.
 
 #### Bind IP <Anchor :ids="['tc.OREX.bind_ip']" />
 
