@@ -568,7 +568,7 @@ Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) и
 
 Стоит отметить, что робот использует настоящие цены, пришедшие с биржи, в то время как в интерфейсе, при использовании параметра `Decimals`, может отображаться округленное значение.
 
-**Важно!** На отображение в настройках инструментов портфеля и виджетах [Finres for today](interface.md#finres_for_today) и [Finres history](interface.md#finres_history) влияет другой [Decimals](params-description.md#s.decimals), значение котрого можно задать в настройках инструмента портфеля.  
+**Важно!** На отображение в настройках инструментов портфеля и виджетах [Finres for today](interface.md#finres_for_today) и [Finres history](interface.md#finres_history) влияет другой [Decimals](params-description.md#s.decimals), значение которого можно задать в настройках инструмента портфеля.  
 
 ### Custom trade <Anchor :ids="['p.custom_trade']" />
 
@@ -1086,7 +1086,7 @@ _Пример:_
 
 При смене значения, число знаков у уже добавленных в сделок НЕ изменится. При изменении значения инструмента портфеля `Decimals`, сделки, которые были добавлены в таблицы [Finres for today](interface.md#finres_for_today) и [Finres history](interface.md#finres_history) до изменения, сохранят свою исходную точность и не будут обновлены.
 
-**Важно!** На отображение в виджете Portfolios table влияет другой [Decimals](params-description.md#p.decimals), значение котрого можно задать в настройках портфеля. 
+**Важно!** На отображение в виджете Portfolios table влияет другой [Decimals](params-description.md#p.decimals), значение которого можно задать в настройках портфеля. 
 
 ### Max trans time <Anchor :ids="['s.max_trans_musec']" />
 
