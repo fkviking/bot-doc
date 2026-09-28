@@ -1,0 +1,35 @@
+# FC Viking Trading Robots Documentation
+
+> Documentation for the FC Viking trading robots: arbitrage robot setup, portfolio parameters, trading connections, C++ formulas, and the WebSocket API.
+
+This file is the documentation index: start here, and prefer the Markdown version of a page over its HTML version. Every page is published in two forms: HTML at `docs/<page>.html` and Markdown at the same path with a `.md` extension. The links below point at the Markdown twins.
+
+The whole documentation in one file: https://fkviking.github.io/bot-doc/en/llms-full.txt
+
+## Pages
+
+- [1. Change Log](https://fkviking.github.io/bot-doc/en/docs/change-history.md): What changed in the robot and the documentation from version to version: new portfolio parameters, C++ methods, and WebSocket API methods.
+- [2. About the Platform](https://fkviking.github.io/bot-doc/en/docs/introduction.md): How the platform is put together: what a robot consists of, system requirements, the role model, and how robots relate to companies.
+- [3. Website Interface](https://fkviking.github.io/bot-doc/en/docs/interface.md): Widgets on bot.fkviking.com: which ones exist, and how to open and arrange them in the desktop and mobile layouts.
+- [4. Getting Started](https://fkviking.github.io/bot-doc/en/docs/getting-started.md): First-time robot setup: enabling market-data connections, adding trading connections, and creating the first portfolio.
+- [5. Providing Feedback](https://fkviking.github.io/bot-doc/en/docs/stable-work.md): How the robot reports problems: pop-up notifications, logs, and the signals that a situation needs the trader's attention.
+- [6. Adding Connections](https://fkviking.github.io/bot-doc/en/docs/creating-connection.md): Connections to exchanges and brokers: supported markets and every parameter you set when creating a connection.
+- [7. Parameters Description](https://fkviking.github.io/bot-doc/en/docs/params-description.md): Reference for portfolio, instrument, and connection parameters, including lot_size, the Is first flag, and notification parameters.
+- [8. Algorithm Notes](https://fkviking.github.io/bot-doc/en/docs/algorithm-comments.md): Non-obvious details of the algorithm: how order books are built and re-opened, and why prices can disappear for a while.
+- [9. Order Submission, Cancellation, and Modification Errors](https://fkviking.github.io/bot-doc/en/docs/order-error.md): Categories of order submission, cancellation, and modification errors, what each reason means, and the exchange error code references.
+- [10. Formulas in C++](https://fkviking.github.io/bot-doc/en/docs/c-api.md): C++ formulas: access to market and portfolio data, changing parameters, plus the limits and the debugging workflow.
+- [11. WebSocket API](https://fkviking.github.io/bot-doc/en/docs/api.md): WebSocket API: methods for managing robots and portfolios and for reading the same data the website shows.
+- [12. Comparison of C++ Formulas and WebSocket API](https://fkviking.github.io/bot-doc/en/docs/comparison.md): A side-by-side comparison of the two ways to extend the robot, and which one fits which task.
+- [13. Frequently Asked Questions](https://fkviking.github.io/bot-doc/en/docs/faq.md): Answers to common questions about trading, portfolio setup, and robot behaviour.
+
+## Notes
+
+- Order submission, cancellation, and modification errors are normal behaviour, not a sign that the robot is broken. A `LOCAL` suffix means the robot rejected the order itself and never sent it to the exchange; an error without `LOCAL` is the exchange's own answer, which the robot only relays.
+- Portfolio parameters and per-instrument parameters are separate sets; "Parameters Description" keeps them in separate sections.
+- Link to a section by its anchor (`params-description.html#p.sell`), not by its number: heading numbers are generated at build time and shift whenever sections are reordered. Anchors such as `#p.sell` and `#faq.license` are the same in the Russian and English versions.
+- Every question in the FAQ is addressable on its own (`faq.html#faq.license`); the full list of questions with links is in sitemap.md.
+
+## Optional
+
+- [Documentation map](https://fkviking.github.io/bot-doc/en/sitemap.md): Full page list with both HTML and Markdown addresses.
+- [Russian version](https://fkviking.github.io/bot-doc/llms.txt): The same documentation in Russian.
