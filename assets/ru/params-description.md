@@ -87,7 +87,7 @@ v\_out\_left, &\text{if } \enspace close\enspace pos
 
 Видео объясняющее работу данного параметра:
 
-<iframe width="735" height="415" src="https://www.youtube.com/embed/CfY5ZeS8aJM" title="Описание параметра Quote" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[Описание параметра Quote](@videos/quote.mp4)
 
 ### Order ID <Anchor :ids="['p.portfolio_num']" />
 
@@ -279,7 +279,7 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 Работа данных параметров наглядно продемонстрирована в этом видео:
 
-<iframe width="735" height="415" src="https://www.youtube.com/embed/DxLdFeUU_bM" title="Описание параметра Lim-sell и Lim-buy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[Описание параметра Lim-sell и Lim-buy](@videos/lim-sell-lim-buy.mp4)
 
 ### Threshold <Anchor :ids="['p.threshold']" />
 
@@ -428,7 +428,7 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 Видео объясняющее работу параметра `К`:
 
-<iframe width="735" height="415" src="https://www.youtube.com/embed/2qUPvspTQq4" title="Описание параметра K" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[Описание параметра K](@videos/k.mp4)
 
 **Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов (кроме подвижки по [Limits timer](params-description.md#p.timer),
 [Percent](params-description.md#p.percent)), но может быть использован в коде формул. Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
@@ -440,7 +440,7 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 Видео объясняющее работу параметра `ТР`:
 
-<iframe width="735" height="415" src="https://www.youtube.com/embed/R2nuoUpGq9c" title="Описание параметра TP" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[Описание параметра TP](@videos/tp.mp4)
 
 **Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов, но может быть использован в коде формул.
 Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
@@ -452,7 +452,7 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 Видео объясняющее работу параметра `К1`:
 
-<iframe width="735" height="415" src="https://www.youtube.com/embed/nYSPQR2LFhE" title="Описание параметра K1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[Описание параметра K1](@videos/k1.mp4)
 
 **Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов, но может быть использован в коде формул.
 Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
@@ -465,7 +465,7 @@ First delta = 20. Вы котируете на продажу объёмом 100
 
 Видео объясняющее работу параметра К2:
 
-<iframe width="735" height="415" src="https://www.youtube.com/embed/9RbN893_eD0" title="Описание параметра K2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[Описание параметра K2](@videos/k2.mp4)
 
 **Важно!** В режиме [Shift mode](params-description.md#p.shift_mode) равном `C++ formula` к имени параметра будет добавлена приписка `formula`, это означает что параметр не используется в алгоритме подвижки лимитов, но может быть использован в коде формул.
 Приписка `formula` не создает новый параметр и не изменяет его значение - меняются только отображаемое имя и роль в алгоритме.
@@ -652,7 +652,7 @@ Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) и
 
     Видео, наглядно демонстрирующее работу параметров `Sell/Buy`:
 
-    <iframe width="735" height="415" src="https://www.youtube.com/embed/p69X-3l-VLc" title="Описание параметра Sell Buy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    [Описание параметра Sell Buy](@videos/sell-buy.mp4)
 
 * [Calculation method](params-description.md#p.calc_method) равен `Relative spread (%)`
 
@@ -730,7 +730,7 @@ Mult<sub>i</sub> - [Fin res multiplier](params-description.md#s.fin_res_mult) и
 
     Видео, наглядно демонстрирующее работу параметров `Price_s/Price_b`:
 
-    <iframe width="735" height="415" src="https://www.youtube.com/embed/PKGbweKJbNE" title="Описание параметра Prices" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    [Описание параметра Prices](@videos/prices.mp4)
 
 * [Calculation method](params-description.md#p.calc_method) равен `Relative spread (%)`
 

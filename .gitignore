@@ -12,3 +12,5 @@ config.local.js
 basement_dist
 src/docs/
 src/en/docs/
+src/.vuepress/public/videos/
+.ai-workflow/browser-test/

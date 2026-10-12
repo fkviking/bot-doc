@@ -10,7 +10,7 @@ const {
   localePrefix,
   sitePath,
   absoluteUrl
-} = require('./generate-ai-docs')
+} = require('../scripts/generate-ai-docs')
 const { themeConfig } = require('../src/.vuepress/config')
 
 const RAW_PUBLISHED_BASE = themeConfig.rawPublishedBase

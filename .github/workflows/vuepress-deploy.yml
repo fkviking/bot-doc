@@ -14,5 +14,5 @@ jobs:
       uses: livrrr/vuepress-deploy@master
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BUILD_SCRIPT: yarn && yarn build
+        BUILD_SCRIPT: apt-get update && apt-get install -y --no-install-recommends ffmpeg && yarn && yarn build
         BUILD_DIR: src/.vuepress/dist/
