@@ -196,7 +196,6 @@ if (t.tick())
 | int comission_sign()                   | получить "Commission type" инструмента портфеля                   |
 | double comission()                     | получить "Commission" инструмента портфеля                        |
 | bool mm()                              | получить "MM" инструмента портфеля                                |
-| bool maker()                           | получить "Only maker" инструмента портфеля                        |
 | bool move_limits()                     | получить "FUT move limits" инструмента портфеля                   |
 | bool move_limits1()                    | получить "SPOT move limits" инструмента портфеля                  |
 | int depth_ob()                         | получить "Depth OB" инструмента портфеля                          |
@@ -317,6 +316,7 @@ if (t.tick())
 | long long mkt_volume()                                      | получить "Market volume" портфеля                                                                        |
 | int type_trade()                                            | получить "Type trade" портфеля                                                                           |
 | int price_type()                                            | получить "Type price" портфеля                                                                           |
+| bool maker()                           | получить "Only maker" портфеля                        |
 | bool simply_first()                                         | получить "Simply first" портфеля                                                                         |
 | bool quote()                                                | получить "Quote" портфеля                                                                                |
 | double percent()                                            | получить "Percent" портфеля                                                                              |
