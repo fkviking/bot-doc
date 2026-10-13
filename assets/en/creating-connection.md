@@ -923,7 +923,7 @@ You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP
 
 ## KUCOINUTA
 
-The connection is under development.
+The connection is under development; the launch is planned by October 23.
 
 ## HUOBI
 

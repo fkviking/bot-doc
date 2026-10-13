@@ -13,11 +13,14 @@
     "generate-docs-en": "node scripts/generate-docs.js en",
     "pre-process": "yarn generate-docs && yarn generate-docs-en",
     "generate-ai-docs": "node scripts/generate-ai-docs.js",
-    "test:ai-docs": "node scripts/test-ai-docs.js",
+    "test:ai-docs": "node tests/ai-docs.js",
+    "test:videos": "node tests/video-player.js && node tests/doc-videos.js",
+    "test:videos:unit": "node tests/video-player.js && node tests/doc-videos.js --unit",
+    "test:videos:assets": "node tests/video-assets.js",
     "reset-assets": "node scripts/reset-assets.js",
     "transliterate-assets": "node scripts/transliterate-assets.js",
     "dev": "yarn pre-process && vuepress dev src",
-    "build": "yarn pre-process && vuepress build src && yarn generate-ai-docs && yarn test:ai-docs"
+    "build": "yarn pre-process && vuepress build src && yarn generate-ai-docs && yarn test:ai-docs && yarn test:videos"
   },
   "license": "MIT",
   "devDependencies": {

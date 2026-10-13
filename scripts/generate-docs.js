@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
 const {addNumberingToHeaders, addAnchorsToHeaders, transliterateLinks} = require('./helpers')
+const { prepareVideoAssets } = require('./video-assets')
 
 const CONFIGS = {
 	ru: {
@@ -64,6 +65,7 @@ function generateDocs(sourceDir, outputDir, warnPlaceholder, language) {
 	const imgOutputDir = path.join(outputDir, '00-img');
 	
 	if (fs.existsSync(imgSourceDir)) {
+		fs.rmSync(imgOutputDir, { recursive: true, force: true });
 		if (!fs.existsSync(imgOutputDir)) fs.mkdirSync(imgOutputDir, { recursive: true });
 		copyDirectory(imgSourceDir, imgOutputDir);
 	}
@@ -84,6 +86,8 @@ function copyDirectory(sourceDir, outputDir) {
 }
 
 generateDocs(config.sourceDir, config.outputDir, config.warnPlaceholder, language)
+
+prepareVideoAssets();
 
 
 function generateDocFile(filePath, warnPlaceholder) {

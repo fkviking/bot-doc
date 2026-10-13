@@ -1,12 +1,15 @@
 const path = require('path');
 const aiDiscovery = require('./plugins/ai-discovery');
+const docVideos = require('./plugins/doc-videos');
+const { videoPreviews, publicDirectory } = require('../../scripts/video-assets');
+const base = '/bot-doc/';
 
 module.exports = {
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#title
    */
   title: 'Документация торговых роботов компании "Викинг"',
-  base: '/bot-doc/',
+  base,
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#description
    */
@@ -39,6 +42,7 @@ module.exports = {
     }
   },
   themeConfig: {
+    videoPreviews: videoPreviews(base),
     logo: '/images/vkg_logo_en.svg',
     repositoryUrl: 'https://github.com/fkviking/bot-doc',
     rawPublishedBase: 'https://raw.githubusercontent.com/fkviking/bot-doc/gh-pages',
@@ -258,6 +262,7 @@ module.exports = {
         .use(require('markdown-it-attrs'))
         .use(require('markdown-it-katex'))
         .use(require('markdown-it-anchor'))
+        .use(docVideos, { base })
 
       const MAX_INDEXED_FENCE_BYTES = 25000
       const renderFence = md.renderer.rules.fence
@@ -280,10 +285,40 @@ module.exports = {
     '@vuepress/plugin-medium-zoom',
     aiDiscovery,
   ],
+  // VuePress 1 uses separate vue-loader pipelines for .vue and .md files.
+  // Media aliases emit separate files with stable public videos/ URLs.
+  chainWebpack: config => {
+    const preparedAsset = resource => path.dirname(resource) === publicDirectory
+    config.module.rule('media').exclude.add(preparedAsset)
+    config.module.rule('images').exclude.add(preparedAsset)
+    config.module.rule('doc-videos')
+      .test(/\.(mp4|webm|ogv)(\?.*)?$/i)
+      .include.add(publicDirectory).end()
+      .use('file-loader')
+      .loader(require.resolve('file-loader'))
+      .options({ name: 'videos/[name].[ext]', publicPath: base })
+    config.module.rule('doc-video-previews')
+      .test(/\.preview\.(jpe?g|webp|png)(\?.*)?$/i)
+      .include.add(publicDirectory).end()
+      .use('file-loader')
+      .loader(require.resolve('file-loader'))
+      .options({ name: 'videos/[name].[ext]', publicPath: base })
+    for (const rule of ['vue', 'markdown']) {
+      config.module.rule(rule).use('vue-loader').tap(options => ({
+        ...options,
+        transformAssetUrls: {
+          ...options.transformAssetUrls,
+          VideoPlayer: ['src', 'poster'],
+          'video-player': ['src', 'poster']
+        }
+      }))
+    }
+  },
   configureWebpack: {
     resolve: {
       alias: {
         '@images': path.resolve(__dirname, '..', 'docs', '00-img'),
+        '@videos': publicDirectory,
       }
     }
   },
