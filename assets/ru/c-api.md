@@ -228,7 +228,6 @@ if (t.tick())
 | void set_comission_sign(int v)         | изменить "Commission type" инструмента портфеля на значение `v`     |
 | void set_comission(double v)           | изменить "Commission" инструмента портфеля на значение `v`          |
 | void set_mm(bool v)                    | изменить "MM" инструмента портфеля на значение `v`                  |
-| void set_maker(bool v)                 | изменить "Only maker" инструмента портфеля на значение `v`          |
 | void set_move_limits(bool v)           | изменить "FUT move limits" инструмента портфеля на значение `v`     |
 | void set_move_limits1(bool v)          | изменить "SPOT move limits" инструмента портфеля на значение `v`    |
 | void set_depth_ob(int v)               | изменить "Depth OB" инструмента портфеля на значение `v`            |
@@ -375,6 +374,7 @@ if (t.tick())
 | void set_mkt_volume(long long v)                            | изменить "Market volume" портфеля на значение `v`                                                          |
 | void set_type_trade(int v)                                  | изменить "Type trade" портфеля на значение `v`                                                             |
 | void set_price_type(int v)                                  | изменить "Type price" портфеля на значение `v`                                                             |
+| void set_maker(bool v)                 | изменить "Only maker" портфеля на значение `v`          |
 | void set_simply_first(bool v)                               | изменить "Simply first" портфеля на значение `v`                                                           |
 | void set_quote(bool v)                                      | изменить "Quote" портфеля на значение `v`                                                                  |
 | void set_percent(double v)                                  | изменить "Percent" портфеля на значение `v`                                                                |
