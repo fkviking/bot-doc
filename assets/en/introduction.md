@@ -10,7 +10,7 @@ summary: 'How the platform is put together: what a robot consists of, system req
 
 ## Platform Overview
 
-In simplified terms, the platform consists of trading robots and a system for managing them. From the client's perspective, the robot management system includes the API and the website [https://bot.fkviking.com/](https://bot.fkviking.com/).  The API is the only programmatic interface that enables communication between the user and the robots. The website [https://bot.fkviking.com/](https://bot.fkviking.com/) uses the same API available to third-party developers for implementing their own custom user interfaces. The platform implements a user permission system by assigning specific roles to each user. Access to the platform via the API or website is governed by restrictions imposed by the role under which authentication is performed. It is assumed that each user has only one account on the platform, as the role-based model allows simultaneous access to multiple robot portfolios, even if the robots belong to different companies. Below are the system requirements for client devices, along with brief descriptions of the robot, the website interface, and the role-based model.
+In simplified terms, the platform consists of trading robots and a system for managing them. From the client's perspective, the robot management system includes the API and the website [https://bot.fkviking.com/](https://bot.fkviking.com/).  The API is the only programmatic interface that enables communication between the user and the robots. The website [https://bot.fkviking.com/](https://bot.fkviking.com/) uses the same API available to third-party developers for implementing their own custom user interfaces. The platform implements a user permission system by assigning specific roles to each user. Access to the platform via the API or website is governed by restrictions imposed by the role under which authentication is performed. It is assumed that each user has only one account on the platform, as the role-based model allows simultaneous access to multiple robot portfolios, even if the robots belong to different companies. Below are the system requirements for client devices, supported trading modes, along with brief descriptions of the robot, the website interface, and the role-based model.
 
 ## System Requirements <Anchor :ids="['requirements']" />
 
@@ -24,7 +24,13 @@ The primary means of interaction between users and robots is the website [https:
 
 Note that these requirements assume a scenario where only one browser window with a single tab open to [https://bot.fkviking.com/](https://bot.fkviking.com/) is running, and the entire internet bandwidth is dedicated to data exchange between the site and the server. If multiple instances (browser tabs) of our site are used, if the internet connection is shared among multiple devices and/or applications, or if other resource-intensive applications (trading terminals, spreadsheets, video players, computer games, etc.) are running in parallel, the overall system requirements increase. Additionally, using VPN or proxy servers may reduce the effective internet channel bandwidth. The requirements listed above are recommended; it is possible to use the desktop version on a computer that does not meet these specifications, but in such cases, the interface may experience "freezing" when interacting with certain widgets.
 
-## Brief Description of the Robot
+## Supported trading sessions <Anchor :ids="['supported_trading_sessions']" />
+
+The platform supports trading only within regular trading sessions.
+
+Trading in special sessions, including pre-trading periods, opening and closing auctions, as well as other non-standard trading sessions, is not supported.
+
+## Brief description of the robot <Anchor :ids="['robot_short']" />
 
 Each robot can trade multiple identical algorithms. An algorithm, along with all its settings, will hereafter be referred to as a portfolio. Each robot's portfolio must contain the financial instruments intended for trading or for use in calculations. A portfolio must contain at least one instrument, and all instruments within a portfolio are unique.
 
@@ -47,7 +53,7 @@ All orders placed by the robot are limit quote orders on all supported exchanges
 
 It is highly recommended not to manually remove orders submitted by a robot from the terminal, except in cases where the order is "stuck" in the robot, that is, when for some reason the robot no longer tracks this order.
 
-## Brief Description of the Interface
+## Brief description of the interface <Anchor :ids="['interface_short']" />
 
 The main interface page consists of a set of table-widgets located in the dropdown menu `Widgets`. All widgets can be opened and closed in any quantity and order, except for the `Robot logs` widget, which is always open and only one instance is allowed. 
 
@@ -63,7 +69,7 @@ Note that all widgets are customizable. Column order can be changed, column widt
 
 To begin working with the robot, you must activate the required data connections for market data and add necessary transaction connections. Market data connections are activated in the `Data connections` widget. Transaction connections are added in the `Trade connections` widget. To create a portfolio, use the `Portfolios table` widget.
 
-## Brief Description of the Role Model <Anchor :ids="['roles']" />
+## Brief description of the role model <Anchor :ids="['roles']" />
 
 A role-based model is used to manage user access rights on the platform. To understand it, it is necessary to first introduce some entities and clarify connections between them. In addition to robot, portfolio, and user, "company" entity is introduced. This entity is used as a binding point for robots, i.e., a robot is created for a specific company and belongs to it thereafter. Creating a robot without specifying a company is impossible. A portfolio is created by a user in a specific robot. A user who creates a portfolio becomes its owner (creator) and automatically gains rights to that portfolio. Thus, a user has rights to all portfolios they have created in a given robot. Access to a portfolio created by a user can only be revoked together with a robot.
 
