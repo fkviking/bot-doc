@@ -253,7 +253,6 @@ Methods of `security_fields`:
 | void set_comission_sign(int v)         | Sets the "Commission type" of the portfolio instrument to `v`.              |
 | void set_comission(double v)           | Sets the "Commission" of the portfolio instrument to `v`.                   |
 | void set_mm(bool v)                    | Sets the "MM" of the portfolio instrument to `v`.                           |
-| void set_maker(bool v)                 | Sets the "Only maker" of the portfolio instrument to `v`.                   |
 | void set_move_limits(bool v)           | Sets the "FUT move limits" of the portfolio instrument to `v`.              |
 | void set_move_limits1(bool v)          | Sets the "SPOT move limits" of the portfolio instrument to `v`.             |
 | void set_depth_ob(int v)               | Sets the "Depth OB" of the portfolio instrument to `v`.            |
@@ -400,6 +399,7 @@ Methods of `portfolio`:
 | void set_mkt_volume(long long v)    | Sets  "Market volume" of the portfolio to `v`.                                                  |
 | void set_type_trade(int v)          | Sets  "Type trade" of the portfolio to `v`.                                                     |
 | void set_price_type(int v)          | Sets  "Type price" of the portfolio to `v`.                                                     |
+| void set_maker(bool v)                 | Sets "Only maker" of the portfolio to `v`.                   |
 | void set_simply_first(bool v)       | Sets  "Simply first" of the portfolio to `v`.                                                   |
 | void set_quote(bool v)              | Sets  "Quote" of the portfolio to `v`.                                                          |
 | void set_percent(double v)          | Sets  "Percent" of the portfolio to `v`.                                                        |
