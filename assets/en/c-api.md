@@ -221,7 +221,6 @@ Methods of `security_fields`:
 | int comission_sign()                   | Returns the "Commission type" of the portfolio instrument.                  |
 | double comission()                     | Returns the "Commission" of the portfolio instrument.                       |
 | bool mm()                              | Returns the "MM" flag of the portfolio instrument.                          |
-| bool maker()                           | Returns the "Only maker" flag of the portfolio instrument.                  |
 | bool move_limits()                     | Returns the "FUT move limits" of the portfolio instrument.                  |
 | bool move_limits1()                    | Returns the "SPOT move limits" of the portfolio instrument.                 |
 | int depth_ob()                         | Returns the "Depth OB" of the portfolio instrument.                          |
@@ -254,7 +253,6 @@ Methods of `security_fields`:
 | void set_comission_sign(int v)         | Sets the "Commission type" of the portfolio instrument to `v`.              |
 | void set_comission(double v)           | Sets the "Commission" of the portfolio instrument to `v`.                   |
 | void set_mm(bool v)                    | Sets the "MM" of the portfolio instrument to `v`.                           |
-| void set_maker(bool v)                 | Sets the "Only maker" of the portfolio instrument to `v`.                   |
 | void set_move_limits(bool v)           | Sets the "FUT move limits" of the portfolio instrument to `v`.              |
 | void set_move_limits1(bool v)          | Sets the "SPOT move limits" of the portfolio instrument to `v`.             |
 | void set_depth_ob(int v)               | Sets the "Depth OB" of the portfolio instrument to `v`.            |
@@ -300,7 +298,7 @@ Methods of `portfolio`:
 | Method                                                      | Description                                                                 |
 |-------------------------------------------------------------|-----------------------------------------------------------------------------|
 | void restart_sec_iter()                                     | Initializes the iterator. (For a single portfolio, nested iterators cannot be used. The iteration order of instruments is **not** defined.) |
-| bool has_next_sec()                                         | Returns whether there are more instruments in the portfolio’s instrument list. |
+| bool has_next_sec()                                         | Returns whether there are more instruments in the portfolio instrument list. |
 | security_fields next_sec()                                  | Returns the next instrument in the portfolio. (See [iteration example](#__Example3__)). The iteration order is **not** defined and does not depend on instrument addition order or settings. |
 | deal_item deal(const std::string& s)                        | Returns the trade for the instrument with SecKey `s` (available only in Trade formula, i.e., at the moment of trade execution). If no trade occurred for this instrument, both `amount` and `price` will be zero. |
 | deal_item deal(const security_fields& sf)                   | Returns the trade for the instrument `sf` (available only in Trade formula). If no trade occurred for this instrument, both `amount` and `price` will be zero. |
@@ -311,64 +309,65 @@ Methods of `portfolio`:
 | const user_value& uf0()                                     | Returns user-defined field #0. (User fields are not used by the built-in algorithm.) |
 | ...                                                         | ...                                                                         |
 | const user_value& uf19()                                    | Returns user-defined field #19. (User fields are not used by the built-in algorithm.) |
-| std::string name()                                          | Returns the portfolio’s "Name".                                            |
-| int decimals()                                              | Returns the portfolio’s "Decimals".                                        |
-| std::string comment()                                       | Returns the portfolio’s "Comment".                                         |
-| std::string color()                | Returns the portfolio’s "Color" in hex format [valid CSS color](https://www.w3schools.com/colors/default.asp). |
-| bool re_sell()                      | Returns the portfolio’s "re_sell".                                                                           |
-| bool re_buy()                       | Returns the portfolio’s "re_buy".                                                                            |
-| bool use_tt()                       | Returns the portfolio’s "Use timetable".                                                                     |
-| int portfolio_type()                | Returns the portfolio’s "Type".                                                                              |
+| std::string name()                                          | Returns "Name" of the portfolio.                                            |
+| int decimals()                                              | Returns "Decimals" of the portfolio.                                        |
+| std::string comment()                                       | Returns "Comment" of the portfolio.                                         |
+| std::string color()                | Returns "Color" of the portfolio in hex format [valid CSS color](https://www.w3schools.com/colors/default.asp). |
+| bool re_sell()                      | Returns "re_sell" of the portfolio.                                                                           |
+| bool re_buy()                       | Returns "re_buy" of the portfolio.                                                                            |
+| bool use_tt()                       | Returns "Use timetable" of the portfolio.                                                                     |
+| int portfolio_type()                | Returns "Type" of the portfolio.                                                                              |
 | int shift_mode()                                            | get "Shift mode" of the portfolio                                                                                |
 | int v_side()                                                | get "v_side" of the portfolio                                                                                 |
 | int calc_method()                                            | get "Calculation method" of the portfolio                                                                                 |
-| long long v_in_l()                  | Returns the portfolio’s "v_in_left".                                                                         |
-| long long v_in_r()                  | Returns the portfolio’s "v_in_right".                                                                        |
-| long long v_out_l()                 | Returns the portfolio’s "v_out_left".                                                                        |
-| long long v_out_r()                 | Returns the portfolio’s "v_out_right".                                                                       |
-| long long v_min()                   | Returns the portfolio’s "v_min".                                                                             |
-| long long v_max()                   | Returns the portfolio’s "v_max".                                                                             |
-| double k()                          | Returns the portfolio’s "K".                                                                                 |
-| double k1()                         | Returns the portfolio’s "K1".                                                                                |
-| double k2()                         | Returns the portfolio’s "K2".                                                                                |
-| double tp()                         | Returns the portfolio’s "TP".                                                                                |
+| long long v_in_l()                  | Returns "v_in_left" of the portfolio.                                                                         |
+| long long v_in_r()                  | Returns "v_in_right" of the portfolio.                                                                        |
+| long long v_out_l()                 | Returns "v_out_left" of the portfolio.                                                                        |
+| long long v_out_r()                 | Returns "v_out_right" of the portfolio.                                                                       |
+| long long v_min()                   | Returns "v_min" of the portfolio.                                                                             |
+| long long v_max()                   | Returns "v_max" of the portfolio.                                                                             |
+| double k()                          | Returns "K" of the portfolio.                                                                                 |
+| double k1()                         | Returns "K1" of the portfolio.                                                                                |
+| double k2()                         | Returns "K2" of the portfolio.                                                                                |
+| double tp()                         | Returns "TP" of the portfolio.                                                                                |
 | double x()                                                  | get "X" of the portfolio                                                                                   |
-| bool equal_prices()                 | Returns the portfolio’s "Equal prices".                                                                      |
-| bool always_limits_timer()          | Returns the portfolio’s "Always timer".                                                                      |
-| double lim_s()                      | Returns the portfolio’s "Lim_Sell".                                                                          |
-| double lim_b()                      | Returns the portfolio’s "Lim_Buy".                                                                           |
-| double delta()                      | Returns the portfolio’s "Delta".                                                                             |
-| double first_delta()                | Returns the portfolio’s "First delta".                                                                       |
-| long long mkt_volume()              | Returns the portfolio’s "Market volume".                                                                     |
-| int type_trade()                    | Returns the portfolio’s "Type trade".                                                                        |
-| int price_type()                    | Returns the portfolio’s "Type price".                                                                        |
-| bool simply_first()                 | Returns the portfolio’s "Simply first".                                                                      |
-| bool quote()                        | Returns the portfolio’s "Quote".                                                                             |
-| double percent()                    | Returns the portfolio’s "Percent".                                                                           |
-| int timer()                         | Returns the portfolio’s "Limits timer".                                                                      |
-| bool to0()                          | Returns the portfolio’s "To0".                                                                               |
-| bool virtual_0_pos()                | Returns the portfolio’s "Virt 0 pos".                                                                        |
-| double opened()                     | Returns the portfolio’s "Opened".                                                                            |
-| double opened_comission()           | Returns the portfolio’s "Commission sum".                                                                    |
-| double fin_res_wo_c()               | Returns the portfolio’s "Fin res wo C".                                                                      |
-| double fin_res()                    | Returns the portfolio’s "Fin res".                                                                           |
-| long long pos()                     | Returns the portfolio’s "Pos".                                                                               |
-| int n_perc_fill()                   | Returns the portfolio’s "n_perc_fill".                                                                       |
-| int max_not_hedged()                | Returns the portfolio’s "Max not hedged".                                                                    |
-| double return_first()               | Returns the portfolio’s "Return first".                                                                      |
-| double price_check()                | Returns the portfolio’s "Price check".                                                                       |
-| int hedge_after()                   | Returns the portfolio’s "Hedge (sec)".                                                                       |
-| long long overlay()                 | Returns the portfolio’s "Overlay".                                                                           |
-| double ext_field1()                 | Returns the portfolio’s "Extra field#1".                                                                     |
-| double ext_field2()                 | Returns the portfolio’s "Extra field#2".                                                                     |
-| double sell()                       | Returns the portfolio’s "Sell".                                                                              |
-| double buy()                        | Returns the portfolio’s "Buy".                                                                               |
-| double price_s()                    | Returns the portfolio’s "Price_s".                                                                           |
-| double price_b()                    | Returns the portfolio’s "Price_b".                                                                           |
-| bool is_sell_ok()                   | Checks validity of the portfolio’s "Sell".                                                                   |
-| bool is_buy_ok()                   | Checks validity of the portfolio’s "Buy".                                                     |
-| bool is_price_s_ok                  | Checks validity of the portfolio’s "Price_s".                                                 |
-| bool is_price_b_ok                  | Checks validity of the portfolio’s "Price_b".                                                 |
+| bool equal_prices()                 | Returns "Equal prices" of the portfolio.                                                                      |
+| bool always_limits_timer()          | Returns "Always timer" of the portfolio.                                                                      |
+| double lim_s()                      | Returns "Lim_Sell" of the portfolio.                                                                          |
+| double lim_b()                      | Returns "Lim_Buy" of the portfolio.                                                                           |
+| double delta()                      | Returns "Delta" of the portfolio.                                                                             |
+| double first_delta()                | Returns "First delta" of the portfolio.                                                                       |
+| long long mkt_volume()              | Returns  "Market volume" of the portfolio.                                                                     |
+| int type_trade()                    | Returns  "Type trade" of the portfolio.                                                                        |
+| int price_type()                    | Returns  "Type price" of the portfolio.                                                                        |
+| bool simply_first()                 | Returns  "Simply first" of the portfolio.                                                                      |
+| bool maker()                           | Returns the "Only maker" flag of the portfolio.                  |
+| bool quote()                        | Returns  "Quote" of the portfolio.                                                                             |
+| double percent()                    | Returns  "Percent" of the portfolio.                                                                           |
+| int timer()                         | Returns  "Limits timer" of the portfolio.                                                                      |
+| bool to0()                          | Returns  "To0" of the portfolio.                                                                               |
+| bool virtual_0_pos()                | Returns  "Virt 0 pos" of the portfolio.                                                                        |
+| double opened()                     | Returns  "Opened" of the portfolio.                                                                            |
+| double opened_comission()           | Returns  "Commission sum" of the portfolio.                                                                    |
+| double fin_res_wo_c()               | Returns  "Fin res wo C" of the portfolio.                                                                      |
+| double fin_res()                    | Returns  "Fin res" of the portfolio.                                                                           |
+| long long pos()                     | Returns  "Pos" of the portfolio.                                                                               |
+| int n_perc_fill()                   | Returns  "n_perc_fill" of the portfolio.                                                                       |
+| int max_not_hedged()                | Returns  "Max not hedged" of the portfolio.                                                                    |
+| double return_first()               | Returns  "Return first" of the portfolio.                                                                      |
+| double price_check()                | Returns  "Price check" of the portfolio.                                                                       |
+| int hedge_after()                   | Returns  "Hedge (sec)" of the portfolio.                                                                       |
+| long long overlay()                 | Returns  "Overlay" of the portfolio.                                                                           |
+| double ext_field1()                 | Returns  "Extra field#1" of the portfolio.                                                                     |
+| double ext_field2()                 | Returns  "Extra field#2" of the portfolio.                                                                     |
+| double sell()                       | Returns  "Sell" of the portfolio.                                                                              |
+| double buy()                        | Returns  "Buy" of the portfolio.                                                                               |
+| double price_s()                    | Returns  "Price_s" of the portfolio.                                                                           |
+| double price_b()                    | Returns  "Price_b" of the portfolio.                                                                           |
+| bool is_sell_ok()                   | Checks validity of  "Sell" of the portfolio.                                                                   |
+| bool is_buy_ok()                   | Checks validity of  "Buy" of the portfolio.                                                     |
+| bool is_price_s_ok                  | Checks validity of  "Price_s" of the portfolio.                                                 |
+| bool is_price_b_ok                  | Checks validity of  "Price_b" of the portfolio.                                                 |
 | void set_uf0(const user_value& v)   | Sets user-defined field #0. (User fields are not used by the built-in algorithm.)              |
 | ...                                 | ...                                                                                           |
 | void set_uf19(const user_value& v)  | Sets user-defined field #19. (User fields are not used by the built-in algorithm.)             |
@@ -400,6 +399,7 @@ Methods of `portfolio`:
 | void set_mkt_volume(long long v)    | Sets  "Market volume" of the portfolio to `v`.                                                  |
 | void set_type_trade(int v)          | Sets  "Type trade" of the portfolio to `v`.                                                     |
 | void set_price_type(int v)          | Sets  "Type price" of the portfolio to `v`.                                                     |
+| void set_maker(bool v)                 | Sets "Only maker" of the portfolio to `v`.                   |
 | void set_simply_first(bool v)       | Sets  "Simply first" of the portfolio to `v`.                                                   |
 | void set_quote(bool v)              | Sets  "Quote" of the portfolio to `v`.                                                          |
 | void set_percent(double v)          | Sets  "Percent" of the portfolio to `v`.                                                        |
