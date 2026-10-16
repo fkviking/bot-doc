@@ -4608,7 +4608,7 @@ Payload:
 | >>> orig_price | y | number |  | Original order price |
 | >>> buy_sell | y | number | direction | Deal direction |
 | >>> quantity | y | number |  | Integer deal quantity |
-| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions. |
+| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions |
 | >>> cn | y | string |  | Transactional connection name |
 | >>> sec | y | string |  | Security unique key |
 | >>> decimals | y | number |  | Integer number of decimal points in price field |
@@ -4724,7 +4724,7 @@ Payload:
 | >>> orig_price | y | number |  | Original order price |
 | >>> buy_sell | y | number | direction | Deal direction |
 | >>> quantity | y | number |  | Integer deal quantity |
-| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions. |
+| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions |
 | >>> cn | y | string |  | Transactional connection name |
 | >>> sec | y | string |  | Security unique key |
 | >>> decimals | y | number |  | Integer number of decimal points in price field |
@@ -4783,7 +4783,7 @@ Example:
 
 ```json
 {
-	"type":"portfolio_fin_res.subscribe",
+	"type":"portfolio_deals.subscribe",
 	"data":
 	{
 		"msg":"Permission denied",
@@ -4940,7 +4940,7 @@ Payload:
 | >>> orig_price | y | number |  | Original order price |
 | >>> buy_sell | y | number | direction | Deal direction |
 | >>> quantity | y | number |  | Integer deal quantity |
-| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions. |
+| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions |
 | >>> cn | y | string |  | Transactional connection name |
 | >>> sec | y | string |  | Security unique key |
 | >>> decimals | y | number |  | Integer number of decimal points in price field |
@@ -5062,7 +5062,7 @@ Example:
 
 ```json
 {
-	"type":"portfolio_fin_res.get_previous",
+	"type":"portfolio_deals.get_previous",
 	"data":
 	{
 		"msg":"Permission denied",
@@ -5157,7 +5157,7 @@ Example:
 
 ```json
 {
-	"type":"portfolio_fin_res.get_sec_keys",
+	"type":"portfolio_deals.get_sec_keys",
 	"data":
 	{
 		"msg":"Permission denied",
@@ -5231,7 +5231,7 @@ Payload:
 | >>> orig_price | y | number |  | Original order price |
 | >>> buy_sell | y | number | direction | Deal direction |
 | >>> quantity | y | number |  | Integer deal quantity |
-| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions. |
+| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions |
 | >>> cn | y | string |  | Transactional connection name |
 | >>> sec | y | string |  | Security unique key |
 | >>> decimals | y | number |  | Integer number of decimal points in price field |
@@ -5353,7 +5353,7 @@ Example:
 
 ```json
 {
-	"type":"portfolio_fin_res.get_history",
+	"type":"portfolio_deals.get_history",
 	"data":
 	{
 		"msg":"Permission denied",
