@@ -32,7 +32,7 @@ Trading in special sessions, including pre-trading periods, opening and closing 
 
 ## Brief description of the robot <Anchor :ids="['robot_short']" />
 
-Each robot can trade multiple identical algorithms. An algorithm, along with all its settings, will hereafter be referred to as a portfolio. Each robot's portfolio must contain the financial instruments intended for trading or for use in calculations. A portfolio must contain at least one instrument, and all instruments within a portfolio are unique.
+Each robot can trade multiple identical algorithms. An algorithm, along with all its settings, will hereafter be referred to as a portfolio. A single robot may contain no more than 200 portfolios. Each robot's portfolio must contain the financial instruments intended for trading or for use in calculations. A robot may contain a maximum of 600 such instruments in total. A portfolio must contain at least one instrument, and all instruments within a portfolio are unique.
 
 One of the instruments in the portfolio must be marked with the [Is first](params-description.md#is-first) flag; this instrument will be referred to as the main instrument or the first leg of the portfolio. Instruments in the portfolio not marked with the [Is first](params-description.md#is-first) flag will be referred to as the second leg of the portfolio. Each robot's portfolio has parameters that apply to the entire portfolio; these are called [portfolio parameters](params-description.md#p).
  In addition, there are parameters set individually for each instrument in the portfolio; these are called [instrument-specific portfolio parameters](params-description.md#portfolio-instrument-parameters).
@@ -88,7 +88,8 @@ Demo robots allow you to explore part of platform capabilities for free, but wit
 - Creating trading connections is prohibited, because such robots are not intended for live trading. During initial setup of such robots, [Connection setup](getting-started.md#connection_properties) section should be skipped.
 - Historical mode is not available, because such robots are multi-user.
 - Only virtual portfolios can be created.
-- Using C++ formulas is not available. 
+- Using C++ formulas is not available.
+- The maximum number of portfolios is 10.
 
 ### Head of traders <Anchor :ids="['head_of_traders_role']" />
 
