@@ -7,6 +7,12 @@ summary: 'What changed in the robot and the documentation from version to versio
 
 # Change Log
 
+## 2026-10-20
+
+- Added non-editable portfolio parameter [Pos0](params-description.md#p.pos0);
+- Added the [lot_qty()](c-api.md#lot-qty) method to the C++ interface for the instrument object;
+- Changed the behavior and description of the [lot_round()](c-api.md#lot-round) method in the C++ interface for the instrument object.
+
 ## 2026-09-29
 
 - Added [`ring_deque`](c-api.html#ring-deque) object to the C++ interface, which can save and load its values on robot restart;

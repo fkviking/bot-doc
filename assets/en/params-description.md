@@ -853,6 +853,10 @@ Displays the current trading status of the portfolio. Possible values are:
 
 Non-editable parameter.
 
+### Pos0 <Anchor :ids="['p.pos0']" />
+
+This flag is set only when [Curpos](params-description.md#s.pos) of all portfolio instruments equals zero. Non-editable parameter.
+
 ### Comment <Anchor :ids="['p.comment']" />
 
 A comment can be added to each portfolio if needed. Maximum allowed number of characters is 100.
