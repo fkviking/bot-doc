@@ -530,6 +530,8 @@ You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP
 
 The robot supports only transactional FIX connections to the CQG broker. The CQG transactional connection can operate either in conjunction with an EXANTE market data connection or independently. Since ticker names differ between EXANTE and CQG, when adding a CQG connection that uses EXANTE market data, you must fill in the ticker name mapping dictionary [Securities dictionary](creating-connection.md#securities-dictionary), adding all instruments you plan to use. When using CQG market data independently, required tickers are added via the `Security manager`, functionality located in the [Data connections](interface.md#data_connections) widget.
 
+**Important!** You can add a maximum of 50 unique CQG instruments per robot.
+
 ### Name <Anchor :ids="['tc.CQG.name']" />
 
 A field for specifying the connection name. This value is set for convenience, to make it easier to identify the connection within the list of transactional connections. Allowed characters: `_ a-z A-Z 0-9`.
