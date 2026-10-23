@@ -923,9 +923,27 @@ Flag that controls automatic order cancellation by the exchange upon disconnecti
 
 You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
-## KUCOINUTA
+## KUCOIN <Anchor :ids="['tc.KUCOIN']" />
 
-The connection is under development; the launch is planned by October 23.
+### Name <Anchor :ids="['tc.KUCOIN.name']" />
+
+Field for setting the connection name. This value is set for convenience, so that it is easier to navigate the list of transaction connections later. Allowed characters: `_ a-z A-Z 0-9`.
+
+### Key <Anchor :ids="['tc.KUCOIN.key_api']" />
+
+Public key for accessing the exchange API, created in the personal account on the exchange website. Created together with the corresponding secret key. Located in the account settings under the API section. When creating, it is important to select United Trading Account.
+
+### Secret <Anchor :ids="['tc.KUCOIN.key_secret']" />
+
+Secret key for accessing the exchange API, created in the personal account on the exchange website. Created together with the corresponding public key. Located in the account settings under the API section. When creating, it is important to select United Trading Account.
+
+### Passphrase <Anchor :ids="['tc.KUCOIN.passphrase']" />
+
+The passphrase is set by the user at the stage of creating the API key.
+
+### Bind IP <Anchor :ids="['tc.KUCOIN.bind_ip']" />
+
+You should [contact support](mailto:help@fkviking.ru) to clarify the bind IP. The IP address specified in this field should not be provided to the exchange as the server IP address.
 
 ## HUOBI
 
