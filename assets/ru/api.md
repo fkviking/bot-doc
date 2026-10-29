@@ -4608,6 +4608,7 @@ Payload:
 | >>> orig_price | y | number |  | Original order price |
 | >>> buy_sell | y | number | direction | Deal direction |
 | >>> quantity | y | number |  | Integer deal quantity |
+| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions |
 | >>> cn | y | string |  | Transactional connection name |
 | >>> sec | y | string |  | Security unique key |
 | >>> decimals | y | number |  | Integer number of decimal points in price field |
@@ -4637,6 +4638,7 @@ Example:
                 "t": 1670932198000080090,
                 "dt": 1670932198001653551,
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "r_id": "1"
             },
@@ -4653,6 +4655,7 @@ Example:
                 "t": 1670932199000047295,
                 "dt": 1670932199001713057,
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "r_id": "1"
             },
@@ -4669,6 +4672,7 @@ Example:
                 "t": 1670932200000058955,
                 "dt": 1670932200001680729,
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "r_id": "1"
             },
@@ -4685,6 +4689,7 @@ Example:
                 "t": 1670932201000080655,
                 "dt": 1670932201001754776,
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "r_id": "1"
             }
@@ -4719,6 +4724,7 @@ Payload:
 | >>> orig_price | y | number |  | Original order price |
 | >>> buy_sell | y | number | direction | Deal direction |
 | >>> quantity | y | number |  | Integer deal quantity |
+| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions |
 | >>> cn | y | string |  | Transactional connection name |
 | >>> sec | y | string |  | Security unique key |
 | >>> decimals | y | number |  | Integer number of decimal points in price field |
@@ -4746,6 +4752,7 @@ Example:
                 "id": -3735218779281737327,
                 "t": 1670932204000081702,
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "dt": 1670932204001796726
             }
@@ -4776,7 +4783,7 @@ Example:
 
 ```json
 {
-	"type":"portfolio_fin_res.subscribe",
+	"type":"portfolio_deals.subscribe",
 	"data":
 	{
 		"msg":"Permission denied",
@@ -4933,6 +4940,7 @@ Payload:
 | >>> orig_price | y | number |  | Original order price |
 | >>> buy_sell | y | number | direction | Deal direction |
 | >>> quantity | y | number |  | Integer deal quantity |
+| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions |
 | >>> cn | y | string |  | Transactional connection name |
 | >>> sec | y | string |  | Security unique key |
 | >>> decimals | y | number |  | Integer number of decimal points in price field |
@@ -4959,6 +4967,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             },
@@ -4974,6 +4983,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             },
@@ -4989,6 +4999,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             },
@@ -5004,6 +5015,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             },
@@ -5019,6 +5031,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             }
@@ -5049,7 +5062,7 @@ Example:
 
 ```json
 {
-	"type":"portfolio_fin_res.get_previous",
+	"type":"portfolio_deals.get_previous",
 	"data":
 	{
 		"msg":"Permission denied",
@@ -5144,7 +5157,7 @@ Example:
 
 ```json
 {
-	"type":"portfolio_fin_res.get_sec_keys",
+	"type":"portfolio_deals.get_sec_keys",
 	"data":
 	{
 		"msg":"Permission denied",
@@ -5218,6 +5231,7 @@ Payload:
 | >>> orig_price | y | number |  | Original order price |
 | >>> buy_sell | y | number | direction | Deal direction |
 | >>> quantity | y | number |  | Integer deal quantity |
+| >>> aggr | y | boolean |  | A transaction may be an aggregation of several transactions |
 | >>> cn | y | string |  | Transactional connection name |
 | >>> sec | y | string |  | Security unique key |
 | >>> decimals | y | number |  | Integer number of decimal points in price field |
@@ -5244,6 +5258,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             },
@@ -5259,6 +5274,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             },
@@ -5274,6 +5290,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             },
@@ -5289,6 +5306,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             },
@@ -5304,6 +5322,7 @@ Example:
                 "quantity": 1,
                 "cn": "virtual",
                 "lot_size": 1e-8,
+		"aggr": false,
 		"curpos": 1,
                 "decimals": 4
             }
@@ -5334,7 +5353,7 @@ Example:
 
 ```json
 {
-	"type":"portfolio_fin_res.get_history",
+	"type":"portfolio_deals.get_history",
 	"data":
 	{
 		"msg":"Permission denied",
@@ -6100,7 +6119,7 @@ Example:
 
 ### Запрос списка финансовых инструментов <Anchor :ids="['get_securities']"/>
 
-Получить список финансовых инструментов, доступных в данном робота
+Получить список финансовых инструментов, доступных в данном роботе
 
 <details>
 <summary>Request</summary>

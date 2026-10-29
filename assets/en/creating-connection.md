@@ -530,6 +530,8 @@ You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP
 
 The robot supports only transactional FIX connections to the CQG broker. The CQG transactional connection can operate either in conjunction with an EXANTE market data connection or independently. Since ticker names differ between EXANTE and CQG, when adding a CQG connection that uses EXANTE market data, you must fill in the ticker name mapping dictionary [Securities dictionary](creating-connection.md#securities-dictionary), adding all instruments you plan to use. When using CQG market data independently, required tickers are added via the `Security manager`, functionality located in the [Data connections](interface.md#data_connections) widget.
 
+**Important!** You can add a maximum of 50 unique CQG instruments per robot.
+
 ### Name <Anchor :ids="['tc.CQG.name']" />
 
 A field for specifying the connection name. This value is set for convenience, to make it easier to identify the connection within the list of transactional connections. Allowed characters: `_ a-z A-Z 0-9`.
@@ -921,9 +923,27 @@ Flag that controls automatic order cancellation by the exchange upon disconnecti
 
 You should [contact support](mailto:help@fkviking.ru) to clarify bind IP. The IP address specified in this field should not be provided to the exchange as the IP address of the server.
 
-## KUCOINUTA
+## KUCOIN <Anchor :ids="['tc.KUCOIN']" />
 
-The connection is under development; the launch is planned by October 23.
+### Name <Anchor :ids="['tc.KUCOIN.name']" />
+
+Field for setting the connection name. This value is set for convenience, so that it is easier to navigate the list of transaction connections later. Allowed characters: `_ a-z A-Z 0-9`.
+
+### Key <Anchor :ids="['tc.KUCOIN.key_api']" />
+
+Public key for accessing the exchange API, created in the personal account on the exchange website. Created together with the corresponding secret key. Located in the account settings under the API section. When creating, it is important to select United Trading Account.
+
+### Secret <Anchor :ids="['tc.KUCOIN.key_secret']" />
+
+Secret key for accessing the exchange API, created in the personal account on the exchange website. Created together with the corresponding public key. Located in the account settings under the API section. When creating, it is important to select United Trading Account.
+
+### Passphrase <Anchor :ids="['tc.KUCOIN.passphrase']" />
+
+The passphrase is set by the user at the stage of creating the API key.
+
+### Bind IP <Anchor :ids="['tc.KUCOIN.bind_ip']" />
+
+You should [contact support](mailto:help@fkviking.ru) to clarify the bind IP. The IP address specified in this field should not be provided to the exchange as the server IP address.
 
 ## HUOBI
 

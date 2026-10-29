@@ -135,12 +135,13 @@ Time interval in seconds after which any unhedged position is automatically hedg
 
 - If set to `-1`, unhedged position checks are disabled.
 
-**Note:**  
-If the position mismatch exceeds the [Overlay](params-description.md#p.overlay) value (including active orders), a correcting order is placed without canceling existing active orders.  
-- When a correcting order is placed, the error counter for that instrument is reset.  
-- Mismatches are calculated separately for each second-leg instrument.  
-- At most one correcting order can be active per second-leg instrument at a time.  
-- If the correcting order is not executed, it is re-submitted once per second.
+**It is not obvious that**  
+If the position, taking into account the execution of current active orders, diverges by more than the [Overlay](params-description.md#p.overlay) value (active orders may exist), the position will be leveled without touching the current active orders. 
+- If the leveling order has been placed, the error counter for this financial instrument will be reset. 
+- The divergence is calculated separately for each of the second leg instruments. 
+- Leveling is also performed separately for each of the second leg instruments. 
+- At any one time, no more than one leveling order can be pending for each of the second leg instruments. 
+- If the leveling order was not filled, it is re-placed once per second.
 
 ---
 
