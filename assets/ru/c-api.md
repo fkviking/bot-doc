@@ -758,37 +758,50 @@ Meтоды `coin_item`:
 
 [_Примеры работы с индикаторами и коллекциями, размещенными в `shared memory`._](#__ExampleInd__)
 
-#### `TradingDays` и `schedule` индикатора
+#### Нумерация дней недели, `Trading days` и `schedule` индикатора
 
-Для расчета любого индикатора обычно используются цены, получаемые с биржи. Если финансовый инструмент на бирже торгуется 24/7, то никаких сложностей с ценами не возникает, в противном же случае встает вопрос фильтрации получаемых данных, чтобы не пересчитывать индикаторы на "нулевых" и "кривых" ценах (при пустых стаканах в неторговые дни и часы, аукционах открытия и т.п.). Для фильтрации цен у объектов индикаторов существуют `TradingDays` и `schedule`, `TradingDays` - это фильтр по дням, а `schedule` - фильтр по временным интервалам внутри дня (для всех дней `schedule` одинаковое).
+Для расчета любого индикатора обычно используются цены, получаемые с биржи. Если финансовый инструмент на бирже торгуется 24/7, то никаких сложностей с ценами не возникает, в противном же случае встает вопрос фильтрации получаемых данных, чтобы не пересчитывать индикаторы на "нулевых" и "кривых" ценах (при пустых стаканах в неторговые дни и часы, аукционах открытия и т.п.).
+Для фильтрации цен у объектов индикаторов существует `schedule`, это фильтр по временным интервалам внутри дня и дням недели (каждый временной интервал может относиться к одному или к нескольким дням недели).
 
-По умолчанию `TradingDays` индикатора - это ссылка на `TradingDays` портфеля, в коде которого данный индикатор считается, т.е. при изменении `TradingDays` портфеля `TradingDays` индикатора тоже будет изменен (это справедливо, даже если в портфеле `TradingDays` не используется). Если же необходимо использовать свой `TradingDays`, то индикатору можно явно указать значение для `TradingDays`. `TradingDays` - это битовая маска торговых дней недели. Дни недели занумерованы с нуля, причем нулевой бит (считая справа налево) - это воскресенье, т.е. воскресенье это `1 << 0` (где `<<` это побитовый сдвиг числа влево), понедельник это `1 << 1` и т.д.
+Временной интервал - это:
+- пара времен, т.е. время начала и время конца, оба времени включительно;
+- битовая маска дней недели, к которым данный интервал относится (если не указана, то равна всем семи дням недели).
 
-По умолчанию `schedule` индикатора пуст, это означает, что расписание не задано и фильтрация по времени отсутствует. Если же `schedule` не пусто, то это список непересекающихся временных интервалов, в которые необходимо рассчитывать значение индекса. Временной интервал - это пара времен, т.е. время начала и время конца, оба времени включительно. 
+Если ни один из интервалов `schedule` при создании не содержал дни недели, к которым данный интервал применим, то у `schedule` есть `Trading days`, общий для всех интервалов, по умолчанию он равен всем семи дням недели. `Trading days` индикатора равен `Trading days` его `schedule`.
 
-#### Объект `indicators::interval`
+`Trading days` интервала/`schedule`/индикатора - это битовая маска торговых дней недели. Дни недели занумерованы с нуля (причем `0` - воскресенье, `1` - понедельник, и т.д.), торговля только в воскресенье это `1 << 0` (где `<<` это побитовый сдвиг числа влево),
+торговля только в понедельник это `1 << 1` и т.д.
+
+По умолчанию `schedule` индикатора пуст, это означает, что расписание не задано и фильтрация по времени отсутствует. Если же `schedule` не пуст, то это список непересекающихся временных интервалов, в которые необходимо рассчитывать значение индекса.
+
+#### Объект `indicators::interval` <Anchor :ids="['cpp-interval']"/>
 
 Конструкторы `interval`:
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
-| interval(day_time b, day_time e) | создать временной интервал c началом во время `b` и концом во время `e`, должно выполняться условие `b < e`, иначае будет выброшено исключение `std::invalid_argument` |
+| interval(day_time b, day_time e) | Создать временной интервал c началом во время `b` и концом во время `e`, должно выполняться условие `b < e`, иначае будет выброшено исключение `std::invalid_argument`. **`Trading days` будет задано как все дни недели** |
+| interval(int trading_days, day_time b, day_time e) | создать временной интервал c началом во время `b` и концом во время `e` для дней заданных битовой маской `trading_days`, должны выполняться условия: `b < e` и $1 \le trading\_days \le 127$, иначае будет выброшено исключение `std::invalid_argument` |
 
-#### Объект `indicators::schedule`
+#### Объект `indicators::schedule` <Anchor :ids="['cpp-schedule']"/>
 
 Конструкторы `schedule`:
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
 | schedule() | создать пустое расписание |
-| schedule(const std::vector&lt;interval&gt;& sch) | создать расписание, инициализированное списком непересекающихся интервалов, отсортированных по возрастанию, если интервалы пересекаются или не отсортированы по возрастанию, будет выброшено исключение `std::invalid_argument` |
+| schedule(const std::vector&lt;interval&gt;& sch) | Создать расписание, инициализированное списком непересекающихся интервалов, если интервалы пересекаются, будет выброшено исключение `std::invalid_argument`. **Интервалы расписания при своем создании в конструкторе должны либо все содержать `trading days`, либо все не содержать `trading days`, в противном случае будет выброшено исключение `std::invalid_argument`** |
 | schedule(const schedule& sch) | конструктор копирования |
 
 Методы `schedule`:
 
 | Метод                                        | Описание                                                                  |
 |----------------------------------------------|---------------------------------------------------------------------------|
-| bool is_in(const day_time& dt) const | проверить находится ли указанное время в одном из интервалов расписания |
+| bool empty() const | проверить расписание на пустоту |
+| bool is_in(const day_time& dt) const | проверить находится ли указанное время в одном из интервалов расписания (**возвращает `true` если расписание пусто**) |
+| bool is_in(int wd, const day_time& dt) const | проверить находится ли указанное время в одном из интервалов расписания в заданный день недели, $0 \le wd \le 6$ (**возвращает `true` если расписание пусто**) |
+| int trading_days() const | Получить `trading days` расписания. **Возвращает `0` если интервалы расписания содержали `trading days` в своих конструкторах при создании** |
+| void set_trading_days(int trading_days) | Задать `trading days` всех интервалов, значение данного параметра должно быть целым числом из отрезка `[1, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`. **Задать `trading days` таким образом возможно только в случае если все интервалы расписания НЕ содержали `trading days` в своих конструкторах при создании**  |
 
 #### Константы
 
@@ -821,12 +834,12 @@ $n$ - количество значений исходной функции (ц�
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
-| SMA() | создать объект с пустым расписанием и с `TradingDays` портфеля |
-| SMA(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| SMA(const schedule& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| SMA(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| SMA(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| SMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| SMA() | создать объект с пустым расписанием |
+| SMA(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием |
+| SMA(const schedule& sch) | создать объект c расписанием |
+| SMA(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| SMA(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| SMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
 
 
 Методы `SMA`:
@@ -837,8 +850,8 @@ $n$ - количество значений исходной функции (ц�
 | void set_length(size_t n) | Задать количество элементов для расчета, значение данного параметра должно быть целым числом из отрезка `[1, 10000]` (значение по умолчания 10), в противном случае будет выброшено исключение `std::invalid_argument`  |
 | size_t timeframe() const | Получить тайм-фрейм расчетов, т.е. с какой периодичностью получать $p_{i}$|
 | void set_timeframe(size_t timeframe) | Задать тайм-фрейм для расчетов (в секундах), значение данного параметра должно быть целым числом из отрезка `[1, 86400]` (значение по умолчанию 1 секунда), в противном случае будет выброшено исключение `std::invalid_argument`. При изменении таймфрейма накопленная для расчетов очередь значений очищается |
-| int trading_days() const | Получить `TradingDays` индикатора |
-| void set_trading_days(int trading_days) | Задать `TradingDays`, значение данного параметра должно быть целым числом из отрезка `[0, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
+| int trading_days() const | Получить `Trading days` индикатора |
+| void set_trading_days(int trading_days) | Задать `Trading days`, значение данного параметра должно быть целым числом из отрезка `[1, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
 | bool update(double p) | Добавить новое значение $p_{i}$ для расчета. Если тайм-фрейм истек, то новое значение будет добавлено и функция вернет `true`, иначе `false` |
 | double value() const | Получить текущее значение индикатора. Если список элементов для расчета индикатора пуст, то будет выброшено исключение `std::out_of_range` |
 | void clear() | Очистить список элементов по которым считается значение индикатора |
@@ -864,12 +877,12 @@ $n$ - количество значений исходной функции (ц�
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
-| EMA() | создать объект с пустым расписанием и с `TradingDays` портфеля |
-| EMA(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| EMA(const schedule& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| EMA(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| EMA(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| EMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| EMA() | создать объект с пустым расписанием |
+| EMA(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием |
+| EMA(const schedule& sch) | создать объект c расписанием |
+| EMA(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| EMA(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| EMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
 
 
 Методы `EMA`:
@@ -880,8 +893,8 @@ $n$ - количество значений исходной функции (ц�
 | void set_length(size_t n) | Задать количество элементов для расчета, значение данного параметра должно быть целым числом из отрезка `[1, 10000]` (значение по умолчания 10), в противном случае будет выброшено исключение `std::invalid_argument`  |
 | size_t timeframe() const | Получить тайм-фрейм расчетов, т.е. с какой периодичностью получать $p_{i}$|
 | void set_timeframe(size_t timeframe) | Задать тайм-фрейм для расчетов (в секундах), значение данного параметра должно быть целым числом из отрезка `[1, 86400]` (значение по умолчанию 1 секунда), в противном случае будет выброшено исключение `std::invalid_argument`. При изменении таймфрейма накопленная для расчетов очередь значений очищается  |
-| int trading_days() const | Получить `TradingDays` индикатора |
-| void set_trading_days(int trading_days) | Задать `TradingDays`, значение данного параметра должно быть целым числом из отрезка `[0, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
+| int trading_days() const | Получить `Trading days` индикатора |
+| void set_trading_days(int trading_days) | Задать `Trading days`, значение данного параметра должно быть целым числом из отрезка `[1, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
 | bool update(double p) | Добавить новое значение $p_{i}$ для расчета. Если тайм-фрейм истек, то новое значение будет добавлено и функция вернет `true`, иначе `false` |
 | double value() const | Получить текущее значение индикатора. Если список элементов для расчета индикатора пуст, то будет выброшено исключение `std::out_of_range` |
 | void clear() | Очистить список элементов по которым считается значение индикатора |
@@ -907,12 +920,12 @@ $n$ - количество значений исходной функции (ц�
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
-| Max() | создать объект с пустым расписанием и с `TradingDays` портфеля |
-| Max(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| Max(const schedule& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| Max(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| Max(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| Max(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| Max() | создать объект с пустым расписанием |
+| Max(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием |
+| Max(const schedule& sch) | создать объект c расписанием |
+| Max(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| Max(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| Max(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
 
 
 Методы `Max`:
@@ -923,8 +936,8 @@ $n$ - количество значений исходной функции (ц�
 | void set_length(size_t n) | Задать количество элементов для расчета, значение данного параметра должно быть целым числом из отрезка `[1, 10000]` (значение по умолчания 10), в противном случае будет выброшено исключение `std::invalid_argument`  |
 | size_t timeframe() const | Получить тайм-фрейм расчетов, т.е. с какой периодичностью получать $p_{i}$|
 | void set_timeframe(size_t timeframe) | Задать тайм-фрейм для расчетов (в секундах), значение данного параметра должно быть целым числом из отрезка `[1, 86400]` (значение по умолчанию 1 секунда), в противном случае будет выброшено исключение `std::invalid_argument`. При изменении таймфрейма накопленная для расчетов очередь значений очищается  |
-| int trading_days() const | Получить `TradingDays` индикатора |
-| void set_trading_days(int trading_days) | Задать `TradingDays`, значение данного параметра должно быть целым числом из отрезка `[0, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
+| int trading_days() const | Получить `Trading days` индикатора |
+| void set_trading_days(int trading_days) | Задать `Trading days`, значение данного параметра должно быть целым числом из отрезка `[1, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
 | bool update(double p) | Добавить новое значение $p_{i}$ для расчета. Если тайм-фрейм истек, то новое значение будет добавлено и функция вернет `true`, иначе `false` |
 | double value() const | Получить текущее значение индикатора. Если список элементов для расчета индикатора пуст, то будет выброшено исключение `std::out_of_range` |
 | void clear() | Очистить список элементов по которым считается значение индикатора |
@@ -948,12 +961,12 @@ $n$ - количество значений исходной функции (ц�
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
-| Min() | создать объект с пустым расписанием и с `TradingDays` портфеля |
-| Min(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| Min(const schedule& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| Min(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| Min(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| Min(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| Min() | создать объект с пустым расписанием |
+| Min(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием |
+| Min(const schedule& sch) | создать объект c расписанием |
+| Min(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| Min(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| Min(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
 
 Методы `Min`:
 
@@ -963,8 +976,8 @@ $n$ - количество значений исходной функции (ц�
 | void set_length(size_t n) | Задать количество элементов для расчета, значение данного параметра должно быть целым числом из отрезка `[1, 10000]` (значение по умолчания 10), в противном случае будет выброшено исключение `std::invalid_argument`  |
 | size_t timeframe() const | Получить тайм-фрейм расчетов, т.е. с какой периодичностью получать $p_{i}$|
 | void set_timeframe(size_t timeframe) | Задать тайм-фрейм для расчетов (в секундах), значение данного параметра должно быть целым числом из отрезка `[1, 86400]` (значение по умолчанию 1 секунда), в противном случае будет выброшено исключение `std::invalid_argument`. При изменении таймфрейма накопленная для расчетов очередь значений очищается  |
-| int trading_days() const | Получить `TradingDays` индикатора |
-| void set_trading_days(int trading_days) | Задать `TradingDays`, значение данного параметра должно быть целым числом из отрезка `[0, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
+| int trading_days() const | Получить `Trading days` индикатора |
+| void set_trading_days(int trading_days) | Задать `Trading days`, значение данного параметра должно быть целым числом из отрезка `[1, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
 | bool update(double p) | Добавить новое значение $p_{i}$ для расчета. Если тайм-фрейм истек, то новое значение будет добавлено и функция вернет `true`, иначе `false` |
 | double value() const | Получить текущее значение индикатора. Если список элементов для расчета индикатора пуст, то будет выброшено исключение `std::out_of_range` |
 | void clear() | Очистить список элементов по которым считается значение индикатора |
@@ -990,12 +1003,12 @@ $n$ - количество значений исходной функции (ц�
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
-| Var() | создать объект с пустым расписанием и с `TradingDays` портфеля |
-| Var(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| Var(const schedule& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| Var(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| Var(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| Var(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| Var() | создать объект с пустым расписанием |
+| Var(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием |
+| Var(const schedule& sch) | создать объект c расписанием |
+| Var(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| Var(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| Var(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
 
 
 Методы `Var`:
@@ -1006,8 +1019,8 @@ $n$ - количество значений исходной функции (ц�
 | void set_length(size_t n) | Задать количество элементов для расчета, значение данного параметра должно быть целым числом из отрезка `[1, 10000]` (значение по умолчания 10), в противном случае будет выброшено исключение `std::invalid_argument`  |
 | size_t timeframe() const | Получить тайм-фрейм расчетов, т.е. с какой периодичностью получать $p_{i}$|
 | void set_timeframe(size_t timeframe) | Задать тайм-фрейм для расчетов (в секундах), значение данного параметра должно быть целым числом из отрезка `[1, 86400]` (значение по умолчанию 1 секунда), в противном случае будет выброшено исключение `std::invalid_argument`. При изменении таймфрейма накопленная для расчетов очередь значений очищается  |
-| int trading_days() const | Получить `TradingDays` индикатора |
-| void set_trading_days(int trading_days) | Задать `TradingDays`, значение данного параметра должно быть целым числом из отрезка `[0, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
+| int trading_days() const | Получить `Trading days` индикатора |
+| void set_trading_days(int trading_days) | Задать `Trading days`, значение данного параметра должно быть целым числом из отрезка `[1, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
 | bool update(double p) | Добавить новое значение $p_{i}$ для расчета. Если тайм-фрейм истек, то новое значение будет добавлено и функция вернет `true`, иначе `false` |
 | double value() const | Получить текущее значение индикатора. Если список элементов для расчета индикатора пуст, то будет выброшено исключение `std::out_of_range` |
 | void clear() | Очистить список элементов по которым считается значение индикатора |
@@ -1033,12 +1046,12 @@ $n$ - количество значений исходной функции (ц�
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
-| StdDev() | создать объект с пустым расписанием и с `TradingDays` портфеля |
-| StdDev(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| StdDev(const schedule& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| StdDev(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| StdDev(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| StdDev(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| StdDev() | создать объект с пустым расписанием |
+| StdDev(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием |
+| StdDev(const schedule& sch) | создать объект c расписанием |
+| StdDev(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| StdDev(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| StdDev(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
 
 
 Методы `StdDev`:
@@ -1049,8 +1062,8 @@ $n$ - количество значений исходной функции (ц�
 | void set_length(size_t n) | Задать количество элементов для расчета, значение данного параметра должно быть целым числом из отрезка `[1, 10000]` (значение по умолчания 10), в противном случае будет выброшено исключение `std::invalid_argument`  |
 | size_t timeframe() const | Получить тайм-фрейм расчетов, т.е. с какой периодичностью получать $p_{i}$|
 | void set_timeframe(size_t timeframe) | Задать тайм-фрейм для расчетов (в секундах), значение данного параметра должно быть целым числом из отрезка `[1, 86400]` (значение по умолчанию 1 секунда), в противном случае будет выброшено исключение `std::invalid_argument`. При изменении таймфрейма накопленная для расчетов очередь значений очищается  |
-| int trading_days() const | Получить `TradingDays` индикатора |
-| void set_trading_days(int trading_days) | Задать `TradingDays`, значение данного параметра должно быть целым числом из отрезка `[0, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
+| int trading_days() const | Получить `Trading days` индикатора |
+| void set_trading_days(int trading_days) | Задать `Trading days`, значение данного параметра должно быть целым числом из отрезка `[1, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
 | bool update(double p) | Добавить новое значение $p_{i}$ для расчета. Если тайм-фрейм истек, то новое значение будет добавлено и функция вернет `true`, иначе `false` |
 | double value() const | Получить текущее значение индикатора. Если список элементов для расчета индикатора пуст, то будет выброшено исключение `std::out_of_range` |
 | void clear() | Очистить список элементов по которым считается значение индикатора |
@@ -1085,12 +1098,12 @@ $n$ - количество значений исходной функции (ц�
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
-| BB() | создать объект с пустым расписанием и с `TradingDays` портфеля |
-| BB(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| BB(const schedule& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| BB(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| BB(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| BB(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| BB() | создать объект с пустым расписанием |
+| BB(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием |
+| BB(const schedule& sch) | создать объект c расписанием |
+| BB(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| BB(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| BB(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
 
 
 Методы `BB`:
@@ -1103,8 +1116,8 @@ $n$ - количество значений исходной функции (ц�
 | void set_timeframe(size_t timeframe) | Задать тайм-фрейм для расчетов (в секундах), значение данного параметра должно быть целым числом из отрезка `[1, 86400]` (значение по умолчанию 1 секунда), в противном случае будет выброшено исключение `std::invalid_argument`. При изменении таймфрейма накопленная для расчетов очередь значений очищается  |
 | double d() const | Получить $d$ |
 | void set_d(double d) | Задать $d$, значение данного параметра должно быть дробным числом из отрезка `[1, 1000]` (значение по умолчанию 4), в противном случае будет выброшено исключение `std::invalid_argument` |
-| int trading_days() const | Получить `TradingDays` индикатора |
-| void set_trading_days(int trading_days) | Задать `TradingDays`, значение данного параметра должно быть целым числом из отрезка `[0, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
+| int trading_days() const | Получить `Trading days` индикатора |
+| void set_trading_days(int trading_days) | Задать `Trading days`, значение данного параметра должно быть целым числом из отрезка `[1, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
 | bool update(double p) | Добавить новое значение $p_{i}$ для расчета. Если тайм-фрейм истек, то новое значение будет добавлено и функция вернет `true`, иначе `false` |
 | double value() const | Получить текущее значение ML индикатора. Если список элементов для расчета индикатора пуст, то будет выброшено исключение `std::out_of_range` |
 | double tl() const | Получить текущее значение TL индикатора. Если список элементов для расчета индикатора пуст, то будет выброшено исключение `std::out_of_range` |
@@ -1149,12 +1162,12 @@ $n + 1$ - количество значений исходной функции 
 
 | Конструктор                                         | Описание                                                                  |
 |-----------------------------------------------------|---------------------------------------------------------------------------|
-| RSI() | создать объект с пустым расписанием и с `TradingDays` портфеля |
-| RSI(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| RSI(const schedule& sch) | создать объект c расписанием и с `TradingDays` портфеля |
-| RSI(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| RSI(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
-| RSI(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием и с `TradingDays` портфеля, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| RSI() | создать объект с пустым расписанием |
+| RSI(const std::vector&lt;interval&gt;& sch) | создать объект c расписанием |
+| RSI(const schedule& sch) | создать объект c расписанием |
+| RSI(const std::string& key, bool load = true, bool save = ...) | создать объект с пустым расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| RSI(const std::vector&lt;interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
+| RSI(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | создать объект c расписанием, [принцип работы `key`, `load`, `save` описан тут](#shared-memory) |
 
 
 Методы `RSI`:
@@ -1165,8 +1178,8 @@ $n + 1$ - количество значений исходной функции 
 | void set_length(size_t n) | Задать количество элементов для расчета, значение данного параметра должно быть целым числом из отрезка `[1, 10000]` (значение по умолчания 10), в противном случае будет выброшено исключение `std::invalid_argument`  |
 | size_t timeframe() const | Получить тайм-фрейм расчетов, т.е. с какой периодичностью получать $p_{i}$|
 | void set_timeframe(size_t timeframe) | Задать тайм-фрейм для расчетов (в секундах), значение данного параметра должно быть целым числом из отрезка `[1, 86400]` (значение по умолчанию 1 секунда), в противном случае будет выброшено исключение `std::invalid_argument`. При изменении таймфрейма накопленная для расчетов очередь значений очищается  |
-| int trading_days() const | Получить `TradingDays` индикатора |
-| void set_trading_days(int trading_days) | Задать `TradingDays`, значение данного параметра должно быть целым числом из отрезка `[0, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
+| int trading_days() const | Получить `Trading days` индикатора |
+| void set_trading_days(int trading_days) | Задать `Trading days`, значение данного параметра должно быть целым числом из отрезка `[1, 127]`, в противном случае будет выброшено исключение `std::invalid_argument`  |
 | bool update(double p) | Добавить новое значение $p_{i}$ для расчета. Если тайм-фрейм истек, то новое значение будет добавлено и функция вернет `true`, иначе `false` |
 | double value() const | Получить текущее значение индикатора. Если список элементов для расчета индикатора пуст, то будет выброшено исключение `std::out_of_range` |
 | void clear() | Очистить список элементов по которым считается значение индикатора |
@@ -1559,7 +1572,7 @@ return sma.value();// get current SMA value
 ```
 ---
 
-Пример расчета `EMA` с использованием расписания (`TradingDays` берутся из портфеля, тайм-фрейм 1 секунда и 10 значений для усреднения):
+Пример расчета `EMA` с использованием расписания (`Trading days` по умочанию все семь дней недели, тайм-фрейм 1 секунда и 10 значений для усреднения):
 ```C
 security s = get_security();// get main security
 static indicators::EMA ema({{{7, 0}, {18, 45}}, {{19, 0}, {23, 50}}});// initialize EMA with trading schedule: 7:00-18:45, 19:00-23:50
@@ -1568,10 +1581,16 @@ return ema.value();// get current EMA value
 ```
 ---
 
+Пример задания разного расписания для разных дней недели:
+```C
+static indicators::EMA ema({WHOLE_WEEK, {{7, 0}, {18, 45}}, {WORK_WEEK, {19, 0}, {23, 50}}});// initialize EMA with trading schedule: 7:00-18:45 for whole week, 19:00-23:50 only for Monday, Tuesday, Wednesday, Thursday, Friday
+```
+---
+
 Пример расчета `Var` с использованием значений пользовательских полей для настройки параметров индикатора и с обработкой отсутствия цен по заданному финансовому инструменту:
 ```C
 portfolio p = get_portfolio();// get current portfolio
-user_value td = p.uf0();// get TradingDays value from user field 0
+user_value td = p.uf0();// get Trading days value from user field 0
 user_value len = p.uf1();// get length value from user field 1
 user_value tf = p.uf2();// get timeframe value from user field 2
 security s = get_security();// get main security
@@ -1579,7 +1598,7 @@ security s = get_security();// get main security
 static indicators::Var v({{{7, 0}, {23, 0}}});// initialize Var with trading schedule: 7:00-23:00
 v.set_timeframe(tf.value());// set timeframe value from user field 2
 v.set_length(len.value());// set length value from user field 1
-v.set_trading_days(td.value());// set TradingDays value from user field 0
+v.set_trading_days(td.value());// set Trading days value from user field 0
 
 try// try to catch exception
 {
@@ -1592,7 +1611,7 @@ catch(std::range_error& e)// if there is no mid_price value simply return -1
 return v.value();// get current Var value
 ```
 ---
-Примеры задания `TradingDays` индикатора:
+Примеры задания `Trading days` индикатора:
 ```C
 sma.set_trading_days(WD_MONDAY | WD_TUESDAY);// compute indicator value on Monday and Tuesday only
 sma.set_trading_days(WORK_WEEK);// compute indicator value from Monday till Friday
