@@ -111,11 +111,7 @@ This button should be used ONLY IN EXTREME CASES, when trading is disabled for t
 
 - **To0** <Anchor :ids="['portfolio_actions.to0']" /> - restricts trading for selected portfolios, allowing trading only in the direction of position closing. Sets the [To0](params-description.md#p.to0) flag for the selected portfolios.
 
-- **Group TradingDays** <Anchor :ids="['portfolio_actions.trading_days']" /> - allows setting trading days for selected portfolios. Behavior is similar to setting trading days in each portfolio’s settings on the [Timetable](params-description.md#p.trading_days) tab, with the difference that only the entered changes are applied. For example, if two portfolios have different trading day lists—one with Monday, Tuesday, Friday, and another with Monday, Tuesday, Friday, Saturday, Sunday—you can add Thursday to both lists via this widget, but the lists will not become identical.
-    
-  **Important!**  This widget modifies only the list of trading days; the time intervals defining trading hours and the [Timetable](params-description.md#p.use_tt) checkbox itself remain unchanged.
-
-- **Group Timetable** <Anchor :ids="['portfolio_actions.timetable']" /> - allows setting trading intervals for selected portfolios or copying trading intervals from an existing timetable of another portfolio. The behavior is similar to setting trading intervals in each portfolio’s settings on the [Timetable](params-description.md#p.use_tt) tab, with the added ability to copy intervals from another portfolio.
+- **Group Timetable** <Anchor :ids="['portfolio_actions.timetable']" /> - allows setting intervals for selected portfolios or copying intervals from an existing schedule of another portfolio. The behavior is similar to setting the [Timetable](params-description.md#p.use_tt) schedule in each specific portfolio, with the added ability to copy the schedule from another portfolio.
 
     ![Doc](@images/group_timetable.gif)
 

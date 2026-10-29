@@ -9995,47 +9995,6 @@ Example:
               "disabled": false
             },
             {
-              "field": "trading_days",
-              "title": "TradingDays",
-              "formatter": "bitmask_select",
-              "editor": "bitmask_select",
-              "enum_values": [
-                {
-                  "id": 1,
-                  "value": "Sunday"
-                },
-                {
-                  "id": 2,
-                  "value": "Monday"
-                },
-                {
-                  "id": 4,
-                  "value": "Tuesday"
-                },
-                {
-                  "id": 8,
-                  "value": "Wednesday"
-                },
-                {
-                  "id": 16,
-                  "value": "Thursday"
-                },
-                {
-                  "id": 32,
-                  "value": "Friday"
-                },
-                {
-                  "id": 64,
-                  "value": "Saturday"
-                }
-              ],
-              "min": 0,
-              "max": 127,
-              "default": 127,
-              "visible": false,
-              "disabled": false
-            },
-            {
               "field": "sell",
               "title": "Sell",
               "formatter": "float",
@@ -12515,6 +12474,47 @@ Example:
             }
           ],
           "timetable": [
+            {
+              "field": "trading_days",
+              "title": "Trading days",
+              "formatter": "bitmask_select",
+              "editor": "bitmask_select",
+              "enum_values": [
+                {
+                  "id": 1,
+                  "value": "Sunday"
+                },
+                {
+                  "id": 2,
+                  "value": "Monday"
+                },
+                {
+                  "id": 4,
+                  "value": "Tuesday"
+                },
+                {
+                  "id": 8,
+                  "value": "Wednesday"
+                },
+                {
+                  "id": 16,
+                  "value": "Thursday"
+                },
+                {
+                  "id": 32,
+                  "value": "Friday"
+                },
+                {
+                  "id": 64,
+                  "value": "Saturday"
+                }
+              ],
+              "min": 0,
+              "max": 127,
+              "default": 127,
+              "visible": true,
+              "disabled": false
+            },
             {
               "field": "begin",
               "title": "Begin",

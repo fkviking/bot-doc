@@ -787,46 +787,50 @@ Methods of `indicator_info`:
 
 [_Examples of working with indicators and collections placed in `shared memory`._](#__ExampleInd__)
 
-#### `TradingDays` and `schedule` for Indicators
+#### Day-of-Week Numbering, `Trading days`, and `schedule` for Indicators
 
-Indicator calculations typically use prices received from the exchange. If a financial instrument trades 24/7, there are usually no issues with price data. However, for instruments with limited trading hours, it is essential to filter incoming data to avoid recalculating indicators on "zero" or "invalid" prices (e.g., during non-trading periods, auctions, or when the order book is empty).
-To filter such data, indicator objects support two mechanisms:  
-- `TradingDays` – filters by trading days of the week.  
-- `schedule` – filters by time intervals within each day (the same schedule applies to all days).  
+Indicator calculations typically use prices received from the exchange. If a financial instrument trades 24/7, there are usually no issues with price data. However, for instruments with limited trading hours, it is essential to filter incoming data to avoid recalculating indicators on "zero" or "invalid" prices (e.g., during non-trading days and hours, opening auctions, etc.).
 
-By default, an indicator’s `TradingDays` is linked to `TradingDays` of the portfolio in which the indicator is used. This means that if the portfolio’s `TradingDays` changes, the indicator’s `TradingDays` will also change (even if the portfolio itself does not use `TradingDays`).  
+To filter such data, indicator objects have `schedule` — this is a filter by time intervals within the day and by days of the week (each time interval can apply to one or several days of the week).
 
-If a custom `TradingDays` is required, you can explicitly set it for the indicator. `TradingDays` is a bitmask of trading days of the week, with days numbered starting from zero. The 0th bit (counting from right to left) corresponds to Sunday:  
-- Sunday = `1 << 0`  
-- Monday = `1 << 1`  
-- … and so on.  
+A time interval is:
+- a pair of times, i.e., a start time and an end time, both times inclusive;
+- a bitmask of days of the week that this interval applies to (if not specified, it equals all seven days of the week).
 
-By default, an indicator’s `schedule` is empty, meaning no schedule is set and no time filtering is applied.  
-If `schedule` is set, it represents a list of non-overlapping time intervals. Each interval is a pair of times (start and end, both inclusive) within which the indicator will be calculated.
+If none of the `schedule` intervals contained days of the week that this interval applies to upon creation, then `schedule` has a `Trading days` value that is common to all intervals; by default, it equals all seven days of the week. The `Trading days` of an indicator equals the `Trading days` of its `schedule`.
 
-#### Object `indicators::interval`
+`Trading days` of an interval/`schedule`/indicator is a bitmask of trading days of the week. Days of the week are numbered starting from zero (`0` is Sunday, `1` is Monday, and so on). Trading only on Sunday is `1 << 0` (where `<<` is the left-shift operator), trading only on Monday is `1 << 1`, and so on.
 
-**Constructors of `interval`:**
+By default, an indicator's `schedule` is empty, meaning no schedule is set and no time filtering is applied. If `schedule` is not empty, it represents a list of non-overlapping time intervals within which the indicator value needs to be calculated.
+
+#### Object `indicators::interval` <Anchor :ids="['cpp-interval']"/>
+
+Constructors of `interval`:
 
 | Constructor                                | Description                                                                 |
 |--------------------------------------------|-----------------------------------------------------------------------------|
-| interval(day_time b, day_time e)           | Creates a time interval with start at `b` and end at `e`. The condition `b < e` must hold; otherwise, a `std::invalid_argument` exception is thrown. |
+| interval(day_time b, day_time e)           | Creates a time interval with start at `b` and end at `e`. The condition `b < e` must hold; otherwise, a `std::invalid_argument` exception is thrown. **`Trading days` will be set as all days of the week** |
+| interval(int trading_days, day_time b, day_time e) | Creates a time interval with start at `b` and end at `e` for the days given by the bitmask `trading_days`, the conditions `b < e` and $1 \le trading\_days \le 127$ must hold; otherwise, a `std::invalid_argument` exception is thrown |
 
-#### Object `indicators::schedule`
+#### Object `indicators::schedule` <Anchor :ids="['cpp-schedule']"/>
 
-**Constructors of `schedule`:**
+Constructors of `schedule`:
 
 | Constructor                                | Description                                                                 |
 |--------------------------------------------|-----------------------------------------------------------------------------|
 | schedule()                                 | Creates an empty schedule.                                                  |
-| schedule(const std::vector&lt;interval&gt;& sch)  | Creates a schedule initialized with a list of non-overlapping intervals sorted in ascending order. If intervals overlap or are unsorted, a `std::invalid_argument` exception is thrown. |
+| schedule(const std::vector&lt;interval&gt;& sch)  | Creates a schedule initialized with a list of non-overlapping intervals. If intervals overlap, a `std::invalid_argument` exception is thrown. **The schedule intervals, when constructed, must either all contain `trading days` or all not contain `trading days`; otherwise, a `std::invalid_argument` exception is thrown** |
 | schedule(const schedule& sch)              | Copy constructor.                                                           |
 
 **Methods of `schedule`:**
 
 | Method                         | Description                                                                 |
 |--------------------------------|-----------------------------------------------------------------------------|
-| bool is_in(const day_time& dt) const | Checks whether the specified time is within one of the schedule intervals. |
+| bool empty() const | Checks whether the schedule is empty |
+| bool is_in(const day_time& dt) const | Checks whether the specified time is within one of the schedule intervals (**returns `true` if the schedule is empty**) |
+| bool is_in(int wd, const day_time& dt) const | Checks whether the specified time is within one of the schedule intervals for a given day of the week, $0 \le wd \le 6$ (**returns `true` if the schedule is empty**) |
+| int trading_days() const | Returns the `trading days` of the schedule. **Returns `0` if the schedule intervals contained `trading days` in their constructors upon creation** |
+| void set_trading_days(int trading_days) | Sets the `trading days` of all intervals; the value of this parameter must be an integer from the range `[1, 127]`, otherwise a `std::invalid_argument` exception is thrown. **The `trading days` can be set this way only if all schedule intervals did NOT contain `trading days` in their constructors upon creation** |
 
 ---
 
@@ -861,12 +865,12 @@ where:
 
 | Constructor                        | Description                                                                 |
 |------------------------------------|-----------------------------------------------------------------------------|
-| SMA()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
-| SMA(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
-| SMA(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
-| SMA(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| SMA(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| SMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
+| SMA()                              | Creates an object with an empty schedule. |
+| SMA(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule.               |
+| SMA(const schedule& sch)                  | Creates an object with a schedule.               |
+| SMA(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| SMA(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| SMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 
 **Methods of `SMA`:**
@@ -877,8 +881,8 @@ where:
 | void set_length(size_t n)            | Sets the number of elements used in calculation. Must be an integer in `[1, 10000]` (default = 10). Otherwise throws `std::invalid_argument`. |
 | size_t timeframe() const             | Returns the calculation timeframe, i.e., how often $p_{i}$ values are taken. |
 | void set_timeframe(size_t timeframe) | Sets the calculation timeframe in seconds. Must be an integer in `[1, 86400]` (default = 1 second). Otherwise throws `std::invalid_argument`. Changing the timeframe clears the accumulated value queue. |
-| int trading_days() const             | Returns the indicator’s `TradingDays`.                                      |
-| void set_trading_days(int td)        | Sets the indicator’s `TradingDays`. Must be an integer in `[0, 127]`. Otherwise throws `std::invalid_argument`. |
+| int trading_days() const             | Returns the indicator’s `Trading days`.                                      |
+| void set_trading_days(int td)        | Sets the indicator’s `Trading days`. Must be an integer in `[1, 127]`. Otherwise throws `std::invalid_argument`. |
 | bool update(double p)                | Adds a new value $p_{i}$ for calculation. If the timeframe has elapsed, the value is added and the function returns `true`; otherwise `false`. |
 | double value() const                 | Returns the current indicator value. Throws `std::out_of_range` if no elements are available. |
 | void clear()                         | Clears the list of elements used for calculation.                           |
@@ -902,12 +906,12 @@ where:
 
 | Constructor                        | Description                                                                 |
 |------------------------------------|-----------------------------------------------------------------------------|
-| EMA()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
-| EMA(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
-| EMA(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
-| EMA(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| EMA(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| EMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
+| EMA()                              | Creates an object with an empty schedule. |
+| EMA(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule.               |
+| EMA(const schedule& sch)                  | Creates an object with a schedule.               |
+| EMA(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| EMA(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| EMA(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 
 **Methods of `EMA`:**
@@ -918,8 +922,8 @@ where:
 | void set_length(size_t n)            | Sets the number of elements used in calculation. Must be an integer in `[1, 10000]` (default = 10). Otherwise throws `std::invalid_argument`. |
 | size_t timeframe() const             | Returns the calculation timeframe, i.e., how often $p_i$ values are taken.  |
 | void set_timeframe(size_t timeframe) | Sets the calculation timeframe in seconds. Must be an integer in `[1, 86400]` (default = 1 second). Otherwise throws `std::invalid_argument`. Changing the timeframe clears the accumulated value queue. |
-| int trading_days() const             | Returns the indicator’s `TradingDays`.                                      |
-| void set_trading_days(int td)        | Sets the indicator’s `TradingDays`. Must be an integer in `[0, 127]`. Otherwise throws `std::invalid_argument`. |
+| int trading_days() const             | Returns the indicator’s `Trading days`.                                      |
+| void set_trading_days(int td)        | Sets the indicator’s `Trading days`. Must be an integer in `[1, 127]`. Otherwise throws `std::invalid_argument`. |
 | bool update(double p)                | Adds a new value $p_i$ for calculation. If the timeframe has elapsed, the value is added and the function returns `true`; otherwise `false`. |
 | double value() const                 | Returns the current indicator value. Throws `std::out_of_range` if no elements are available. |
 | void clear()                         | Clears the list of elements used for calculation.                           |
@@ -944,12 +948,12 @@ where:
 
 | Constructor                        | Description                                                                 |
 |------------------------------------|-----------------------------------------------------------------------------|
-| Max()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
-| Max(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
-| Max(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
-| Max(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| Max(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| Max(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
+| Max()                              | Creates an object with an empty schedule. |
+| Max(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule.               |
+| Max(const schedule& sch)                  | Creates an object with a schedule.               |
+| Max(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Max(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Max(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 
 **Methods of `Max`:**
@@ -960,8 +964,8 @@ where:
 | void set_length(size_t n)            | Sets the number of elements used in calculation. Must be an integer in `[1, 10000]` (default = 10). Otherwise throws `std::invalid_argument`. |
 | size_t timeframe() const             | Returns the calculation timeframe, i.e., how often $p_i$ values are taken.  |
 | void set_timeframe(size_t timeframe) | Sets the calculation timeframe in seconds. Must be an integer in `[1, 86400]` (default = 1 second). Otherwise throws `std::invalid_argument`. Changing the timeframe clears the accumulated value queue. |
-| int trading_days() const             | Returns the indicator’s `TradingDays`.                                      |
-| void set_trading_days(int td)        | Sets the indicator’s `TradingDays`. Must be an integer in `[0, 127]`. Otherwise throws `std::invalid_argument`. |
+| int trading_days() const             | Returns the indicator’s `Trading days`.                                      |
+| void set_trading_days(int td)        | Sets the indicator’s `Trading days`. Must be an integer in `[1, 127]`. Otherwise throws `std::invalid_argument`. |
 | bool update(double p)                | Adds a new value $p_i$ for calculation. If the timeframe has elapsed, the value is added and the function returns `true`; otherwise `false`. |
 | double value() const                 | Returns the current indicator value. Throws `std::out_of_range` if no elements are available. |
 | void clear()                         | Clears the list of elements used for calculation.                           |
@@ -986,12 +990,12 @@ where:
 
 | Constructor                        | Description                                                                 |
 |------------------------------------|-----------------------------------------------------------------------------|
-| Min()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
-| Min(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
-| Min(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
-| Min(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| Min(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| Min(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
+| Min()                              | Creates an object with an empty schedule. |
+| Min(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule.               |
+| Min(const schedule& sch)                  | Creates an object with a schedule.               |
+| Min(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Min(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Min(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 **Methods of `Min`:**
 
@@ -1001,8 +1005,8 @@ where:
 | void set_length(size_t n)            | Sets the number of elements used in calculation. Must be an integer in `[1, 10000]` (default = 10). Otherwise throws `std::invalid_argument`. |
 | size_t timeframe() const             | Returns the calculation timeframe, i.e., how often $p_i$ values are taken.  |
 | void set_timeframe(size_t timeframe) | Sets the calculation timeframe in seconds. Must be an integer in `[1, 86400]` (default = 1 second). Otherwise throws `std::invalid_argument`. Changing the timeframe clears the accumulated value queue. |
-| int trading_days() const             | Returns the indicator’s `TradingDays`.                                      |
-| void set_trading_days(int td)        | Sets the indicator’s `TradingDays`. Must be an integer in `[0, 127]`. Otherwise throws `std::invalid_argument`. |
+| int trading_days() const             | Returns the indicator’s `Trading days`.                                      |
+| void set_trading_days(int td)        | Sets the indicator’s `Trading days`. Must be an integer in `[1, 127]`. Otherwise throws `std::invalid_argument`. |
 | bool update(double p)                | Adds a new value $p_i$ for calculation. If the timeframe has elapsed, the value is added and the function returns `true`; otherwise `false`. |
 | double value() const                 | Returns the current indicator value. Throws `std::out_of_range` if no elements are available. |
 | void clear()                         | Clears the list of elements used for calculation.                           |
@@ -1027,12 +1031,12 @@ where:
 
 | Constructor                        | Description                                                                 |
 |------------------------------------|-----------------------------------------------------------------------------|
-| Var()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
-| Var(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
-| Var(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
-| Var(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| Var(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| Var(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
+| Var()                              | Creates an object with an empty schedule. |
+| Var(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule.               |
+| Var(const schedule& sch)                  | Creates an object with a schedule.               |
+| Var(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Var(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| Var(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 
 **Methods of `Var`:**
@@ -1043,8 +1047,8 @@ where:
 | void set_length(size_t n)            | Sets the number of elements used in calculation. Must be an integer in `[1, 10000]` (default = 10). Otherwise throws `std::invalid_argument`. |
 | size_t timeframe() const             | Returns the calculation timeframe, i.e., how often $p_i$ values are taken.  |
 | void set_timeframe(size_t timeframe) | Sets the calculation timeframe in seconds. Must be an integer in `[1, 86400]` (default = 1 second). Otherwise throws `std::invalid_argument`. Changing the timeframe clears the accumulated value queue. |
-| int trading_days() const             | Returns the indicator’s `TradingDays`.                                      |
-| void set_trading_days(int td)        | Sets the indicator’s `TradingDays`. Must be an integer in `[0, 127]`. Otherwise throws `std::invalid_argument`. |
+| int trading_days() const             | Returns the indicator’s `Trading days`.                                      |
+| void set_trading_days(int td)        | Sets the indicator’s `Trading days`. Must be an integer in `[1, 127]`. Otherwise throws `std::invalid_argument`. |
 | bool update(double p)                | Adds a new value $p_i$ for calculation. If the timeframe has elapsed, the value is added and the function returns `true`; otherwise `false`. |
 | double value() const                 | Returns the current indicator value. Throws `std::out_of_range` if no elements are available. |
 | void clear()                         | Clears the list of elements used for calculation.                           |
@@ -1069,12 +1073,12 @@ where:
 
 | Constructor                        | Description                                                                 |
 |------------------------------------|-----------------------------------------------------------------------------|
-| StdDev()                           | Creates an object with an empty schedule and portfolio `TradingDays`.        |
-| StdDev(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
-| StdDev(const schedule& sch)               | Creates an object with a schedule and portfolio `TradingDays`.               |
-| StdDev(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| StdDev(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| StdDev(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
+| StdDev()                           | Creates an object with an empty schedule. |
+| StdDev(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule.               |
+| StdDev(const schedule& sch)               | Creates an object with a schedule.               |
+| StdDev(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| StdDev(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| StdDev(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 
 **Methods of `StdDev`:**
@@ -1085,8 +1089,8 @@ where:
 | void set_length(size_t n)            | Sets the number of elements used in calculation. Must be an integer in `[1, 10000]` (default = 10). Otherwise throws `std::invalid_argument`. |
 | size_t timeframe() const             | Returns the calculation timeframe, i.e., how often $p_i$ values are taken.  |
 | void set_timeframe(size_t timeframe) | Sets the calculation timeframe in seconds. Must be an integer in `[1, 86400]` (default = 1 second). Otherwise throws `std::invalid_argument`. Changing the timeframe clears the accumulated value queue. |
-| int trading_days() const             | Returns the indicator’s `TradingDays`.                                      |
-| void set_trading_days(int td)        | Sets the indicator’s `TradingDays`. Must be an integer in `[0, 127]`. Otherwise throws `std::invalid_argument`. |
+| int trading_days() const             | Returns the indicator’s `Trading days`.                                      |
+| void set_trading_days(int td)        | Sets the indicator’s `Trading days`. Must be an integer in `[1, 127]`. Otherwise throws `std::invalid_argument`. |
 | bool update(double p)                | Adds a new value $p_i$ for calculation. If the timeframe has elapsed, the value is added and the function returns `true`; otherwise `false`. |
 | double value() const                 | Returns the current indicator value. Throws `std::out_of_range` if no elements are available. |
 | void clear()                         | Clears the list of elements used for calculation.                           |
@@ -1119,12 +1123,12 @@ where:
 
 | Constructor                        | Description                                                                 |
 |------------------------------------|-----------------------------------------------------------------------------|
-| BB()                               | Creates an object with an empty schedule and portfolio `TradingDays`.        |
-| BB(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
-| BB(const schedule& sch)                   | Creates an object with a schedule and portfolio `TradingDays`.               |
-| BB(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| BB(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| BB(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
+| BB()                               | Creates an object with an empty schedule. |
+| BB(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule.               |
+| BB(const schedule& sch)                   | Creates an object with a schedule.               |
+| BB(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| BB(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| BB(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 
 **Methods of `BB`:**
@@ -1137,8 +1141,8 @@ where:
 | void set_timeframe(size_t timeframe) | Sets the calculation timeframe in seconds. Must be an integer in `[1, 86400]` (default = 1 second). Otherwise throws `std::invalid_argument`. Changing the timeframe clears the accumulated value queue. |
 | double d() const                     | Returns the value of $d$.                                                   |
 | void set_d(double d)                 | Sets the value of $d$. Must be a floating-point number in `[1, 1000]` (default = 4). Otherwise throws `std::invalid_argument`. |
-| int trading_days() const             | Returns the indicator’s `TradingDays`.                                      |
-| void set_trading_days(int td)        | Sets the indicator’s `TradingDays`. Must be an integer in `[0, 127]`. Otherwise throws `std::invalid_argument`. |
+| int trading_days() const             | Returns the indicator’s `Trading days`.                                      |
+| void set_trading_days(int td)        | Sets the indicator’s `Trading days`. Must be an integer in `[1, 127]`. Otherwise throws `std::invalid_argument`. |
 | bool update(double p)                | Adds a new value $p_i$ for calculation. If the timeframe has elapsed, the value is added and the function returns `true`; otherwise `false`. |
 | double value() const                 | Returns the current ML value. Throws `std::out_of_range` if no elements are available. |
 | double tl() const                    | Returns the current TL value. Throws `std::out_of_range` if no elements are available. |
@@ -1186,12 +1190,12 @@ $n + 1$ — number of source values used for calculation (`RSI`).
 
 | Constructor                        | Description                                                                 |
 |------------------------------------|-----------------------------------------------------------------------------|
-| RSI()                              | Creates an object with an empty schedule and portfolio `TradingDays`.        |
-| RSI(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule and portfolio `TradingDays`.               |
-| RSI(const schedule& sch)                  | Creates an object with a schedule and portfolio `TradingDays`.               |
-| RSI(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| RSI(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and the `TradingDays` portfolio, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
-| RSI(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule and with `TradingDays` of the portfolio, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
+| RSI()                              | Creates an object with an empty schedule. |
+| RSI(const std::vector&lt;interval&gt;& sch) | Creates an object with a schedule.               |
+| RSI(const schedule& sch)                  | Creates an object with a schedule.               |
+| RSI(const std::string& key, bool load = true, bool save = ...) | Creates an object with an empty schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| RSI(const std::vector&interval&gt;& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the operating principle of `key`, `load`, `save` is described here](#shared-memory) |
+| RSI(const schedule& sch, const std::string& key, bool load = true, bool save = ...) | Creates an object with a schedule, [the principle of `key`, `load`, `save` operation is described here](#shared-memory) |
 
 
 **Methods of `RSI`:**
@@ -1202,8 +1206,8 @@ $n + 1$ — number of source values used for calculation (`RSI`).
 | void set_length(size_t n)            | Sets the number of elements used in calculation. Must be an integer in `[1, 10000]` (default = 10). Otherwise throws `std::invalid_argument`. |
 | size_t timeframe() const             | Returns the calculation timeframe, i.e., how often $p_i$ values are taken.  |
 | void set_timeframe(size_t timeframe) | Sets the calculation timeframe in seconds. Must be an integer in `[1, 86400]` (default = 1 second). Otherwise throws `std::invalid_argument`. Changing the timeframe clears the accumulated value queue. |
-| int trading_days() const             | Returns the indicator’s `TradingDays`.                                      |
-| void set_trading_days(int td)        | Sets the indicator’s `TradingDays`. Must be an integer in `[0, 127]`. Otherwise throws `std::invalid_argument`. |
+| int trading_days() const             | Returns the indicator’s `Trading days`.                                      |
+| void set_trading_days(int td)        | Sets the indicator’s `Trading days`. Must be an integer in `[1, 127]`. Otherwise throws `std::invalid_argument`. |
 | bool update(double p)                | Adds a new value $p_i$ for calculation. If the timeframe has elapsed, the value is added and the function returns `true`; otherwise `false`. |
 | double value() const                 | Returns the current indicator value. Throws `std::out_of_range` if no elements are available. |
 | void clear()                         | Clears the list of elements used for calculation.                           |
@@ -1604,7 +1608,7 @@ return sma.value();// get current SMA value
 ```
 ---
 
-Example of calculating `EMA` using a schedule (`TradingDays` are taken from the portfolio, 1-second timeframe and 10 values for averaging):
+Example of calculating `EMA` using a schedule (`Trading days` by default are all seven days of the week, 1-second timeframe and 10 values for averaging):
 ```C
 security s = get_security();// get main security
 static indicators::EMA ema({{{7, 0}, {18, 45}}, {{19, 0}, {23, 50}}});// initialize EMA with trading schedule: 7:00-18:45, 19:00-23:50
@@ -1613,10 +1617,16 @@ return ema.value();// get current EMA value
 ```
 ---
 
+Example of setting different schedules for different days of the week:
+```
+static indicators::EMA ema({WHOLE_WEEK, {{7, 0}, {18, 45}}, {WORK_WEEK, {19, 0}, {23, 50}}});// initialize EMA with trading schedule: 7:00-18:45 for whole week, 19:00-23:50 only for Monday, Tuesday, Wednesday, Thursday, Friday
+```
+---
+
 Example of calculating `Var` using user field values to configure indicator parameters and handling missing prices for a given financial instrument:
 ```C
 portfolio p = get_portfolio();// get current portfolio
-user_value td = p.uf0();// get TradingDays value from user field 0
+user_value td = p.uf0();// get Trading days value from user field 0
 user_value len = p.uf1();// get length value from user field 1
 user_value tf = p.uf2();// get timeframe value from user field 2
 security s = get_security();// get main security
@@ -1624,7 +1634,7 @@ security s = get_security();// get main security
 static indicators::Var v({{{7, 0}, {23, 0}}});// initialize Var with trading schedule: 7:00-23:00
 v.set_timeframe(tf.value());// set timeframe value from user field 2
 v.set_length(len.value());// set length value from user field 1
-v.set_trading_days(td.value());// set TradingDays value from user field 0
+v.set_trading_days(td.value());// set Trading days value from user field 0
 
 try// try to catch exception
 {
@@ -1637,7 +1647,7 @@ catch(std::range_error& e)// if there is no mid_price value simply return -1
 return v.value();// get current Var value
 ```
 ---
-Examples of Setting `TradingDays` for an Indicator:
+Examples of Setting `Trading days` for an Indicator:
 ```C
 sma.set_trading_days(WD_MONDAY | WD_TUESDAY);// compute indicator value on Monday and Tuesday only
 sma.set_trading_days(WORK_WEEK);// compute indicator value from Monday till Friday

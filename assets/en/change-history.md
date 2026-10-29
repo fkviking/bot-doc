@@ -7,6 +7,19 @@ summary: 'What changed in the robot and the documentation from version to versio
 
 # Change Log
 
+## 2026-11-10
+
+- The ability to configure the portfolio's trading schedule separately for each day of the week has been added. In connection with this:
+    * The portfolio [TradingDays](params-description.md#p.trading_days) parameter has been removed;
+    * The [Trading days](params-description.md#p.trading_days) column has been added to the [Timetable](params-description.md#p.use_tt) table of the portfolio;
+    * The `Group TradingDays` item has been removed from the `Actions` menu of the [Portfolios table](interface.md#portfolios_table) widget.
+- The ability to configure the calculation schedule for [indicators](c-api.md#indicators-docs) values separately for each day of the week has been added. In connection with this:
+    * A new constructor accounting for days of the week has been added to the [`interval`](c-api.md#cpp-interval) object in the C++ interface;
+    * A new overloaded `is_in` method accounting for the day of the week has been added to the [`schedule`](c-api.md#cpp-schedule) object in the C++ interface.
+- **In connection with the removal of the portfolio [TradingDays](params-description.md#p.trading_days) parameter and its addition to each interval in the [Timetable](params-description.md#p.use_tt) table of the portfolio:**
+    * **If this parameter was used in any way through the [WebSocket API](api.md), the client code implementation must be changed, as the changes in the robot DO NOT maintain backward compatibility;**
+    * **The current settings of ALL portfolios also do not maintain backward compatibility: all intervals in the schedule will have all days of the week set as the [Trading days](params-description.md#p.trading_days) value by default, and users will have to change the days to the required ones themselves for all intervals of all portfolios.**
+
 ## 2026-10-20
 
 - Added non-editable portfolio parameter [Pos0](params-description.md#p.pos0);

@@ -548,27 +548,28 @@ Where Curpos<sub>first</sub> and Count<sub>first</sub> - are the [Curpos](params
 
 ### Timetable <Anchor :ids="['p.use_tt', 'p.trading_days', 'p.begin', 'p.end', 'p.a_sell', 'p.a_buy', 'p.auto_to0', 'p.auto_close', 'p.save_history', 'p.auto_to_market']" />
 
-Enable trading according to a schedule. The schedule consists of a list of weekdays specifying the days on which trading will be active, and a list of trading periods (the same for all trading days), each with its own set of parameters:
+Enable trading according to a schedule. The schedule consists of a list of intervals (each interval can apply to one or several trading days), and each interval has its own set of parameters:
 
-`Begin` - start of the trading period.\
-`End` - end of the trading period.\
-`re_sell` -  behavior of [re_sell](params-description.md#p.re_sell) during this interval: always enable, always disable, or "manual" mode.\
-`re_buy` - behavior of [re_buy](params-description.md#p.re_buy) during this interval: always enable, always disable, or "manual" mode.\
-`Close` -  attempt to close the position immediately after the end of the trading period (within 10 seconds). Position closure is not guaranteed, as orders may fail to be placed due to external reasons.\
-`To market` - attempt to flatten the position immediately after the end of the trading period (within 10 seconds). Position flattening is not guaranteed, as orders may fail to be placed due to external reasons.\
-`To0` - behavior of [To0](params-description.md#p.to0) during this interval: always enable, always disable, or "manual" mode.\
-`Save history` - whether to save the history of changes to certain portfolio parameters during this interval.
+- `Trading days` - the days of the week for which this interval applies;
+- `Begin` - start of the interval (inclusive);
+- `End` - end of the interval (inclusive);
+- `re_sell` - what to do with [re_sell](params-description.md#p.re_sell) during this interval: always enable, always disable, or "manual" mode;
+- `re_buy` - what to do with [re_buy](params-description.md#p.re_buy) during this interval: always enable, always disable, or "manual" mode;
+- `Close` - attempt to close the position immediately after the end of the interval (within `10` seconds). Position closure is not guaranteed, as orders may fail to be placed and/or filled for reasons beyond our control.
+- `To market` - attempt to align the position immediately after the end of the interval (within `10` seconds). Position alignment is not guaranteed, as orders may fail to be placed and/or filled for reasons beyond our control.
+- `To0` - what to do with [To0](params-description.md#p.to0) during this interval: always enable, always disable, or "manual" mode.
+- `Save history` - whether to save the history of changes to certain portfolio parameters during this interval.
 
-If the current local server time (`curTime`) falls within one of the defined periods, i.e., $Begin_i \le curTime \le End_i$, control over the above-mentioned portfolio parameters is transferred to the schedule. Otherwise (if the current time does not fall within any of the periods), the aforementioned parameters are automatically disabled.
+If the current local server time (`curTime`) falls within one of the intervals, i.e., $Begin_i \le curTime \le End_i$, control over the above-mentioned portfolio parameters is transferred to the schedule; otherwise (if the current time does not fall within any of the intervals), the aforementioned parameters are automatically disabled.
 
 The "manual" mode means that the respective portfolio parameter is not controlled by the schedule during that time interval, i.e., the user can adjust the parameter manually even when the schedule is active.
 
-The weekly trading schedule can also be applied to multiple portfolios simultaneously by selecting them in the [Portfolios table](interface.md#portfolios_table) widget and choosing the [TradingDays](getting-started.md#portfolio_actions.trading_days) option from the `Actions` menu.
+The schedule can also be applied to multiple portfolios simultaneously by selecting them in the [Portfolios table](interface.md#portfolios_table) widget and choosing the [Group Timetable](getting-started.md#portfolio_actions.timetable) option from the `Actions` menu.
 
 
 **Important!** Current time is determined by the server clock where the robot is running. Currently, for robots trading on cryptocurrency exchanges, this is UTC; for all others, it is UTC+3 (MSK). The server time is displayed in the [Robots](interface.md#robots_table) widget under the `Robot time` column.It is strongly recommended to use this time as reference.
 
-**Important!** There is a difference between two scenarios: (1) when a non-trading period is explicitly defined between trading periods, starting exactly at the end of one trading period and ending just before the next, and (2) when there is a time gap between trading periods but no non-trading period is defined in the schedule. In the second case, all flags described above will be automatically disabled during the gap. In the first case, the behavior can be specifically configured.
+**Important!** There is a difference between two scenarios: (1) when a non-trading interval is explicitly defined between trading intervals, starting exactly at the end of one trading interval and ending just before the next, and (2) when there is a time gap between trading intervals but no non-trading interval is defined in the schedule. In the second case, all flags described above will be automatically disabled between the intervals. In the first case, the behavior can be specifically configured.
 
 ### To0 <Anchor :ids="['p.to0']" />
 
