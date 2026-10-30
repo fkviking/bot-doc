@@ -42,7 +42,8 @@ export default {
     },
     
     navbarHeight() {
-      return this.$root.$el.querySelector('.navbar')?.offsetHeight || 58;
+      const root = this.$root.$el;
+      return (root.querySelector('.navbar')?.offsetHeight || 58) + (root.querySelector('.announcement-bar')?.offsetHeight || 0);
     },
 
     locale() {

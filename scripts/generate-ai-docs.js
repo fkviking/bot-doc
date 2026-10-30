@@ -137,7 +137,9 @@ function removeEditorBanner (markdown) {
 
 /** Removes the <Anchor> component from headings. */
 function headingAnchors (markdown) {
-  return markdown.replace(/^(#{1,6})\s+<Anchor\b[^>]*?\/>\s*/gm, '$1 ')
+  return markdown
+    .replace(/^(#{1,6})\s+<Anchor\b[^>]*?\/>\s*/gm, '$1 ')
+    .replace(/^(#{1,6}\s.*?)\s*<Badge\b[^>]*?\btext="([^"]*)"[^>]*?\/>/gm, '$1 — $2')
 }
 
 function standardAnchors (text) {
@@ -341,19 +343,42 @@ function twinBody (sourcePath, locale) {
   return transformOutsideFences(plain, locale).trim()
 }
 
-/** Builds the Markdown twin of a page: its pre-processed text without Vue markup. */
-function generateMarkdownTwin (sourcePath, locale) {
-  return `${twinBody(sourcePath, locale)}\n`
+/** Renders the site announcement as a Markdown quote with an absolute link, or '' when there is none. */
+function announcementNotice (locale, announcement) {
+  if (!announcement || !announcement.text) return ''
+  const { label, text, link } = announcement
+  let notice = `> ${label ? `**${label}:** ` : ''}${text}`
+  if (link) {
+    let href = link.href
+    if (!/^https?:\/\//.test(href)) {
+      const [file, hash] = href.split('#')
+      href = markdownUrl(locale, file.replace(/\.(md|html)$/, '')) + (hash ? `#${hash}` : '')
+    }
+    notice += ` [${link.text}](${href})`
+  }
+  return notice
+}
+
+function localeAnnouncement (locale) {
+  return config.themeConfig.locales[locale === 'en' ? '/en/' : '/'].announcement
+}
+
+/** Builds the Markdown twin of a page: the announcement, if any, then its pre-processed text without Vue markup. */
+function generateMarkdownTwin (sourcePath, locale, announcement = localeAnnouncement(locale)) {
+  const notice = announcementNotice(locale, announcement)
+  return `${notice ? `${notice}\n\n` : ''}${twinBody(sourcePath, locale)}\n`
 }
 
 /** Builds llms-full.txt: every page of a locale in one file, in sidebar order. */
-function llmsFullDocument (locale, pages) {
+function llmsFullDocument (locale, pages, announcement = localeAnnouncement(locale)) {
   const text = config.aiDocs[locale]
+  const notice = announcementNotice(locale, announcement)
   const header = [
     `# ${text.llmsTitle}`,
     '',
     `> ${text.summary}`,
-    ''
+    '',
+    ...(notice ? [notice, ''] : [])
   ].join('\n')
 
   return `${header}\n${pages.map(page => twinBody(page.sourcePath, locale)).join('\n\n')}\n`
@@ -388,6 +413,7 @@ function declaredAnchor (markup) {
 function sectionTitle (markup) {
   return markup
     .replace(/<Anchor\b[^>]*?\/>/g, '')
+    .replace(/\s*<Badge\b[^>]*?\btext="([^"]*)"[^>]*?\/>/g, ' — $1')
     .replace(/<\/?(?:i|b|em|strong|code)>/gi, '')
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .trim()
@@ -472,13 +498,15 @@ function htmlUrl (locale, slug) {
 }
 
 /** Builds llms.txt in the llmstxt.org shape: title, blurb, link sections, optional tail. */
-function llmsDocument (locale, pages) {
+function llmsDocument (locale, pages, announcement = localeAnnouncement(locale)) {
   const text = config.aiDocs[locale]
+  const notice = announcementNotice(locale, announcement)
   const lines = [
     `# ${text.llmsTitle}`,
     '',
     `> ${text.summary}`,
     '',
+    ...(notice ? [notice, ''] : []),
     text.formats,
     '',
     text.fullNote.replace('{url}', absoluteUrl(sitePath(locale, 'llms-full.txt'))),
@@ -621,6 +649,9 @@ module.exports = {
   absoluteUrl,
   generate,
   generateMarkdownTwin,
+  announcementNotice,
+  llmsDocument,
+  llmsFullDocument,
   transformDestination,
   transformOutsideFences
 }

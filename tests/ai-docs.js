@@ -9,7 +9,11 @@ const {
   sections,
   localePrefix,
   sitePath,
-  absoluteUrl
+  absoluteUrl,
+  announcementNotice,
+  generateMarkdownTwin,
+  llmsDocument,
+  llmsFullDocument
 } = require('../scripts/generate-ai-docs')
 const { themeConfig } = require('../src/.vuepress/config')
 
@@ -95,7 +99,9 @@ function assertFullDocumentIsComplete (locale, pages) {
   assert(!/AUTO-GENERATED/i.test(full), `${fullPath} shows a build banner to the reader`)
 
   pages.forEach(page => {
+    const notice = announcementNotice(locale, themeConfig.locales[locale === 'en' ? '/en/' : '/'].announcement)
     const twin = fs.readFileSync(path.join(OUTPUT_ROOT, `${prefix}docs/${page.slug}.md`), 'utf8')
+      .replace(notice ? `${notice}\n\n` : '', '')
 
     assert(full.includes(twin.trim()), `${fullPath} does not carry the full text of ${page.slug}`)
   })
@@ -172,6 +178,11 @@ function testGeneratedPages () {
       assert(!markdown.includes('@images/'), `${markdownPath} contains @images alias`)
       assert(!/AUTO-GENERATED/i.test(markdown), `${markdownPath} shows a build banner to the reader`)
       assert(!markdown.includes('<Anchor'), `${markdownPath} contains a Vue Anchor component`)
+      assert(!markdown.includes('<Badge'), `${markdownPath} contains a Vue Badge component`)
+      if (page.slug === 'change-history') {
+        const label = locale === 'en' ? 'Breaking changes' : 'Несовместимые изменения'
+        assert(markdown.includes(`## 2026-11-10 — ${label}`), `${markdownPath} lacks the "${label}" heading label`)
+      }
       assertLocalLinksExist(markdownPath)
     })
 
@@ -273,9 +284,41 @@ function testHomeFooterLinks () {
   })
 }
 
+function testAnnouncement () {
+  const read = file => fs.readFileSync(path.join(OUTPUT_ROOT, file), 'utf8')
+  const sample = { label: 'L', text: 'T.', link: { text: 'More', href: 'page.md#anchor' } }
+  const pages = entries('ru')
+  assert.strictEqual(announcementNotice('ru', undefined), '', 'no announcement must give no notice')
+  assert.strictEqual(announcementNotice('en', sample), `> **L:** T. [More](${SITE_ORIGIN}${sitePath('en', 'docs/page.md')}#anchor)`)
+  assert.strictEqual(announcementNotice('ru', { text: 'T', link: { text: 'M', href: 'https://x.test/a' } }), '> T [M](https://x.test/a)')
+  const twin = `> T [M](${SITE_ORIGIN}${sitePath('ru', 'docs/faq.md')}`
+  assert.strictEqual(announcementNotice('ru', { text: 'T', link: { text: 'M', href: 'faq.md' } }), `${twin})`)
+  assert.strictEqual(announcementNotice('ru', { text: 'T', link: { text: 'M', href: 'faq.html#a' } }), `${twin}#a)`)
+  assert.strictEqual(announcementNotice('ru', { label: 'L', text: 'T' }), '> **L:** T')
+  assert.strictEqual(announcementNotice('ru', { text: 'T', link: { text: 'M', href: 'https://t.me/x' } }), '> T [M](https://t.me/x)')
+  assert(!llmsDocument('ru', pages, null).includes('> **'), 'llms.txt must not carry a notice without an announcement')
+  assert(!llmsFullDocument('ru', pages, null).includes('> **'), 'llms-full.txt must not carry a notice without an announcement')
+  assert(!generateMarkdownTwin(pages[0].sourcePath, 'ru', null).startsWith('>'), 'twin must not start with a notice without an announcement')
+
+  const locales = { ru: '/', en: '/en/' }
+  Object.keys(locales).forEach(locale => {
+    const announcement = themeConfig.locales[locales[locale]].announcement
+    if (!announcement) return
+    const prefix = locale === 'en' ? 'en/' : ''
+    const notice = announcementNotice(locale, announcement)
+    assert(notice, `${locale} announcement must render a notice`)
+    assert(read(`${prefix}llms.txt`).includes(notice), `${prefix}llms.txt lacks the notice`)
+    assert.strictEqual(read(`${prefix}llms-full.txt`).split(notice).length - 1, 1, `${prefix}llms-full.txt must hold the notice once`)
+    entries(locale).forEach(page => {
+      assert(read(`${prefix}docs/${page.slug}.md`).startsWith(`${notice}\n\n`), `${prefix}docs/${page.slug}.md lacks the notice`)
+    })
+  })
+}
+
 testGeneratedPages()
 testHtmlDiscovery()
 testJekyllIsDisabled()
 testXmlSitemap()
 testHomeFooterLinks()
+testAnnouncement()
 console.log('AI documentation checks passed')
