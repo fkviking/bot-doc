@@ -7,7 +7,7 @@ summary: 'What changed in the robot and the documentation from version to versio
 
 # Change Log
 
-## 2026-11-10
+## 2026-11-10 <Badge text="Breaking changes" type="warning" vertical="super" />
 
 - The ability to configure the portfolio's trading schedule separately for each day of the week has been added. In connection with this:
     * The portfolio [TradingDays](params-description.md#p.trading_days) parameter has been removed;
@@ -19,6 +19,122 @@ summary: 'What changed in the robot and the documentation from version to versio
 - **In connection with the removal of the portfolio [TradingDays](params-description.md#p.trading_days) parameter and its addition to each interval in the [Timetable](params-description.md#p.use_tt) table of the portfolio:**
     * **If this parameter was used in any way through the [WebSocket API](api.md), the client code implementation must be changed, as the changes in the robot DO NOT maintain backward compatibility;**
     * **The current settings of ALL portfolios also do not maintain backward compatibility: all intervals in the schedule will have all days of the week set as the [Trading days](params-description.md#p.trading_days) value by default, and users will have to change the days to the required ones themselves for all intervals of all portfolios.**
+
+### How to migrate
+
+#### WebSocket API
+
+The `trading_days` field has been removed from the portfolio object and added to each element of the `timetable` array. The value format has not changed: a bitmask of days of the week (`bitmask_select`), `1` is Sunday, `2` is Monday, `4` is Tuesday, `8` is Wednesday, `16` is Thursday, `32` is Friday, `64` is Saturday, the default is `127` (all days). See [api.md](api.md) and [Timetable](params-description.md#p.trading_days) for the field descriptions.
+
+At the portfolio level:
+
+<table>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+<tr>
+<td>
+
+```js
+{
+  "trading_days": 127,
+  "name": "qwe",
+  "decimals": 4,
+  "securities": { … },
+  "timetable": [ … ],
+  // …
+}
+```
+
+</td>
+<td>
+
+```js
+{
+  "name": "qwe",
+  "decimals": 4,
+  "securities": { … },
+  "timetable": [ … ],
+  // …
+}
+```
+
+</td>
+</tr>
+</table>
+
+At the schedule level (`timetable`):
+
+<table>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+<tr>
+<td>
+
+```json
+{
+  "begin": 36000,
+  "end": 67200,
+  "a_sell": 2,
+  "a_buy": 2,
+  "auto_close": false,
+  "auto_to_market": false,
+  "auto_to0": 2,
+  "save_history": false
+}
+```
+
+</td>
+<td>
+
+```json
+{
+  "trading_days": 127,
+  "begin": 36000,
+  "end": 67200,
+  "a_sell": 2,
+  "a_buy": 2,
+  "auto_close": false,
+  "auto_to_market": false,
+  "auto_to0": 2,
+  "save_history": false
+}
+```
+
+</td>
+</tr>
+</table>
+
+If a client read or wrote the portfolio `trading_days`, it must now:
+
+- read `trading_days` from each interval of the portfolio `timetable` instead of from the portfolio itself;
+- write `trading_days` into every `timetable` interval: the field is required (for example, Monday to Friday is `2 + 4 + 8 + 16 + 32 = 62`); the allowed range is `1` to `127`;
+- not send `trading_days` at the portfolio level: a request containing this field is rejected with an error.
+
+##### Existing portfolios
+
+In all existing portfolios, `trading_days` in every `timetable` interval will be `127` (all days of the week). The former portfolio value is not carried over, so users must set [Trading days](params-description.md#p.trading_days) for each interval themselves.
+
+#### C++
+
+A constructor with a bitmask of days of the week has been added to [`interval`](c-api.md#cpp-interval):
+
+```cpp
+interval(int trading_days, day_time b, day_time e)
+```
+
+The conditions `b < e` and $1 \le trading\_days \le 127$ must hold; otherwise, `std::invalid_argument` is thrown. The previous `interval(day_time b, day_time e)` works as before and sets all days of the week.
+
+An overloaded `is_in` method has been added to [`schedule`](c-api.md#cpp-schedule):
+
+```cpp
+bool is_in(int wd, const day_time& dt) const
+```
+
+`wd` is the day of the week, $0 \le wd \le 6$ (`0` is Sunday, `1` is Monday, and so on); like `is_in(const day_time& dt)`, the method returns `true` if the schedule is empty.
 
 ## 2026-10-20
 

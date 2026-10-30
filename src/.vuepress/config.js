@@ -52,6 +52,11 @@ module.exports = {
         title: 'Документация торговых роботов компании "Викинг"',
         description: 'Руководство пользователя, описание алгоритма и API',
         footer: 'ФК Викинг | Copyright © 2010-2026',
+        announcement: {
+          label: 'Важно',
+          text: '10 ноября — несовместимые изменения в WebSocket API и расписании портфелей.',
+          link: { text: 'Подробнее', href: 'change-history.md#2026-11-10' }
+        },
         copyPage: {
           copy: 'Копировать страницу',
           copying: 'Копирую…',
@@ -113,6 +118,11 @@ module.exports = {
         title: 'Documentation for Viking\'s trading robots',
         description: 'User guide, algorithm description and API',
         footer: 'FC Viking | Copyright © 2010-2026',
+        announcement: {
+          label: 'Important',
+          text: 'November 10: breaking changes to the WebSocket API and portfolio schedules.',
+          link: { text: 'Learn more here', href: 'change-history.md#2026-11-10' }
+        },
         copyPage: {
           copy: 'Copy page',
           copying: 'Copying…',
@@ -185,7 +195,8 @@ module.exports = {
         'Ошибки выставления, снятия и изменения заявок — штатное поведение, а не признак поломки робота. Постфикс `LOCAL` означает, что заявку отклонил сам робот и на биржу она не уходила; ошибка без `LOCAL` — ответ биржи, робот лишь транслирует её текст.',
         'Параметры портфеля и параметры отдельных инструментов портфеля — разные наборы; в «Описании параметров» они разведены по разным разделам.',
         'Ссылайтесь на разделы по якорю (`params-description.html#p.sell`), а не по номеру: нумерация заголовков проставляется при сборке и сдвигается при изменении порядка разделов. Якоря вида `#p.sell` и `#faq.license` одинаковы в русской и английской версиях.',
-        'Каждый вопрос из «Часто задаваемых вопросов» адресуется отдельно (`faq.html#faq.license`); полный список вопросов со ссылками — в sitemap.md.'
+        'Каждый вопрос из «Часто задаваемых вопросов» адресуется отдельно (`faq.html#faq.license`); полный список вопросов со ссылками — в sitemap.md.',
+        'Несовместимые изменения и порядок перехода на новую версию описаны в истории изменений (`change-history.html`): в записях, помеченных «Несовместимые изменения»; у каждой есть часть «Как перейти», запись адресуется якорем даты (`change-history.html#<дата>`), одинаковым в русской и английской версиях.'
       ],
       optionalTitle: 'Optional',
       fullNote: 'Вся документация одним файлом: {url}',
@@ -224,7 +235,8 @@ module.exports = {
         'Order submission, cancellation, and modification errors are normal behaviour, not a sign that the robot is broken. A `LOCAL` suffix means the robot rejected the order itself and never sent it to the exchange; an error without `LOCAL` is the exchange\'s own answer, which the robot only relays.',
         'Portfolio parameters and per-instrument parameters are separate sets; "Parameters Description" keeps them in separate sections.',
         'Link to a section by its anchor (`params-description.html#p.sell`), not by its number: heading numbers are generated at build time and shift whenever sections are reordered. Anchors such as `#p.sell` and `#faq.license` are the same in the Russian and English versions.',
-        'Every question in the FAQ is addressable on its own (`faq.html#faq.license`); the full list of questions with links is in sitemap.md.'
+        'Every question in the FAQ is addressable on its own (`faq.html#faq.license`); the full list of questions with links is in sitemap.md.',
+        'Breaking changes and how to migrate are described in the change history (`change-history.html`): in entries marked "Breaking changes"; each has a "How to migrate" part, and the entry is addressed by its date anchor (`change-history.html#<date>`), the same in the Russian and English versions.'
       ],
       optionalTitle: 'Optional',
       fullNote: 'The whole documentation in one file: {url}',
@@ -285,6 +297,15 @@ module.exports = {
     '@vuepress/plugin-medium-zoom',
     aiDiscovery,
   ],
+  // VuePress strips heading HTML with a greedy /<.*>/, so a heading with <Anchor/> and <Badge/> loses its text in the sidebar.
+  extendPageData ($page) {
+    const sources = ($page._strippedContent || '').split('\n').filter(line => /^#{2,6}\s.*<Badge\b/.test(line))
+    const emptyHeaders = ($page.headers || []).filter(header => header.title === '')
+    emptyHeaders.forEach((header, index) => {
+      const source = sources[index]
+      if (source) header.title = source.replace(/^#+\s+/, '').replace(/<[^>]*>/g, '').trim()
+    })
+  },
   // VuePress 1 uses separate vue-loader pipelines for .vue and .md files.
   // Media aliases emit separate files with stable public videos/ URLs.
   chainWebpack: config => {

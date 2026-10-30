@@ -40,7 +40,7 @@ function createAnchorFromHeader(headerText) {
 	const anchorMatch = headerText.match(/<Anchor\s*:ids="\[([^\]]*)\]"\s*\/>/);
 	const cleanHeaderText = headerText.replace(/<Anchor.*?\/>/, '').trim();
 
-	const slug = slugify(cleanHeaderText);
+	const slug = slugify(cleanHeaderText.replace(/<Badge\b[^>]*?\/>/g, ''));
 	const escapedSlug = escapeQuotesInSlug(slug);
 	
 	let anchor;
