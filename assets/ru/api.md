@@ -12519,7 +12519,7 @@ Example:
                   "value": "Saturday"
                 }
               ],
-              "min": 0,
+              "min": 1,
               "max": 127,
               "default": 127,
               "visible": true,
