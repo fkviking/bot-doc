@@ -111,7 +111,7 @@ At the schedule level (`timetable`):
 If a client read or wrote the portfolio `trading_days`, it must now:
 
 - read `trading_days` from each interval of the portfolio `timetable` instead of from the portfolio itself;
-- write `trading_days` into every `timetable` interval: the field is required (for example, Monday to Friday is `2 + 4 + 8 + 16 + 32 = 62`); the allowed range is `0` to `127`; `0` is an empty mask, no days of the week;
+- write `trading_days` into every `timetable` interval: the field is required (for example, Monday to Friday is `2 + 4 + 8 + 16 + 32 = 62`); the allowed range is `1` to `127`;
 - not send `trading_days` at the portfolio level: a request containing this field is rejected with an error.
 
 ##### Existing portfolios
