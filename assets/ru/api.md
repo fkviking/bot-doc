@@ -620,6 +620,7 @@ Example:
             "log_level": 0,
             "timetable": [
                 {
+                    "trading_days": 127,
                     "begin": 36000,
                     "end": 50400,
                     "auto_close": false,
@@ -627,6 +628,7 @@ Example:
                     "auto_to0": false
                 },
                 {
+                    "trading_days": 127,
                     "begin": 50580,
                     "end": 67020,
                     "auto_close": false,
@@ -864,6 +866,7 @@ Example:
             "log_level": 0,
             "timetable": [
                 {
+                    "trading_days": 127,
                     "begin": 36000,
                     "end": 50400,
                     "auto_close": false,
@@ -871,6 +874,7 @@ Example:
                     "auto_to0": false
                 },
                 {
+                    "trading_days": 127,
                     "begin": 50580,
                     "end": 67020,
                     "auto_close": false,
@@ -1246,7 +1250,6 @@ Example:
       "_fin_res_time": 60,
       "_l_s_time": 2,
       "_l_b_time": 2,
-      "trading_days": 127,
       "decimals": 4,
       "timer": 1,
       "v_in_l": 1,
@@ -1404,6 +1407,7 @@ Example:
       },
       "timetable": [
         {
+          "trading_days": 127,
           "begin": 36000,
           "end": 67200,
           "a_sell": 2,
@@ -11665,16 +11669,6 @@ Example:
               "portfolio_action": {
                 "to0": true
               },
-              "formatter": "action",
-              "editor": "action",
-              "visible": [
-                "toolbar"
-              ],
-              "disabled": false
-            },
-            {
-              "field": "_trading_days",
-              "title": "TradingDays",
               "formatter": "action",
               "editor": "action",
               "visible": [
