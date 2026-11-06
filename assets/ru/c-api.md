@@ -1583,7 +1583,7 @@ return ema.value();// get current EMA value
 
 Пример задания разного расписания для разных дней недели:
 ```C
-static indicators::EMA ema({WHOLE_WEEK, {{7, 0}, {18, 45}}, {WORK_WEEK, {19, 0}, {23, 50}}});// initialize EMA with trading schedule: 7:00-18:45 for whole week, 19:00-23:50 only for Monday, Tuesday, Wednesday, Thursday, Friday
+static indicators::EMA ema({{WHOLE_WEEK, {7, 0}, {18, 45}}, {WORK_WEEK, {19, 0}, {23, 50}}});// initialize EMA with trading schedule: 7:00-18:45 for whole week, 19:00-23:50 only for Monday, Tuesday, Wednesday, Thursday, Friday
 ```
 ---
 

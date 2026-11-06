@@ -1619,7 +1619,7 @@ return ema.value();// get current EMA value
 
 Example of setting different schedules for different days of the week:
 ```
-static indicators::EMA ema({WHOLE_WEEK, {{7, 0}, {18, 45}}, {WORK_WEEK, {19, 0}, {23, 50}}});// initialize EMA with trading schedule: 7:00-18:45 for whole week, 19:00-23:50 only for Monday, Tuesday, Wednesday, Thursday, Friday
+static indicators::EMA ema({{WHOLE_WEEK, {7, 0}, {18, 45}}, {WORK_WEEK, {19, 0}, {23, 50}}});// initialize EMA with trading schedule: 7:00-18:45 for whole week, 19:00-23:50 only for Monday, Tuesday, Wednesday, Thursday, Friday
 ```
 ---
 
