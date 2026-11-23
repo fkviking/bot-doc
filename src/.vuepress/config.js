@@ -52,11 +52,12 @@ module.exports = {
         title: 'Документация торговых роботов компании "Викинг"',
         description: 'Руководство пользователя, описание алгоритма и API',
         footer: 'ФК Викинг | Copyright © 2010-2026',
+        /*
         announcement: {
           label: 'Важно',
           text: '10 ноября — несовместимые изменения в WebSocket API и расписании портфелей.',
           link: { text: 'Подробнее', href: 'change-history.md#2026-11-10' }
-        },
+        },*/
         copyPage: {
           copy: 'Копировать страницу',
           copying: 'Копирую…',
@@ -118,11 +119,12 @@ module.exports = {
         title: 'Documentation for Viking\'s trading robots',
         description: 'User guide, algorithm description and API',
         footer: 'FC Viking | Copyright © 2010-2026',
+        /*
         announcement: {
           label: 'Important',
           text: 'November 10: breaking changes to the WebSocket API and portfolio schedules.',
           link: { text: 'Learn more here', href: 'change-history.md#2026-11-10' }
-        },
+        },*/
         copyPage: {
           copy: 'Copy page',
           copying: 'Copying…',
