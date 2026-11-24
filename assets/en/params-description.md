@@ -1080,7 +1080,7 @@ Parameter defining the leverage for placed orders.
 
 Portfolio instrument parameter, which is set separately for each instrument row in the portfolio instrument settings table. It determines how many digits after the decimal point are displayed in the parameters of those portfolio instrument settings for which the value is a fractional number. 
 
-This parameter is also responsible for the number of digits after the decimal point in trade prices for this financial instrument in [Finres for today](interface.md#finres_for_today) and [Finres history](interface.md#finres_history).
+This parameter is also responsible for the number of digits after the decimal point in trade prices for this financial instrument in [Finres for today](interface.md#finres_for_today) and [Finres history](interface.md#finres_history). The average values of the spreads in the [Finres for today](interface.md#finres_for_today) and [Finres history](interface.md#finres_history) widgets are calculated based on the displayed prices, that is, taking into account the specified value of [Decimals](params-description.md#s.decimals) of the portfolio instruments.
 
 When the value is changed, the number of digits for already added trades will NOT change. When portfolio instrument `Decimals` is changed, existing trades already added to [Finres for today](interface.md#finres_for_today) and [Finres history](interface.md#finres_history) tables will retain their original precision and will not be updated.
 
