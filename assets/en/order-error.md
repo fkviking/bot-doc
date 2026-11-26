@@ -63,7 +63,7 @@ If the log contains `Stop trading!!!` along with an order submission error, and 
 
 ### MOEX FORTS
 
-The up-to-date reference of error codes for the Futures Market is publicly available on the Moscow Exchange FTP. You can review it [here](http://ftp.moex.com/pub/TWIME/Spectra/prod/doc/spectra_twime_ru.pdf)
+The up-to-date reference of error codes for the Futures Market is publicly available on the Moscow Exchange FTP. You can review it [here](http://ftp.moex.com/pub/TWIME/Spectra/prod/doc/spectra_twime_en.pdf)
 
 **MOEX SPECTRA ERRORS**  
 -1 Error performing operation.  
