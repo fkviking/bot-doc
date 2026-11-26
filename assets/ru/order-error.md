@@ -73,7 +73,7 @@ summary: Категории ошибок выставления, снятия и
 
 ### MOEX FORTS
 
-Актуальный справочник кодов ошибок для Срочного рынка находится в открытом доступе на ftp Московской биржи. Ознакомиться можно по [ссылке](http://ftp.moex.ru/pub/TWIME/Spectra/prod/doc/spectra_twime_ru.pdf)
+Актуальный справочник кодов ошибок для Срочного рынка находится в открытом доступе на ftp Московской биржи. Ознакомиться можно по [ссылке](http://ftp.moex.com/pub/TWIME/Spectra/prod/doc/spectra_twime_ru.pdf)
 
 **MOEX SPECTRA ERRORS**  
 -1 Error performing operation.  
